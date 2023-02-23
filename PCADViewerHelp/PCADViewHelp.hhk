@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
+<!-- Sitemap 1.0 -->
+</HEAD><BODY>
+<UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="&icirc; &iuml;&eth;&icirc;&atilde;&eth;&agrave;&igrave;&igrave;&aring;">
+		<param name="Name" value="О программе ПиКАДОГЛЯД ">
+		<param name="Local" value="about.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="&ecirc;&icirc;&iacute;&ocirc;&egrave;&atilde;&oacute;&eth;&agrave;&ouml;&egrave;&yuml; &otilde;&icirc;&euml;&ntilde;&ograve;&agrave;">
+		<param name="Name" value="Диалог установки параметров холста. ">
+		<param name="Local" value="canvas_configuration.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="&iacute;&agrave;&ntilde;&ograve;&eth;&icirc;&eacute;&ecirc;&agrave; &otilde;&icirc;&euml;&ntilde;&ograve;&agrave;">
+		<param name="Name" value="Диалог установки параметров холста. ">
+		<param name="Local" value="canvas_configuration.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="&egrave;&iacute;&ntilde;&ograve;&eth;&oacute;&igrave;&aring;&iacute;&ograve; &otilde;&icirc;&euml;&ntilde;&ograve;">
+		<param name="Name" value="Инструмент ">
+		<param name="Local" value="canvas.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="&otilde;&icirc;&euml;&ntilde;&ograve;">
+		<param name="Name" value="Инструмент ">
+		<param name="Local" value="canvas.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="&acirc;&ucirc;&auml;&aring;&euml;&yuml;&thorn;&ugrave;&agrave;&yuml; &eth;&agrave;&igrave;&ecirc;&agrave;">
+		<param name="Name" value="Инструмент ">
+		<param name="Local" value="selecting_frame.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="&eth;&agrave;&igrave;&ecirc;&agrave; &acirc;&ucirc;&auml;&aring;&euml;&aring;&iacute;&egrave;&yuml;">
+		<param name="Name" value="Инструмент ">
+		<param name="Local" value="selecting_frame.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="&eth;&agrave;&igrave;&ecirc;&agrave;">
+		<param name="Name" value="Инструмент ">
+		<param name="Local" value="selecting_frame.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="&oacute;&ntilde;&ograve;&agrave;&iacute;&icirc;&acirc;&ecirc;&agrave; &igrave;&agrave;&ntilde;&oslash;&ograve;&agrave;&aacute;&agrave;">
+		<param name="Name" value="Управление масштабом изображения ">
+		<param name="Local" value="scaling.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="&igrave;&agrave;&ntilde;&oslash;&ograve;&agrave;&aacute;">
+		<param name="Name" value="Управление масштабом изображения ">
+		<param name="Local" value="scaling.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="&icirc;&ograve;&igrave;&aring;&ograve;&ecirc;&agrave; &iuml;&eth;&egrave;&igrave;&egrave;&ograve;&egrave;&acirc;&icirc;&acirc;">
+		<param name="Name" value="Отмеченные примитивы изображения и инструменты отметки ">
+		<param name="Local" value="marking.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="&icirc;&ograve;&igrave;&aring;&ograve;&ecirc;&agrave;">
+		<param name="Name" value="Отмеченные примитивы изображения и инструменты отметки ">
+		<param name="Local" value="marking.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="&eth;&aring;&auml;&agrave;&ecirc;&ograve;&egrave;&eth;&icirc;&acirc;&agrave;&iacute;&egrave;&aring; &ntilde;&euml;&icirc;&cedil;&acirc;">
+		<param name="Name" value="Слои изображения и изменение их параметров. ">
+		<param name="Local" value="layers.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="&ntilde;&euml;&icirc;&egrave;">
+		<param name="Name" value="Слои изображения и изменение их параметров. ">
+		<param name="Local" value="layers.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="&egrave;&iacute;&ocirc;&icirc;&eth;&igrave;&agrave;&ouml;&egrave;&yuml; &icirc; &ocirc;&agrave;&eacute;&euml;&aring;">
+		<param name="Name" value="Диалог информации об открытом файле ">
+		<param name="Local" value="file_information.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="&egrave;&iacute;&ocirc;&icirc;&eth;&igrave;&agrave;&ouml;&egrave;&yuml;">
+		<param name="Name" value="Диалог информации об открытом файле ">
+		<param name="Local" value="file_information.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="&ecirc;&icirc;&iacute;&ocirc;&egrave;&atilde;&oacute;&eth;&agrave;&ouml;&egrave;&yuml;">
+		<param name="Name" value="Конфигурация и настройка программы ПиКАДОГЛЯД ">
+		<param name="Local" value="configuration.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="&iacute;&agrave;&ntilde;&ograve;&eth;&icirc;&eacute;&ecirc;&egrave;">
+		<param name="Name" value="Конфигурация и настройка программы ПиКАДОГЛЯД ">
+		<param name="Local" value="configuration.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="&eth;&agrave;&aacute;&icirc;&divide;&egrave;&eacute; &iuml;&eth;&icirc;&ouml;&aring;&ntilde;&ntilde;">
+		<param name="Name" value="Типичный ход рабочего процесса при использовании программы ПиКАДОГЛЯД ">
+		<param name="Local" value="workflow.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="&icirc;&eth;&atilde;&agrave;&iacute;&ucirc; &oacute;&iuml;&eth;&agrave;&euml;&aring;&iacute;&egrave;&yuml;">
+		<param name="Name" value="Элементы управления программы ">
+		<param name="Local" value="controls.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="&oacute;&iuml;&eth;&agrave;&acirc;&euml;&aring;&iacute;&egrave;&aring;">
+		<param name="Name" value="Элементы управления программы ">
+		<param name="Local" value="controls.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="&atilde;&euml;&agrave;&acirc;&iacute;&icirc;&aring; &igrave;&aring;&iacute;&thorn;">
+		<param name="Name" value="Инструменты программы ПиКАДОГЛЯД ">
+		<param name="Local" value="interface_instruments.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="&igrave;&aring;&iacute;&thorn;">
+		<param name="Name" value="Инструменты программы ПиКАДОГЛЯД ">
+		<param name="Local" value="interface_instruments.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="&ocirc;&oacute;&iacute;&ecirc;&ouml;&egrave;&egrave;">
+		<param name="Name" value="Основные функции программы ПиКАДОГЛЯД ">
+		<param name="Local" value="main_functions.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="&icirc;&ntilde;&iacute;&icirc;&acirc;&iacute;&ucirc;&aring; &ocirc;&oacute;&iacute;&ecirc;&ouml;&egrave;&egrave;">
+		<param name="Name" value="Основные функции программы ПиКАДОГЛЯД ">
+		<param name="Local" value="main_functions.html">
+		</OBJECT>
+</UL>
+</BODY></HTML>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxDialog" name="FileInfoDialog">
+		<title>Информация о файле</title>
+		<size>400,378</size>
+		<style>wxSTAY_ON_TOP|wxDEFAULT_DIALOG_STYLE|wxBORDER_STATIC</style>
+		<object class="wxButton" name="ID_BUTTON1" variable="FileInfoButtonExit" member="yes">
+			<label>Выход</label>
+			<pos>256,344</pos>
+			<handler function="OnFileInfoButtonExitClick" entry="EVT_BUTTON" />
+		</object>
+		<object class="wxStaticText" name="ID_STATICTEXT1" variable="FileNameStatic" member="yes">
+			<label>Имя файла</label>
+			<pos>8,16</pos>
+		</object>
+		<object class="wxTextCtrl" name="ID_TEXTCTRL1" variable="FileNameText" member="yes">
+			<pos>80,8</pos>
+			<size>312,24</size>
+			<style>wxTE_READONLY</style>
+		</object>
+		<object class="wxStaticText" name="ID_STATICTEXT3" variable="FileTypeStatic" member="yes">
+			<label>Тип файла</label>
+			<pos>8,48</pos>
+			<size>56,14</size>
+		</object>
+		<object class="wxTextCtrl" name="ID_TEXTCTRL2" variable="FileTypeText" member="yes">
+			<pos>80,40</pos>
+			<size>110,24</size>
+			<style>wxTE_READONLY</style>
+		</object>
+		<object class="wxStaticText" name="ID_STATICTEXT4" variable="FileWorkshopStatic" member="yes">
+			<label>Загрузчик</label>
+			<pos>208,48</pos>
+		</object>
+		<object class="wxTextCtrl" name="ID_TEXTCTRL3" variable="FileWorkshopText" member="yes">
+			<pos>272,40</pos>
+			<size>120,21</size>
+			<style>wxTE_READONLY</style>
+		</object>
+		<object class="wxButton" name="ID_BUTTON2" variable="FileInfoButtonSave" member="yes">
+			<label>Сохранить в файл</label>
+			<pos>72,344</pos>
+			<handler function="OnFileInfoButtonSaveClick" entry="EVT_BUTTON" />
+		</object>
+		<object class="wxStaticText" name="ID_STATICTEXT5" variable="PictSizeStatic" member="yes">
+			<label>Размер</label>
+			<pos>16,80</pos>
+		</object>
+		<object class="wxTextCtrl" name="ID_TEXTCTRL4" variable="PictSizeText" member="yes">
+			<pos>80,72</pos>
+			<style>wxTE_READONLY</style>
+		</object>
+		<object class="wxStaticText" name="ID_STATICTEXT6" variable="PictElemCountStatic" member="yes">
+			<label>Количество&#x0A;элементов</label>
+			<pos>208,72</pos>
+		</object>
+		<object class="wxTextCtrl" name="ID_TEXTCTRL5" variable="PictElemCountText" member="yes">
+			<value>0</value>
+			<pos>280,72</pos>
+			<style>wxTE_READONLY</style>
+		</object>
+		<object class="wxStaticText" name="ID_STATICTEXT7" variable="FileEditorStatic" member="yes">
+			<label>Редактор</label>
+			<pos>16,112</pos>
+		</object>
+		<object class="wxStaticText" name="ID_STATICTEXT8" variable="FileMeasureUnitStatic" member="yes">
+			<label>Единицы&#x0A;измерения</label>
+			<pos>160,104</pos>
+		</object>
+		<object class="wxTextCtrl" name="ID_TEXTCTRL6" variable="FileEditorText" member="yes">
+			<pos>80,104</pos>
+			<size>72,21</size>
+			<style>wxTE_READONLY</style>
+		</object>
+		<object class="wxStaticText" name="ID_STATICTEXT9" variable="DBUInMeasureUnitStatic" member="yes">
+			<label>Плотность</label>
+			<pos>280,112</pos>
+		</object>
+		<object class="wxTextCtrl" name="ID_TEXTCTRL7" variable="FileMeasureUnitText" member="yes">
+			<pos>224,104</pos>
+			<size>48,21</size>
+			<style>wxTE_READONLY</style>
+		</object>
+		<object class="wxTextCtrl" name="ID_TEXTCTRL8" variable="DBUInMeasureUnitText" member="yes">
+			<pos>336,104</pos>
+			<size>56,21</size>
+			<style>wxTE_READONLY</style>
+		</object>
+		<object class="wxListBox" name="ID_LISTBOX1" variable="LayerList" member="yes">
+			<default>-1</default>
+			<pos>80,136</pos>
+			<size>312,80</size>
+			<style>wxLB_SINGLE|wxLB_ALWAYS_SB</style>
+		</object>
+		<object class="wxListBox" name="ID_LISTBOX2" variable="FlashList" member="yes">
+			<default>-1</default>
+			<pos>80,256</pos>
+			<size>312,80</size>
+			<style>wxLB_SINGLE|wxLB_ALWAYS_SB</style>
+		</object>
+		<object class="wxStaticText" name="ID_STATICTEXT10" variable="LayerStatic" member="yes">
+			<label>Слои</label>
+			<pos>24,168</pos>
+		</object>
+		<object class="wxStaticText" name="ID_STATICTEXT11" variable="FlashStatic" member="yes">
+			<label>Апертуры:</label>
+			<pos>8,288</pos>
+		</object>
+		<object class="wxStaticText" name="ID_STATICTEXT12" variable="ApertureFileNameStatic" member="yes">
+			<label>Имя файла&#x0A;апертур</label>
+			<pos>8,224</pos>
+		</object>
+		<object class="wxTextCtrl" name="ID_TEXTCTRL9" variable="ApertureFileNameText" member="yes">
+			<pos>80,224</pos>
+			<size>312,21</size>
+			<style>wxTE_READONLY</style>
+		</object>
+	</object>
+</wxsmith>

@@ -1,0 +1,30 @@
+[OPTIONS]
+Compatibility=1.1 or later
+Compiled file=PCADViewHelp.chm
+Contents file=PCADViewHelp.hhc
+Default Font=Arial CYR,8,204
+Default topic=main_page.html
+Display compile progress=No
+Index file=PCADViewHelp.hhk
+Language=0x419 Русский (Россия)
+Title=Помощь PCAD Viewer
+Charset=windows-1251
+
+[FILES]
+about.html
+canvas.html
+canvas_configuration.html
+configuration.html
+controls.html
+file_information.html
+interface_instruments.html
+layers.html
+main_functions.html
+main_page.html
+marking.html
+scaling.html
+selecting_frame.html
+workflow.html
+
+[INFOTYPES]
+

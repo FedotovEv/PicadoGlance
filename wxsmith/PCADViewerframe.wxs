@@ -1,0 +1,644 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxFrame" name="PCADViewerFrame">
+		<title>Просмотрщик-конвертер PCAD-файлов</title>
+		<size>380,214</size>
+		<minsize>50,50</minsize>
+		<id_arg>0</id_arg>
+		<style>wxDEFAULT_FRAME_STYLE|wxFULL_REPAINT_ON_RESIZE</style>
+		<object class="wxBoxSizer" variable="BoxSizer1" member="yes">
+			<object class="sizeritem">
+				<object class="wxBoxSizer" variable="BoxSizer2" member="yes">
+					<orient>wxVERTICAL</orient>
+					<object class="sizeritem">
+						<object class="wxPanel" name="ID_PANEL1" variable="ScrolledCanvas" member="yes">
+							<style>wxTAB_TRAVERSAL|wxWANTS_CHARS|wxFULL_REPAINT_ON_RESIZE</style>
+							<handler function="OnScrolledCanvasPaint" entry="EVT_PAINT" />
+							<handler function="OnScrolledCanvasKeyDown" entry="EVT_KEY_DOWN" />
+							<handler function="OnScrolledCanvasLeftDown" entry="EVT_LEFT_DOWN" />
+							<handler function="OnScrolledCanvasLeftUp" entry="EVT_LEFT_UP" />
+							<handler function="OnScrolledCanvasMiddleDown" entry="EVT_MIDDLE_DOWN" />
+							<handler function="OnScrolledCanvasRightDown" entry="EVT_RIGHT_DOWN" />
+							<handler function="OnScrolledCanvasMouseMove" entry="EVT_MOTION" />
+							<handler function="OnScrolledCanvasResize" entry="EVT_SIZE" />
+						</object>
+						<flag>wxALL|wxEXPAND</flag>
+						<option>10</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxScrollBar" name="ID_SCROLLBAR3" variable="ScrollBarHorPos" member="yes">
+							<thumbsize>1</thumbsize>
+							<range>10</range>
+							<pagesize>1</pagesize>
+							<style>wxSB_HORIZONTAL</style>
+							<handler function="OnScrollBarHorPosScrollChanged" entry="EVT_COMMAND_SCROLL_CHANGED" />
+						</object>
+						<flag>wxALL|wxEXPAND</flag>
+					</object>
+					<object class="sizeritem">
+						<object class="wxScrollBar" name="ID_SCROLLBAR_HOR_CANVAS" variable="ScrollBarHorCanvasPos" member="yes">
+							<thumbsize>1</thumbsize>
+							<range>10</range>
+							<pagesize>1</pagesize>
+							<style>wxSB_HORIZONTAL</style>
+							<handler function="OnScrollBarHorCanvasPosScrollChanged" entry="EVT_COMMAND_SCROLL_CHANGED" />
+						</object>
+						<flag>wxALL|wxEXPAND</flag>
+					</object>
+				</object>
+				<flag>wxALL|wxEXPAND</flag>
+				<option>10</option>
+			</object>
+			<object class="sizeritem">
+				<object class="wxScrollBar" name="ID_SCROLLBAR1" variable="ScrollBarVertPos" member="yes">
+					<thumbsize>1</thumbsize>
+					<range>10</range>
+					<pagesize>1</pagesize>
+					<style>wxSB_VERTICAL</style>
+					<handler function="OnScrollBarVertPosScrollChanged" entry="EVT_COMMAND_SCROLL_CHANGED" />
+				</object>
+				<flag>wxALL|wxEXPAND</flag>
+			</object>
+			<object class="sizeritem">
+				<object class="wxScrollBar" name="ID_SCROLLBAR_VERT_CANVAS" variable="ScrollBarVertCanvasPos" member="yes">
+					<thumbsize>1</thumbsize>
+					<range>10</range>
+					<pagesize>1</pagesize>
+					<style>wxSB_VERTICAL</style>
+					<handler function="OnScrollBarVertCanvasPosScrollChanged" entry="EVT_COMMAND_SCROLL_CHANGED" />
+				</object>
+				<flag>wxALL|wxEXPAND</flag>
+			</object>
+		</object>
+		<object class="wxStatusBar" name="ID_STATUSBAR1" variable="StatusBar1" member="yes">
+			<fields>4</fields>
+			<widths>-1,180,150,100</widths>
+			<styles>wxSB_NORMAL,wxSB_NORMAL,wxSB_NORMAL,wxSB_NORMAL</styles>
+		</object>
+		<object class="wxToolBar" name="ID_TOOLBAR_MAIN" variable="MainToolBar" member="yes">
+			<object class="tool" name="ToolOpenFile" variable="ToolBarItemOpenFile" member="yes">
+				<label>Открыть изображение</label>
+				<bitmap stock_id="wxART_FILE_OPEN" stock_client="wxART_TOOLBAR" />
+				<bitmap2 stock_id="wxART_FILE_OPEN" stock_client="wxART_TOOLBAR" />
+				<tooltip>Открыть PCAD-файл</tooltip>
+				<longhelp>Открыть PCAD-файл</longhelp>
+				<handler function="OnMenuOpenSelected" entry="EVT_TOOL" />
+			</object>
+			<object class="tool" name="ToolCloseFile" variable="ToolBarItemCloseFile" member="yes">
+				<label>Закрыть изображение</label>
+				<bitmap stock_id="wxART_ERROR" stock_client="wxART_TOOLBAR" />
+				<bitmap2 stock_id="wxART_ERROR" stock_client="wxART_TOOLBAR" />
+				<tooltip>Закрыть текущий открытый файл</tooltip>
+				<longhelp>Закрыть текущий открытый файл</longhelp>
+				<handler function="OnMenuCloseSelected" entry="EVT_TOOL" />
+			</object>
+			<object class="tool" name="ToolExit" variable="ToolBarItemExit" member="yes">
+				<label>Выйти</label>
+				<bitmap stock_id="wxART_QUIT" stock_client="wxART_TOOLBAR" />
+				<bitmap2 stock_id="wxART_QUIT" stock_client="wxART_TOOLBAR" />
+				<tooltip>Выйти из программы</tooltip>
+				<longhelp>Выйти из программы</longhelp>
+				<handler function="OnQuit" entry="EVT_TOOL" />
+			</object>
+			<object class="separator" />
+			<object class="tool" name="ToolExport" variable="ToolBarItemExport" member="yes">
+				<label>Экспорт рисунка</label>
+				<bitmap stock_id="wxART_EXPORT_PICTURE" stock_client="wxART_TOOLBAR" />
+				<bitmap2 stock_id="wxART_EXPORT_PICTURE" stock_client="wxART_TOOLBAR" />
+				<tooltip>Экспорт рисунка</tooltip>
+				<longhelp>Преобразование рисунка в другие графические форматы</longhelp>
+				<handler function="OnToolBarItemExportClicked" entry="EVT_TOOL" />
+			</object>
+			<object class="tool" name="ToolPrint" variable="ToolBarItemPrint" member="yes">
+				<label>Печать рисунка</label>
+				<bitmap stock_id="wxART_PRINT" stock_client="wxART_TOOLBAR" />
+				<bitmap2 stock_id="wxART_PRINT" stock_client="wxART_TOOLBAR" />
+				<tooltip>Печать рисунка</tooltip>
+				<longhelp>Печать рисунка на принтере</longhelp>
+				<handler function="OnToolBarItemPrintClicked" entry="EVT_TOOL" />
+			</object>
+			<object class="tool" name="ToolFileInfo" variable="ToolBarItemFileInfo" member="yes">
+				<label>Информация о рисунке</label>
+				<bitmap stock_id="wxART_INFORMATION" stock_client="wxART_TOOLBAR" />
+				<bitmap2 stock_id="wxART_INFORMATION" stock_client="wxART_TOOLBAR" />
+				<tooltip>Информация о рисунке</tooltip>
+				<longhelp>Информация о рисунке</longhelp>
+				<handler function="OnMenuFileInfoSelected" entry="EVT_TOOL" />
+			</object>
+			<object class="separator" />
+			<object class="tool" name="ToolMark" variable="ToolBarItemMark" member="yes">
+				<label>Пометить элементы</label>
+				<bitmap stock_id="wxART_MARK_ELEMENTS" stock_client="wxART_TOOLBAR" />
+				<bitmap2 stock_id="wxART_MARK_ELEMENTS" stock_client="wxART_TOOLBAR" />
+				<tooltip>Пометить элементы на холсте, внутри контура или все сразу</tooltip>
+				<longhelp>Пометить элементы на холсте, внутри контура или все сразу</longhelp>
+				<handler function="OnToolBarItemMarkClicked" entry="EVT_TOOL" />
+			</object>
+			<object class="tool" name="ToolInvertMark" variable="ToolBarItemInvertMark" member="yes">
+				<label>Обратить выделение элементов</label>
+				<bitmap stock_id="wxART_ADD_BOOKMARK" stock_client="wxART_TOOLBAR" />
+				<bitmap2 stock_id="wxART_ADD_BOOKMARK" stock_client="wxART_TOOLBAR" />
+				<tooltip>Обратить выделение  элементов на холсте, внутри контура или все сразу</tooltip>
+				<longhelp>Обратить выделение  элементов на холсте, внутри контура или все сразу</longhelp>
+				<handler function="OnToolBarItemInvertMarkClicked" entry="EVT_TOOL" />
+			</object>
+			<object class="tool" name="ToolUnmarkAll" variable="ToolBarItemUnmark" member="yes">
+				<label>Снять отметки</label>
+				<bitmap stock_id="wxART_UNMARK_ELEMENTS" stock_client="wxART_TOOLBAR" />
+				<bitmap2 stock_id="wxART_UNMARK_ELEMENTS" stock_client="wxART_TOOLBAR" />
+				<tooltip>Снять все отметки</tooltip>
+				<longhelp>Снять все отметки</longhelp>
+				<handler function="OnToolBarItemUnmarkClicked" entry="EVT_TOOL" />
+			</object>
+			<object class="tool" name="ToolCopy" variable="ToolBarItemCopy" member="yes">
+				<label>Копировать</label>
+				<bitmap stock_id="wxART_COPY" stock_client="wxART_TOOLBAR" />
+				<bitmap2 stock_id="wxART_COPY" stock_client="wxART_TOOLBAR" />
+				<tooltip>Копировать помеченные элементы, элементы на холсте или всё</tooltip>
+				<longhelp>Копировать помеченные элементы, элементы на холсте или всё</longhelp>
+				<handler function="OnToolBarItemCopyClicked" entry="EVT_TOOL" />
+			</object>
+			<object class="separator" />
+			<object class="tool" name="ToolScalDownX" variable="ToolBarItemDownX" member="yes">
+				<label>Уменьшить масштаб по X</label>
+				<bitmap stock_id="wxART_SCALE_MINUS" stock_client="wxART_TOOLBAR" />
+				<bitmap2 stock_id="wxART_SCALE_MINUS" stock_client="wxART_TOOLBAR" />
+				<tooltip>Уменьшить масштаб на ступень по оси X или изотропно</tooltip>
+				<longhelp>Уменьшить масштаб на ступень по оси X или изотропно</longhelp>
+				<handler function="OnMenuScaleDownXSelected" entry="EVT_TOOL" />
+			</object>
+			<object class="wxComboBox" name="ID_COMBOBOX_SCALE_X" variable="ComboBoxScaleX" member="yes">
+				<size>40,-1d</size>
+				<style>wxCB_DROPDOWN</style>
+				<handler function="OnComboBoxScaleXTextEnter" entry="EVT_COMBOBOX" />
+				<handler function="OnComboBoxScaleXTextEnter" entry="EVT_TEXT_ENTER" />
+			</object>
+			<object class="tool" name="ToolScaleUpX" variable="ToolBarItemUpX" member="yes">
+				<label>Увеличить масштаб по X</label>
+				<bitmap stock_id="wxART_SCALE_PLUS" stock_client="wxART_TOOLBAR" />
+				<bitmap2 stock_id="wxART_SCALE_PLUS" stock_client="wxART_TOOLBAR" />
+				<tooltip>Увеличить масштаб на ступень по оси X или изотропно</tooltip>
+				<longhelp>Увеличить масштаб на ступень по оси X или изотропно</longhelp>
+				<handler function="OnMenuScaleUpXSelected" entry="EVT_TOOL" />
+			</object>
+			<object class="tool" name="ToolOneToOneX" variable="ToolBarItemScale1To1X" member="yes">
+				<label>Масштаб 1:1 по X</label>
+				<bitmap stock_id="wxART_SCALE_ONE_TO_ONE" stock_client="wxART_TOOLBAR" />
+				<bitmap2 stock_id="wxART_SCALE_ONE_TO_ONE" stock_client="wxART_TOOLBAR" />
+				<tooltip>Установить масштаб 1:1 по оси X или по обоим осям</tooltip>
+				<longhelp>Установить масштаб 1:1 по оси X или по обоим осям</longhelp>
+				<handler function="OnMenuScale1to1XSelected" entry="EVT_TOOL" />
+			</object>
+			<object class="separator" />
+			<object class="tool" name="ToolEqualScales" variable="ToolBarItemEqualScales" member="yes">
+				<label>Равные</label>
+				<bitmap stock_id="wxART_EQUAL_SCALES" stock_client="wxART_TOOLBAR" />
+				<bitmap2 stock_id="wxART_EQUAL_SCALES" stock_client="wxART_TOOLBAR" />
+				<tooltip>Включить/выключить режим равных масштабов</tooltip>
+				<longhelp>Включить/выключить режим равных масштабов по обоим осям</longhelp>
+				<handler function="OnToolBarItemEqualScalesClicked" entry="EVT_TOOL" />
+				<check>1</check>
+			</object>
+			<object class="separator" />
+			<object class="tool" name="ToolScalDownY" variable="ToolBarItemDownY" member="yes">
+				<label>Уменьшить масштаб по Y</label>
+				<bitmap stock_id="wxART_SCALE_MINUS" stock_client="wxART_TOOLBAR" />
+				<bitmap2 stock_id="wxART_SCALE_MINUS" stock_client="wxART_TOOLBAR" />
+				<tooltip>Уменьшить масштаб на ступень по оси Y или изотропно</tooltip>
+				<longhelp>Уменьшить масштаб на ступень по оси Y или изотропно</longhelp>
+				<handler function="OnMenuScaleDownYSelected" entry="EVT_TOOL" />
+			</object>
+			<object class="wxComboBox" name="ID_COMBOBOX_SCALE_Y" variable="ComboBoxScaleY" member="yes">
+				<size>40,-1d</size>
+				<handler function="OnComboBoxScaleYTextEnter" entry="EVT_COMBOBOX" />
+				<handler function="OnComboBoxScaleYTextEnter" entry="EVT_TEXT_ENTER" />
+			</object>
+			<object class="tool" name="ToolScaleUpY" variable="ToolBarItemUpY" member="yes">
+				<label>Увеличить масштаб по Y</label>
+				<bitmap stock_id="wxART_SCALE_PLUS" stock_client="wxART_TOOLBAR" />
+				<bitmap2 stock_id="wxART_SCALE_PLUS" stock_client="wxART_TOOLBAR" />
+				<tooltip>Увеличить масштаб на ступень по оси Y или изотропно</tooltip>
+				<longhelp>Увеличить масштаб на ступень по оси Y или изотропно</longhelp>
+				<handler function="OnMenuScaleUpYSelected" entry="EVT_TOOL" />
+			</object>
+			<object class="tool" name="ToolOneToOneY" variable="ToolBarItemScale1To1Y" member="yes">
+				<label>Масштаб 1:1 по Y</label>
+				<bitmap stock_id="wxART_SCALE_ONE_TO_ONE" stock_client="wxART_TOOLBAR" />
+				<bitmap2 stock_id="wxART_SCALE_ONE_TO_ONE" stock_client="wxART_TOOLBAR" />
+				<tooltip>Установить масштаб 1:1 по оси Y или по обоим осям</tooltip>
+				<longhelp>Установить масштаб 1:1 по оси Y или по обоим осям</longhelp>
+				<handler function="OnMenuScale1to1YSelected" entry="EVT_TOOL" />
+			</object>
+			<object class="separator" />
+			<object class="wxSpinCtrl" name="ID_SPINCTRL_CANVAS_HOR" variable="SpinCanvasSizeHor" member="yes">
+				<value>0</value>
+				<size>40,-1d</size>
+				<handler function="OnSpinCanvasSizeHorChange" entry="EVT_SPINCTRL" />
+			</object>
+			<object class="wxSpinCtrl" name="ID_SPINCTRL_CANVAS_VERT" variable="SpinCanvasSizeVert" member="yes">
+				<value>0</value>
+				<size>40,-1d</size>
+				<handler function="OnSpinCanvasSizeVertChange" entry="EVT_SPINCTRL" />
+			</object>
+			<object class="separator" />
+			<object class="tool" name="ToolCanvasYesNo" variable="ToolBarCanvasYesNo" member="yes">
+				<label>Включить/Выключить холст</label>
+				<bitmap stock_id="wxART_TICK_MARK" stock_client="wxART_TOOLBAR" />
+				<bitmap2 stock_id="wxART_TICK_MARK" stock_client="wxART_TOOLBAR" />
+				<tooltip>Включить/выключить отображение холста</tooltip>
+				<longhelp>Включить/выключить режим отображения холста</longhelp>
+				<handler function="OnToolBarCanvasYesNoClicked" entry="EVT_TOOL" />
+				<check>1</check>
+			</object>
+			<object class="tool" name="ToolCanvasLandscape" variable="ToolBarItemCanvasLandscape" member="yes">
+				<label>Ландшафтная ориентация холста</label>
+				<bitmap stock_id="wxART_PORTRAIT_LANDSCAPE" stock_client="wxART_TOOLBAR" />
+				<bitmap2 stock_id="wxART_PORTRAIT_LANDSCAPE" stock_client="wxART_TOOLBAR" />
+				<tooltip>Переключение между портретной и альбомной ориентацией холста</tooltip>
+				<longhelp>Переключение между портретной и альбомной ориентацией холста</longhelp>
+				<handler function="OnToolBarItemCanvasLandscapeClicked" entry="EVT_TOOL" />
+				<check>1</check>
+			</object>
+			<object class="separator" />
+			<object class="tool" name="ToolHelp" variable="ToolBarItemHelp" member="yes">
+				<label>Помощь</label>
+				<bitmap stock_id="wxART_HELP" stock_client="wxART_TOOLBAR" />
+				<bitmap2 stock_id="wxART_HELP" stock_client="wxART_TOOLBAR" />
+				<tooltip>Вывод помощи по работе с программой</tooltip>
+				<longhelp>Вывод помощи по работе с программой</longhelp>
+				<handler function="OnMenuItemHelpIndexSelected" entry="EVT_TOOL" />
+			</object>
+		</object>
+		<object class="wxMenuBar" variable="MenuBar1" member="yes">
+			<object class="wxMenu" variable="MenuFile" member="yes">
+				<label>Файл</label>
+				<object class="wxMenuItem" name="IdMenuLoad" variable="MenuItem1" member="yes">
+					<label>Открыть</label>
+					<accel>Ctrl-O</accel>
+					<help>Открыть PCAD-файл</help>
+					<handler function="OnMenuOpenSelected" entry="EVT_MENU" />
+				</object>
+				<object class="wxMenu" name="IdMenuLoadAs" variable="MenuItemLoadAs" member="yes">
+					<label>Открыть как</label>
+					<help>Открыть файл конкретным загрузчиком</help>
+					<object class="separator" />
+				</object>
+				<object class="wxMenuItem" name="IdMenuClose" variable="MenuItemClose" member="yes">
+					<label>Закрыть</label>
+					<accel>Ctrl-W</accel>
+					<help>Закрыть текущий файл</help>
+					<handler function="OnMenuCloseSelected" entry="EVT_MENU" />
+				</object>
+				<object class="separator" />
+				<object class="wxMenu" name="ID_MENUITEM_EXPORT" variable="MenuItemExportHead" member="yes">
+					<label>Экспорт</label>
+					<object class="wxMenuItem" name="IdMenuExportCanvas" variable="MenuItemExportCanvas" member="yes">
+						<label>С холста</label>
+						<help>Экспорт только содержимого холста</help>
+						<checkable>1</checkable>
+					</object>
+					<object class="wxMenuItem" name="IdMenuExportSelected" variable="MenuItemExportSelected" member="yes">
+						<label>Отмеченное</label>
+						<help>Экспорт только отмеченных элементов</help>
+						<checkable>1</checkable>
+					</object>
+					<object class="wxMenuItem" name="IdMenuExportContour" variable="MenuItemExportContour" member="yes">
+						<label>Внутри контура</label>
+						<help>Экспорт только элементов внутри выделяющего контура</help>
+						<checkable>1</checkable>
+					</object>
+					<object class="separator" />
+					<object class="wxMenuItem" name="IdMenuExportText" variable="MenuItemExportText" member="yes">
+						<label>Текст</label>
+						<help>Экспорт в текстовый файл</help>
+						<handler function="OnMenuExportToTextSelected" entry="EVT_MENU" />
+					</object>
+					<object class="wxMenuItem" name="IdMenuExportDXF" variable="MenuItemExportDXF" member="yes">
+						<label>DXF</label>
+						<help>Экспорт в формат DXF</help>
+						<handler function="OnMenuItemExportDXFSelected" entry="EVT_MENU" />
+					</object>
+					<object class="wxMenuItem" name="IdMenuExportSVG" variable="MenuItemExportSVG" member="yes">
+						<label>SVG</label>
+						<help>Экспорт в формат SVG</help>
+						<handler function="OnMenuItemExportSVGSelected" entry="EVT_MENU" />
+					</object>
+					<object class="wxMenuItem" name="IdMenuExportWMF" variable="MenuItemExportWMF" member="yes">
+						<label>Metafile</label>
+						<help>Экспорт в Windows Metafile</help>
+						<handler function="OnMenuItemExportWMFSelected" entry="EVT_MENU" />
+					</object>
+					<object class="separator" />
+					<object class="wxMenuItem" name="IdMenuExportBMP" variable="MenuItemExportBMP" member="yes">
+						<label>BMP</label>
+						<help>Экспорт в формат BMP</help>
+						<handler function="OnMenuItemExportBMPSelected" entry="EVT_MENU" />
+					</object>
+					<object class="wxMenuItem" name="IdMenuExportJPG" variable="MenuItemExportJPEG" member="yes">
+						<label>JPEG</label>
+						<help>Экспорт в формат JPEG</help>
+						<handler function="OnMenuItemExportJPEGSelected" entry="EVT_MENU" />
+					</object>
+				</object>
+				<object class="separator" />
+				<object class="wxMenuItem" name="IdMenuFileInfo" variable="MenuItemFileInfo" member="yes">
+					<label>Информация о файле</label>
+					<accel>Ctrl-I</accel>
+					<help>Вывод информации об открытом файле</help>
+					<handler function="OnMenuFileInfoSelected" entry="EVT_MENU" />
+				</object>
+				<object class="wxMenu" name="ID_MENUITEM_PRINT" variable="MenuItemPrintHead" member="yes">
+					<label>Печать</label>
+					<help>Печать изображения</help>
+					<object class="wxMenuItem" name="IdMenuPrintCanvas" variable="MenuItemPrintCanvas" member="yes">
+						<label>С холста</label>
+						<help>Печать только содержимого холста</help>
+						<checkable>1</checkable>
+					</object>
+					<object class="wxMenuItem" name="IdMenuPrintSelected" variable="MenuItemPrintSelected" member="yes">
+						<label>Отмеченное</label>
+						<help>Печать только отмеченных элементов</help>
+						<checkable>1</checkable>
+					</object>
+					<object class="wxMenuItem" name="IdMenuPrintContour" variable="MenuItemPrintContour" member="yes">
+						<label>Внутри контура</label>
+						<help>Печать только элементов внутри выделяющего контура</help>
+						<checkable>1</checkable>
+					</object>
+					<object class="separator" />
+					<object class="wxMenuItem" name="IdMenuPrint" variable="MenuItemPrint" member="yes">
+						<label>Печатать</label>
+						<help>Предпросмотр результатов и выполнение печати</help>
+						<handler function="OnMenuItemPrintSelected" entry="EVT_MENU" />
+					</object>
+				</object>
+				<object class="separator" />
+				<object class="wxMenuItem" name="IdMenuExitProgram" variable="MenuItemExitProgram" member="yes">
+					<label>Выйти</label>
+					<accel>Alt-F4</accel>
+					<help>Завершить программу</help>
+					<handler function="OnQuit" entry="EVT_MENU" />
+				</object>
+			</object>
+			<object class="wxMenu" variable="MenuEdit" member="yes">
+				<label>Правка</label>
+				<object class="wxMenuItem" name="IdMenuDoCopyToClipboardAuto" variable="MenuItem2" member="yes">
+					<label>Копировать</label>
+					<accel>Ctrl-C</accel>
+					<help>Копирвать в буфер обмена выделенные элементы рисунка</help>
+					<handler function="OnToolBarItemCopyClicked" entry="EVT_MENU" />
+				</object>
+				<object class="separator" />
+				<object class="wxMenuItem" name="IdMenuHandleCanvas" variable="MenuItemHandleCanvas" member="yes">
+					<label>С холста</label>
+					<help>Обрабатывать только содержимое холста</help>
+					<checkable>1</checkable>
+				</object>
+				<object class="wxMenuItem" name="IdMenuHandleSelected" variable="MenuItemHandleSelected" member="yes">
+					<label>Отмеченное</label>
+					<help>Обрабатывать только выделенные элементы</help>
+					<checkable>1</checkable>
+				</object>
+				<object class="wxMenuItem" name="IdMenuHandleContour" variable="MenuItemHandleContour" member="yes">
+					<label>Внутри контура</label>
+					<help>Обрабатывать только элементы внутри выделяющего контура</help>
+					<checkable>1</checkable>
+				</object>
+				<object class="separator" />
+				<object class="wxMenuItem" name="IdMenuSelect" variable="MenuItemSelect" member="yes">
+					<label>Отметить указанное</label>
+					<help>Отметить указанную группу примитивов</help>
+					<handler function="OnMenuItemSelectSelected" entry="EVT_MENU" />
+				</object>
+				<object class="wxMenuItem" name="IdMenuInvertSelection" variable="MenuItemInvertSelection" member="yes">
+					<label>Инвертировать указанное</label>
+					<help>Обратить выделение для выбранной группы примитивов рисунка</help>
+					<handler function="OnMenuItemInvertSelectionSelected" entry="EVT_MENU" />
+				</object>
+				<object class="wxMenuItem" name="IdMenuUnselect" variable="MenuItemUnselect" member="yes">
+					<label>Снять указанные отметки</label>
+					<help>Снять отметки с выбранной группы примитивов</help>
+					<handler function="OnMenuItemUnselectSelected" entry="EVT_MENU" />
+				</object>
+				<object class="wxMenuItem" name="IdMenuDoCopyToClipboardSpec" variable="MenuItemDoCopyToClipboard" member="yes">
+					<label>Копировать указанное</label>
+					<accel>Shift-Ctrl-C</accel>
+					<help>Выполнить копирование указанных групп примитивов в буфер обмена</help>
+					<handler function="OnMenuItemDoCopyToClipboardSelected" entry="EVT_MENU" />
+				</object>
+			</object>
+			<object class="wxMenu" variable="MenuView" member="yes">
+				<label>Вид</label>
+				<object class="wxMenu" name="IdMenuScale" variable="MenuScale" member="yes">
+					<label>Масштаб</label>
+					<help>Изменение масштаба изображения</help>
+					<object class="wxMenuItem" name="IdMenuScaleMode" variable="MenuItemScaleMode" member="yes">
+						<label>Масштабы по осям</label>
+						<help>Выбор соотношения масштабов по осям</help>
+						<enabled>0</enabled>
+					</object>
+					<object class="wxMenuItem" name="IdMenuItemEqualScales" variable="MenuItemEqualScales" member="yes">
+						<label>Равные</label>
+						<help>Устанавливает режим равных масштабов по осям</help>
+						<handler function="OnMenuItemEqualScalesSelected" entry="EVT_MENU" />
+						<radio>1</radio>
+					</object>
+					<object class="wxMenuItem" name="IdMenuItemDiffScales" variable="MenuItemDiffScales" member="yes">
+						<label>Различные</label>
+						<help>Устанавливает режим различных масштабов по осям</help>
+						<handler function="OnMenuItemDiffScalesSelected" entry="EVT_MENU" />
+						<radio>1</radio>
+					</object>
+					<object class="separator" />
+					<object class="wxMenuItem" name="IdMenuScaleUpX" variable="MenuItemScaleUpX" member="yes">
+						<label>Увеличить по X</label>
+						<accel>Ctrl-Alt-+</accel>
+						<help>Увеличить масштаб изображения по оси X</help>
+						<handler function="OnMenuScaleUpXSelected" entry="EVT_MENU" />
+					</object>
+					<object class="wxMenuItem" name="IdMenuScaleDownX" variable="MenuItemScaleDownX" member="yes">
+						<label>Уменьшить по X</label>
+						<accel>Ctrl-Alt--</accel>
+						<help>Уменьшить масштаб изображения по оси X</help>
+						<handler function="OnMenuScaleDownXSelected" entry="EVT_MENU" />
+					</object>
+					<object class="wxMenuItem" name="IdMenuScaleOneX" variable="MenuItemScaleOneX" member="yes">
+						<label>Масштаб 1:1 по X</label>
+						<accel>Ctrl-Alt-1</accel>
+						<help>Установить масштаб 1:1 по оси X</help>
+						<handler function="OnMenuScale1to1XSelected" entry="EVT_MENU" />
+					</object>
+					<object class="wxMenuItem" name="IdMenuNearestStdScaleX" variable="MenuItemNearestStdScaleX" member="yes">
+						<label>Ближайший стандартный по X</label>
+						<accel>Ctrl-Alt-N</accel>
+						<help>Установка ближайшего стандартного масштаба по оси X</help>
+						<handler function="OnMenuItemNearestStdScaleXSelected" entry="EVT_MENU" />
+					</object>
+					<object class="separator" />
+					<object class="wxMenuItem" name="IdMenuScaleUpY" variable="MenuItemScaleUpY" member="yes">
+						<label>Увеличить по Y</label>
+						<accel>Ctrl-Shift-+</accel>
+						<help>Увеличить масштаб изображения по оси Y</help>
+						<handler function="OnMenuScaleUpYSelected" entry="EVT_MENU" />
+					</object>
+					<object class="wxMenuItem" name="IdMenuScaleDownY" variable="MenuItemScaleDownY" member="yes">
+						<label>Уменьшить по Y</label>
+						<accel>Ctrl-Shift--</accel>
+						<help>Уменьшить масштаб изображения по оси Y</help>
+						<handler function="OnMenuScaleDownYSelected" entry="EVT_MENU" />
+					</object>
+					<object class="wxMenuItem" name="IdMenuScaleOneY" variable="MenuItemScaleOneY" member="yes">
+						<label>Масштаб 1:1 по Y</label>
+						<accel>Ctrl-Shift-1</accel>
+						<help>Установить масштаб 1:1 по оси Y</help>
+						<handler function="OnMenuScale1to1YSelected" entry="EVT_MENU" />
+					</object>
+					<object class="wxMenuItem" name="IdMenuNearestStdScaleY" variable="MenuItemNearestStdScaleY" member="yes">
+						<label>Ближайший стандартный по Y</label>
+						<accel>Ctrl-Shift-N</accel>
+						<help>Установка ближайшего стандартного масштаба по оси Y</help>
+						<handler function="OnMenuItemNearestStdScaleYSelected" entry="EVT_MENU" />
+					</object>
+					<object class="separator" />
+					<object class="wxMenuItem" name="IdMenuScaleUpBoth" variable="MenuItem8" member="yes">
+						<label>Увеличить по X и Y</label>
+						<accel>Ctrl-+</accel>
+						<help>Увеличить масштаб изображения по обеим осям</help>
+						<handler function="OnMenuItemScaleUpBothSelected" entry="EVT_MENU" />
+					</object>
+					<object class="wxMenuItem" name="IdMenuScaleDownBoth" variable="MenuItem9" member="yes">
+						<label>Уменьшить по X и Y</label>
+						<accel>Ctrl--</accel>
+						<help>Уменьшить масштаб изображения по обеим осям</help>
+						<handler function="OnMenuItemScaleDownBothSelected" entry="EVT_MENU" />
+					</object>
+					<object class="wxMenuItem" name="IdMenuScaleOneBoth" variable="MenuItem10" member="yes">
+						<label>Масштаб 1:1 по X и Y</label>
+						<accel>Ctrl-1</accel>
+						<help>Установить масштаб 1:1 по обеим осям</help>
+						<handler function="OnMenuScale1to1Selected" entry="EVT_MENU" />
+					</object>
+					<object class="wxMenuItem" name="IdMenuNearestStdScaleXY" variable="MenuItemNearestStdScaleBoth" member="yes">
+						<label>Ближайшие стандартные по X и Y</label>
+						<accel>Ctrl-N</accel>
+						<help>Установка ближайшего стандартного масштаба по обеим осям</help>
+						<handler function="OnMenuItemNearestStdScaleBothSelected" entry="EVT_MENU" />
+					</object>
+					<object class="separator" />
+					<object class="wxMenuItem" name="IdMenuScaleEqualX" variable="MenuItemScaleEqualX" member="yes">
+						<label>Выровнять масштабы с опорой на X</label>
+						<accel>Ctrl-Alt-X</accel>
+						<help>Устанавливает масштаб по оси Y аналогично оси X</help>
+						<handler function="OnMenuEqualScaleXSelected" entry="EVT_MENU" />
+					</object>
+					<object class="wxMenuItem" name="IdMenuScaleEqualY" variable="MenuItemScaleEqualY" member="yes">
+						<label>Выровнять масштабы с опорой на Y</label>
+						<accel>Ctrl-Alt-Y</accel>
+						<help>Устанавливает масштаб по оси X аналогично оси Y</help>
+						<handler function="OnMenuEqualScaleYSelected" entry="EVT_MENU" />
+					</object>
+				</object>
+				<object class="wxMenuItem" name="IdMenuLayers" variable="MenuItemLayers" member="yes">
+					<label>Слои</label>
+					<help>Настройка цветовой палитры</help>
+					<handler function="OnMenuItemLayersSelected" entry="EVT_MENU" />
+				</object>
+				<object class="wxMenuItem" name="IdMenuFonts" variable="MenuItemFonts" member="yes">
+					<label>Шрифты</label>
+					<help>Выбор шрифта для вывода текстовой информации</help>
+					<handler function="OnMenuItemFontsSelected" entry="EVT_MENU" />
+				</object>
+				<object class="wxMenu" name="IdMenuLanguages" variable="MenuLanguages" member="yes">
+					<label>Доступные языки</label>
+					<help>Выбор рабочего языка программы из списка доступных</help>
+					<object class="separator" />
+				</object>
+			</object>
+			<object class="wxMenu" variable="MenuCanvas" member="yes">
+				<label>Холст</label>
+				<object class="wxMenu" name="IdMenuStdSizes" variable="MenuItemStdSizes" member="yes">
+					<label>Тип</label>
+					<object class="wxMenuItem" name="IdMenuCanvasA3" variable="MenuItemCanvasA3" member="yes">
+						<label>A3</label>
+						<help>Холст формата A3</help>
+						<handler function="OnMenuItemCanvasA3Selected" entry="EVT_MENU" />
+					</object>
+					<object class="wxMenuItem" name="IdMenuCanvasA4" variable="MenuItemCanvasA4" member="yes">
+						<label>A4</label>
+						<help>Холст формата A4</help>
+						<handler function="OnMenuItemCanvasA4Selected" entry="EVT_MENU" />
+					</object>
+					<object class="wxMenuItem" name="IdMenuCanvasA5" variable="MenuItemCanvasA5" member="yes">
+						<label>A5</label>
+						<help>Холст формата A5</help>
+						<handler function="OnMenuItemCanvasA5Selected" entry="EVT_MENU" />
+					</object>
+					<object class="wxMenuItem" name="IdMenuCanvasA6" variable="MenuItemCanvasA6" member="yes">
+						<label>A6</label>
+						<help>Холст формата A6</help>
+						<handler function="OnMenuItemCanvasA6Selected" entry="EVT_MENU" />
+					</object>
+					<object class="wxMenuItem" name="IdMenuCanvasA7" variable="MenuItemCanvasA7" member="yes">
+						<label>A7</label>
+						<help>Холст формата A7</help>
+						<handler function="OnMenuItemCanvasA7Selected" entry="EVT_MENU" />
+					</object>
+					<object class="wxMenuItem" name="IdMenuCanvasA8" variable="MenuItemCanvasA8" member="yes">
+						<label>A8</label>
+						<help>Холст формата A8</help>
+						<handler function="OnMenuItemCanvasA8Selected" entry="EVT_MENU" />
+					</object>
+					<object class="wxMenuItem" name="IdMenuCanvasVary" variable="MenuItemCanvasVary" member="yes">
+						<label>Переменный</label>
+						<help>Холст переменного размера</help>
+						<handler function="OnMenuItemCanvasVarySelected" entry="EVT_MENU" />
+					</object>
+				</object>
+				<object class="separator" />
+				<object class="wxMenuItem" name="IdMenuCanvasPortrait" variable="MenuItemCanvasPortrait" member="yes">
+					<label>Портретный</label>
+					<handler function="OnMenuItemCanvasPortraitSelected" entry="EVT_MENU" />
+					<radio>1</radio>
+				</object>
+				<object class="wxMenuItem" name="IdMenuCanvasLandscape" variable="MenuItemCanvasLandscape" member="yes">
+					<label>Ландшафтный</label>
+					<handler function="OnMenuItemCanvasLandscapeSelected" entry="EVT_MENU" />
+					<radio>1</radio>
+				</object>
+				<object class="separator" />
+				<object class="wxMenuItem" name="IdMenuCanvasYesNo" variable="MenuItemCanvasYesNo" member="yes">
+					<label>Включить/Выключить</label>
+					<help>Отключить вывод холста</help>
+					<handler function="OnMenuItemCanvasYesNoSelected" entry="EVT_MENU" />
+					<checkable>1</checkable>
+				</object>
+				<object class="wxMenuItem" name="IdMenuSetConvasSize" variable="MenuItemSetCanvasSize" member="yes">
+					<label>Установка размера</label>
+					<handler function="OnMenuItemSetCanvasSizeSelected" entry="EVT_MENU" />
+				</object>
+			</object>
+			<object class="wxMenu" variable="MenuParams" member="yes">
+				<label>Настройка</label>
+				<object class="wxMenuItem" name="IdMenuOptions" variable="MenuItemOptions" member="yes">
+					<label>Параметры</label>
+					<help>Установка некоторых параметров программы</help>
+					<handler function="OnMenuItemOptionsSelected" entry="EVT_MENU" />
+				</object>
+			</object>
+			<object class="wxMenu" variable="MenuHelp" member="yes">
+				<label>Помощь</label>
+				<object class="wxMenuItem" name="IdMenuHelpIndex" variable="MenuItemHelpIndex" member="yes">
+					<label>Индекс</label>
+					<accel>F1</accel>
+					<help>Главная страница системы помощи</help>
+					<handler function="OnMenuItemHelpIndexSelected" entry="EVT_MENU" />
+				</object>
+				<object class="wxMenuItem" name="IdMenuAbout" variable="MenuItem21" member="yes">
+					<label>О программе</label>
+					<help>Вывод сведений о программе</help>
+					<handler function="OnAbout" entry="EVT_MENU" />
+				</object>
+			</object>
+		</object>
+	</object>
+</wxsmith>

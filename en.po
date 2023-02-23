@@ -1,0 +1,1112 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PCADViewer\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-11-08 20:50+0300\n"
+"PO-Revision-Date: 2022-11-09 10:40+0300\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.2\n"
+
+#: FileInfoDialog.cpp:65
+msgid "Информация о файле"
+msgstr "File information"
+
+#: FileInfoDialog.cpp:67
+msgid "Выход"
+msgstr "Exit"
+
+#: FileInfoDialog.cpp:68
+msgid "Имя файла"
+msgstr "File name"
+
+#: FileInfoDialog.cpp:70
+msgid "Тип файла"
+msgstr "File type"
+
+#: FileInfoDialog.cpp:72
+msgid "Загрузчик"
+msgstr "Loader"
+
+#: FileInfoDialog.cpp:74
+msgid "Сохранить в файл"
+msgstr "Save to file"
+
+#: FileInfoDialog.cpp:75
+msgid "Размер"
+msgstr "File size"
+
+#: FileInfoDialog.cpp:77
+msgid ""
+"Количество\n"
+"элементов"
+msgstr ""
+"Number of\n"
+"items"
+
+#: FileInfoDialog.cpp:78 OptionsDialog.cpp:74
+msgid "0"
+msgstr "0"
+
+#: FileInfoDialog.cpp:79
+msgid "Редактор"
+msgstr "Created by"
+
+#: FileInfoDialog.cpp:80
+msgid ""
+"Единицы\n"
+"измерения"
+msgstr ""
+"Measurement\n"
+"units"
+
+#: FileInfoDialog.cpp:82
+msgid "Плотность"
+msgstr "Density"
+
+#: FileInfoDialog.cpp:87 PCADViewerMain.cpp:376
+msgid "Слои"
+msgstr "Layers"
+
+#: FileInfoDialog.cpp:88
+msgid "Апертуры"
+msgstr "Apertures"
+
+#: FileInfoDialog.cpp:89
+msgid ""
+"Имя файла\n"
+"апертур"
+msgstr ""
+"Aperture\n"
+"file name"
+
+#: FileInfoDialog.cpp:110
+msgid "Сохранить отчёт о загруженном рисунке в файл"
+msgstr "Save the report of the picture to a file"
+
+#: FileInfoDialog.cpp:111
+msgid "Текстовые файлы (*.txt)|*.txt"
+msgstr "Text files (*.txt)|*.txt"
+
+#: FileInfoDialog.cpp:118
+msgid "Ошибка при создании выходного файла"
+msgstr "Error creating the output file"
+
+#: FileInfoDialog.cpp:118 PCADViewerMain.cpp:845 PCADViewerMain.cpp:969
+#: PCADViewerMain.cpp:2039
+msgid "Ошибка"
+msgstr "Error"
+
+#: LayersSettings.cpp:28
+msgid "Информация о слоях рисунка"
+msgstr "Information about picture layers"
+
+#: LayersSettings.cpp:55
+msgid "Включён"
+msgstr "On"
+
+#: LayersSettings.cpp:68 OptionsDialog.cpp:117
+msgid "Принять"
+msgstr "Accept"
+
+#: LayersSettings.cpp:69 OptionsDialog.cpp:119 SetCanvasSize.cpp:105
+msgid "Отменить"
+msgstr "Cancel"
+
+#: OptionsDialog.cpp:56
+msgid "Параметры программы"
+msgstr "Program Options"
+
+#: OptionsDialog.cpp:59
+msgid "Каталог файлов апертур"
+msgstr ""
+"Aperture\n"
+"file directory"
+
+#: OptionsDialog.cpp:65
+msgid "Имя файла апертур"
+msgstr ""
+"Aperture\n"
+"file name"
+
+#: OptionsDialog.cpp:71
+msgid "Номер секции файла апертур"
+msgstr "Aperture file section number"
+
+#: OptionsDialog.cpp:75 SetCanvasSize.cpp:94
+msgid "1"
+msgstr "1"
+
+#: OptionsDialog.cpp:78
+msgid "Используемые единицы координат"
+msgstr "Used coordinate units"
+
+#: OptionsDialog.cpp:80
+msgid "DBU"
+msgstr "DBU"
+
+#: OptionsDialog.cpp:81
+msgid "Измерение координат в DBU - единицах базы данных рисунка"
+msgstr "Measuring coordinates in DBU - Picture Database Units"
+
+#: OptionsDialog.cpp:83 PCADViewerMain.cpp:1389
+msgid "Миллиметр"
+msgstr "Millimeter"
+
+#: OptionsDialog.cpp:84
+msgid "Измерение координат в миллиметрах"
+msgstr "Measuring coordinates in millimeters"
+
+#: OptionsDialog.cpp:86 PCADViewerMain.cpp:1387
+msgid "Дюйм"
+msgstr "Inche"
+
+#: OptionsDialog.cpp:87
+msgid "Измерение координат в дюймах"
+msgstr "Measuring coordinates in inches"
+
+#: OptionsDialog.cpp:91
+msgid "Дополнительный масштабный коэффициент"
+msgstr "Additional scaling factor"
+
+#: OptionsDialog.cpp:93
+msgid "Отключить"
+msgstr "Off"
+
+#: OptionsDialog.cpp:95
+msgid "\"Русский дюйм\""
+msgstr "\"Russian Inch"
+
+#: OptionsDialog.cpp:97
+msgid "Произвольно"
+msgstr "Arbitrary"
+
+#: OptionsDialog.cpp:101
+msgid "По X:"
+msgstr "By X:"
+
+#: OptionsDialog.cpp:104
+msgid "Установка дополнительного масштабного коэффициента"
+msgstr "Setting the additional scaling factor"
+
+#: OptionsDialog.cpp:106
+msgid "По Y:"
+msgstr "By Y:"
+
+#: OptionsDialog.cpp:112
+msgid "Подмасштабы для экрана"
+msgstr "Subscales for the screen"
+
+#: OptionsDialog.cpp:114
+msgid "Выводить изображение на экран с учётом его физического разрешения"
+msgstr ""
+"Display the image on the screen, taking into account its physical resolution"
+
+#: PCADViewerMain.cpp:188
+msgid "ПиКАДоГляд - просмотрщик-конвертер PCAD-файлов"
+msgstr "PKADoGlance - PCAD file viewer-converter"
+
+#: PCADViewerMain.cpp:196
+msgid "Просмотрщик-конвертер PCAD-файлов"
+msgstr "PCAD file viewer-converter"
+
+#: PCADViewerMain.cpp:224
+msgid "Открыть изображение"
+msgstr "Open picture"
+
+#: PCADViewerMain.cpp:224 PCADViewerMain.cpp:266
+msgid "Открыть PCAD-файл"
+msgstr "Open PCAD-file"
+
+#: PCADViewerMain.cpp:225
+msgid "Закрыть изображение"
+msgstr "Close picture"
+
+#: PCADViewerMain.cpp:225
+msgid "Закрыть текущий открытый файл"
+msgstr "Close current opened file"
+
+#: PCADViewerMain.cpp:226
+msgid "Выйти"
+msgstr "Quit"
+
+#: PCADViewerMain.cpp:226
+msgid "Выйти из программы"
+msgstr "Exit the program"
+
+#: PCADViewerMain.cpp:228
+msgid "Экспорт рисунка"
+msgstr "Export picture"
+
+#: PCADViewerMain.cpp:228
+msgid "Преобразование рисунка в другие графические форматы"
+msgstr "Exporting picture to other graphical format files"
+
+#: PCADViewerMain.cpp:229
+msgid "Печать рисунка"
+msgstr "Print picture"
+
+#: PCADViewerMain.cpp:229
+msgid "Печать рисунка на принтере"
+msgstr "Printing picture to printer"
+
+#: PCADViewerMain.cpp:230
+msgid "Информация о рисунке"
+msgstr "Picture information"
+
+#: PCADViewerMain.cpp:232
+msgid "Пометить элементы"
+msgstr "Select elements"
+
+#: PCADViewerMain.cpp:232
+msgid "Пометить элементы на холсте, внутри контура или все сразу"
+msgstr ""
+"Selecting elements on the canvas, inside the choosing contour or all elements"
+
+#: PCADViewerMain.cpp:233
+msgid "Обратить выделение элементов"
+msgstr "Invert selection"
+
+#: PCADViewerMain.cpp:233
+msgid "Обратить выделение  элементов на холсте, внутри контура или все сразу"
+msgstr ""
+"Invert selection of elements on the canvas, inside the choosing contour or "
+"all elements"
+
+#: PCADViewerMain.cpp:234
+msgid "Снять отметки"
+msgstr "Unselect all"
+
+#: PCADViewerMain.cpp:234
+msgid "Снять все отметки"
+msgstr "Unselect all selected elements"
+
+#: PCADViewerMain.cpp:235
+msgid "Копировать"
+msgstr "Copy to clipboard"
+
+#: PCADViewerMain.cpp:235
+msgid "Копировать помеченные элементы, элементы на холсте или всё"
+msgstr "Copy selected elements, elements on canvas, or all"
+
+#: PCADViewerMain.cpp:237
+msgid "Уменьшить масштаб по X"
+msgstr "Zoom out on X"
+
+#: PCADViewerMain.cpp:237
+msgid "Уменьшить масштаб на ступень по оси X или изотропно"
+msgstr "Zoom out by one step on the X-axis or isotropically"
+
+#: PCADViewerMain.cpp:240
+msgid "Увеличить масштаб по X"
+msgstr "Zoom in on X"
+
+#: PCADViewerMain.cpp:240
+msgid "Увеличить масштаб на ступень по оси X или изотропно"
+msgstr "Zoom in by one step on the X-axis or isotropically"
+
+#: PCADViewerMain.cpp:241
+msgid "Масштаб 1:1 по X"
+msgstr "1:1 X scale"
+
+#: PCADViewerMain.cpp:241
+msgid "Установить масштаб 1:1 по оси X или по обоим осям"
+msgstr "Set the scale to 1:1 on the X-axis or on both axes"
+
+#: PCADViewerMain.cpp:243 PCADViewerMain.cpp:339
+msgid "Равные"
+msgstr "Equal scales"
+
+#: PCADViewerMain.cpp:243
+msgid "Включить/выключить режим равных масштабов"
+msgstr "Enable/disable equal scale mode"
+
+#: PCADViewerMain.cpp:243
+msgid "Включить/выключить режим равных масштабов по обоим осям"
+msgstr "Enable/disable equal scale mode on both axes"
+
+#: PCADViewerMain.cpp:245
+msgid "Уменьшить масштаб по Y"
+msgstr "Zoom out on Y"
+
+#: PCADViewerMain.cpp:245
+msgid "Уменьшить масштаб на ступень по оси Y или изотропно"
+msgstr "Zoom out by one step on the Y-axis or isotropically"
+
+#: PCADViewerMain.cpp:248
+msgid "Увеличить масштаб по Y"
+msgstr "Zoom in on Y"
+
+#: PCADViewerMain.cpp:248
+msgid "Увеличить масштаб на ступень по оси Y или изотропно"
+msgstr "Zoom in by one step on the Y-axis or isotropically"
+
+#: PCADViewerMain.cpp:249
+msgid "Масштаб 1:1 по Y"
+msgstr "Scale 1:1 on Y"
+
+#: PCADViewerMain.cpp:249
+msgid "Установить масштаб 1:1 по оси Y или по обоим осям"
+msgstr "Set the scale to 1:1 on the Y axis or on both axes"
+
+#: PCADViewerMain.cpp:258
+msgid "Включить/Выключить холст"
+msgstr "Enable/disable canvas display"
+
+#: PCADViewerMain.cpp:258
+msgid "Включить/выключить отображение холста"
+msgstr "Enable/disable canvas display"
+
+#: PCADViewerMain.cpp:258
+msgid "Включить/выключить режим отображения холста"
+msgstr "Enable/disable canvas display mode"
+
+#: PCADViewerMain.cpp:259
+msgid "Ландшафтная ориентация холста"
+msgstr "Landscape orientation of the canvas"
+
+#: PCADViewerMain.cpp:259
+msgid "Переключение между портретной и альбомной ориентацией холста"
+msgstr "Switching between portrait and landscape orientation of the canvas"
+
+#: PCADViewerMain.cpp:261 PCADViewerMain.cpp:421
+msgid "Помощь"
+msgstr "Help"
+
+#: PCADViewerMain.cpp:261
+msgid "Вывод помощи по работе с программой"
+msgstr "Output help for working with the program"
+
+#: PCADViewerMain.cpp:266
+msgid "Открыть\tCtrl-O"
+msgstr "Open\tCtrl-O"
+
+#: PCADViewerMain.cpp:270
+msgid "Открыть как"
+msgstr "Open as"
+
+#: PCADViewerMain.cpp:270
+msgid "Открыть файл конкретным загрузчиком"
+msgstr "Open the file with a specific loader"
+
+#: PCADViewerMain.cpp:271
+msgid "Закрыть\tCtrl-W"
+msgstr "Close\tCtrl-W"
+
+#: PCADViewerMain.cpp:271
+msgid "Закрыть текущий файл"
+msgstr "Close current opened file"
+
+#: PCADViewerMain.cpp:275 PCADViewerMain.cpp:300 PCADViewerMain.cpp:318
+msgid "С холста"
+msgstr "From the canvas"
+
+#: PCADViewerMain.cpp:275
+msgid "Экспорт только содержимого холста"
+msgstr "Export only the content of the canvas"
+
+#: PCADViewerMain.cpp:277 PCADViewerMain.cpp:302 PCADViewerMain.cpp:320
+msgid "Отмеченное"
+msgstr "Selected"
+
+#: PCADViewerMain.cpp:277
+msgid "Экспорт только отмеченных элементов"
+msgstr "Export only marked items"
+
+#: PCADViewerMain.cpp:279 PCADViewerMain.cpp:304 PCADViewerMain.cpp:322
+msgid "Внутри контура"
+msgstr "Inside of the contour"
+
+#: PCADViewerMain.cpp:279
+msgid "Экспорт только элементов внутри выделяющего контура"
+msgstr "Export only elements inside the selection contour"
+
+#: PCADViewerMain.cpp:282
+msgid "Текст"
+msgstr "Text"
+
+#: PCADViewerMain.cpp:282
+msgid "Экспорт в текстовый файл"
+msgstr "Export to text file"
+
+#: PCADViewerMain.cpp:284
+msgid "DXF"
+msgstr "DXF"
+
+#: PCADViewerMain.cpp:284
+msgid "Экспорт в формат DXF"
+msgstr "Export to DXF file"
+
+#: PCADViewerMain.cpp:286
+msgid "SVG"
+msgstr "SVG"
+
+#: PCADViewerMain.cpp:286
+msgid "Экспорт в формат SVG"
+msgstr "Export to SVG file"
+
+#: PCADViewerMain.cpp:288
+msgid "Metafile"
+msgstr "Metafle"
+
+#: PCADViewerMain.cpp:288
+msgid "Экспорт в Windows Metafile"
+msgstr "Export to Windows Metafile"
+
+#: PCADViewerMain.cpp:291
+msgid "BMP"
+msgstr "BMP"
+
+#: PCADViewerMain.cpp:291
+msgid "Экспорт в формат BMP"
+msgstr "Export in BMP file"
+
+#: PCADViewerMain.cpp:293
+msgid "JPEG"
+msgstr "JPEG"
+
+#: PCADViewerMain.cpp:293
+msgid "Экспорт в формат JPEG"
+msgstr "Export to JPEG file"
+
+#: PCADViewerMain.cpp:295
+msgid "Экспорт"
+msgstr "Export"
+
+#: PCADViewerMain.cpp:297
+msgid "Информация о файле\tCtrl-I"
+msgstr "File information\tCtrl-I"
+
+#: PCADViewerMain.cpp:297
+msgid "Вывод информации об открытом файле"
+msgstr "Displaying information about an open file"
+
+#: PCADViewerMain.cpp:300
+msgid "Печать только содержимого холста"
+msgstr "Print only the content of the canvas"
+
+#: PCADViewerMain.cpp:302
+msgid "Печать только отмеченных элементов"
+msgstr "Print only the marked items"
+
+#: PCADViewerMain.cpp:304
+msgid "Печать только элементов внутри выделяющего контура"
+msgstr "Printing only the elements inside the selection outline"
+
+#: PCADViewerMain.cpp:307
+msgid "Печатать"
+msgstr "Print"
+
+#: PCADViewerMain.cpp:307
+msgid "Предпросмотр результатов и выполнение печати"
+msgstr "Previewing results and printing"
+
+#: PCADViewerMain.cpp:309
+msgid "Печать"
+msgstr "Print"
+
+#: PCADViewerMain.cpp:309
+msgid "Печать изображения"
+msgstr "Print picture"
+
+#: PCADViewerMain.cpp:311
+msgid "Выйти\tAlt-F4"
+msgstr "Quit\tAlt-F4"
+
+#: PCADViewerMain.cpp:311
+msgid "Завершить программу"
+msgstr "Exit from program"
+
+#: PCADViewerMain.cpp:313
+msgid "Файл"
+msgstr "File"
+
+#: PCADViewerMain.cpp:315
+msgid "Копировать\tCtrl-C"
+msgstr "Copy\tCtrl-C"
+
+#: PCADViewerMain.cpp:315
+msgid "Копирвать в буфер обмена выделенные элементы рисунка"
+msgstr "Copy the selected elements of the drawing to the clipboard"
+
+#: PCADViewerMain.cpp:318
+msgid "Обрабатывать только содержимое холста"
+msgstr "Process only the content of the canvas"
+
+#: PCADViewerMain.cpp:320
+msgid "Обрабатывать только выделенные элементы"
+msgstr "Process only selected elements"
+
+#: PCADViewerMain.cpp:322
+msgid "Обрабатывать только элементы внутри выделяющего контура"
+msgstr "Export only elements inside the selection contour"
+
+#: PCADViewerMain.cpp:325
+msgid "Отметить указанное"
+msgstr "Mark the indicated"
+
+#: PCADViewerMain.cpp:325
+msgid "Отметить указанную группу примитивов"
+msgstr "Mark the specified group of primitives"
+
+#: PCADViewerMain.cpp:327
+msgid "Инвертировать указанное"
+msgstr "Invert the specified"
+
+#: PCADViewerMain.cpp:327
+msgid "Обратить выделение для выбранной группы примитивов рисунка"
+msgstr "Reverse the selection for the selected group of drawing primitives"
+
+#: PCADViewerMain.cpp:329
+msgid "Снять указанные отметки"
+msgstr "Remove the indicated marks"
+
+#: PCADViewerMain.cpp:329
+msgid "Снять отметки с выбранной группы примитивов"
+msgstr "Uncheck the selected group of primitives"
+
+#: PCADViewerMain.cpp:331
+msgid "Копировать указанное\tShift-Ctrl-C"
+msgstr "Copy specified\tShift-Ctrl-C"
+
+#: PCADViewerMain.cpp:331
+msgid "Выполнить копирование указанных групп примитивов в буфер обмена"
+msgstr "Copy the specified groups of primitives to the clipboard"
+
+#: PCADViewerMain.cpp:333
+msgid "Правка"
+msgstr "Edit"
+
+#: PCADViewerMain.cpp:336
+msgid "Масштабы по осям"
+msgstr "Axis scales"
+
+#: PCADViewerMain.cpp:336
+msgid "Выбор соотношения масштабов по осям"
+msgstr "Choice of ratio of scales along the axes"
+
+#: PCADViewerMain.cpp:339
+msgid "Устанавливает режим равных масштабов по осям"
+msgstr "Sets the mode of equal scale on axes"
+
+#: PCADViewerMain.cpp:341
+msgid "Различные"
+msgstr "Different scales"
+
+#: PCADViewerMain.cpp:341
+msgid "Устанавливает режим различных масштабов по осям"
+msgstr "Sets the mode of different scales on axes"
+
+#: PCADViewerMain.cpp:344
+msgid "Увеличить по X\tCtrl-Alt-+"
+msgstr "Zoom in on X\tCtrl-Alt-+"
+
+#: PCADViewerMain.cpp:344
+msgid "Увеличить масштаб изображения по оси X"
+msgstr "Zoom in on the X-axis"
+
+#: PCADViewerMain.cpp:346
+msgid "Уменьшить по X\tCtrl-Alt--"
+msgstr "Zoom out on X\tCtrl-Alt-+"
+
+#: PCADViewerMain.cpp:346
+msgid "Уменьшить масштаб изображения по оси X"
+msgstr "Zoom out the image on the X-axis"
+
+#: PCADViewerMain.cpp:348
+msgid "Масштаб 1:1 по X\tCtrl-Alt-1"
+msgstr "Scale 1:1 on X scale\tCtrl-Alt-1"
+
+#: PCADViewerMain.cpp:348
+msgid "Установить масштаб 1:1 по оси X"
+msgstr "Set the scale to 1:1 on the X-axis"
+
+#: PCADViewerMain.cpp:350
+msgid "Ближайший стандартный по X\tCtrl-Alt-N"
+msgstr "The closest standard X\tCtrl-Alt-N"
+
+#: PCADViewerMain.cpp:350
+msgid "Установка ближайшего стандартного масштаба по оси X"
+msgstr "Setting the closest standard X-axis scale"
+
+#: PCADViewerMain.cpp:353
+msgid "Увеличить по Y\tCtrl-Shift-+"
+msgstr "Zoom in by Y\tCtrl-Shift-+"
+
+#: PCADViewerMain.cpp:353
+msgid "Увеличить масштаб изображения по оси Y"
+msgstr "Zoom in on the Y axis"
+
+#: PCADViewerMain.cpp:355
+msgid "Уменьшить по Y\tCtrl-Shift--"
+msgstr "Zoom out by Y\tCtrl-Shift-+"
+
+#: PCADViewerMain.cpp:355
+msgid "Уменьшить масштаб изображения по оси Y"
+msgstr "Zoom out the image on the Y axis"
+
+#: PCADViewerMain.cpp:357
+msgid "Масштаб 1:1 по Y\tCtrl-Shift-1"
+msgstr "Scale 1:1 on Y\tCtrl-Shift-1"
+
+#: PCADViewerMain.cpp:357
+msgid "Установить масштаб 1:1 по оси Y"
+msgstr "Set the scale to 1:1 on the Y axis"
+
+#: PCADViewerMain.cpp:359
+msgid "Ближайший стандартный по Y\tCtrl-Shift-N"
+msgstr "The closest standard scale on Y\tCtrl-Shift-N"
+
+#: PCADViewerMain.cpp:359
+msgid "Установка ближайшего стандартного масштаба по оси Y"
+msgstr "Setting the closest standard Y-axis scale"
+
+#: PCADViewerMain.cpp:362
+msgid "Увеличить по X и Y\tCtrl-+"
+msgstr "Zoom in on X and Y\tCtrl-+"
+
+#: PCADViewerMain.cpp:362
+msgid "Увеличить масштаб изображения по обеим осям"
+msgstr "Zoom in on both axes"
+
+#: PCADViewerMain.cpp:364
+msgid "Уменьшить по X и Y\tCtrl--"
+msgstr "Zoom out on X and Y\tCtrl--"
+
+#: PCADViewerMain.cpp:364
+msgid "Уменьшить масштаб изображения по обеим осям"
+msgstr "Zoom out on both axes"
+
+#: PCADViewerMain.cpp:366
+msgid "Масштаб 1:1 по X и Y\tCtrl-1"
+msgstr "Scale 1:1 on X and Y\tCtrl-1"
+
+#: PCADViewerMain.cpp:366
+msgid "Установить масштаб 1:1 по обеим осям"
+msgstr "Set the scale to 1:1 on both axes"
+
+#: PCADViewerMain.cpp:368
+msgid "Ближайшие стандартные по X и Y\tCtrl-N"
+msgstr "Nearest standard scales on X and Y\tCtrl-N"
+
+#: PCADViewerMain.cpp:368
+msgid "Установка ближайшего стандартного масштаба по обеим осям"
+msgstr "Setting the closest standard scale on both axes"
+
+#: PCADViewerMain.cpp:371
+msgid "Выровнять масштабы с опорой на X\tCtrl-Alt-X"
+msgstr "Align scales based on X axis\tCtrl-Alt-X"
+
+#: PCADViewerMain.cpp:371
+msgid "Устанавливает масштаб по оси Y аналогично оси X"
+msgstr "Sets the Y-axis scale similar to the X-axis"
+
+#: PCADViewerMain.cpp:373
+msgid "Выровнять масштабы с опорой на Y\tCtrl-Alt-Y"
+msgstr "Align scales based Y axis\tCtrl-Alt-Y"
+
+#: PCADViewerMain.cpp:373
+msgid "Устанавливает масштаб по оси X аналогично оси Y"
+msgstr "Sets the X-axis scale similar to the Y-axis"
+
+#: PCADViewerMain.cpp:375
+msgid "Масштаб"
+msgstr "Zoom settings"
+
+#: PCADViewerMain.cpp:375
+msgid "Изменение масштаба изображения"
+msgstr "Changing the picture scales"
+
+#: PCADViewerMain.cpp:376
+msgid "Настройка цветовой палитры"
+msgstr "Adjusting the color palette"
+
+#: PCADViewerMain.cpp:378
+msgid "Шрифты"
+msgstr "Fonts"
+
+#: PCADViewerMain.cpp:378
+msgid "Выбор шрифта для вывода текстовой информации"
+msgstr "Selecting a font to display text information"
+
+#: PCADViewerMain.cpp:382
+msgid "Доступные языки"
+msgstr "Available languages"
+
+#: PCADViewerMain.cpp:382
+msgid "Выбор рабочего языка программы из списка доступных"
+msgstr ""
+"Select the working language of the program from the list of available "
+"languages"
+
+#: PCADViewerMain.cpp:383
+msgid "Вид"
+msgstr "View"
+
+#: PCADViewerMain.cpp:386
+msgid "A3"
+msgstr "A3"
+
+#: PCADViewerMain.cpp:386
+msgid "Холст формата A3"
+msgstr "Canvas format A3"
+
+#: PCADViewerMain.cpp:388
+msgid "A4"
+msgstr "A4"
+
+#: PCADViewerMain.cpp:388
+msgid "Холст формата A4"
+msgstr "Canvas format A4"
+
+#: PCADViewerMain.cpp:390
+msgid "A5"
+msgstr "A5"
+
+#: PCADViewerMain.cpp:390
+msgid "Холст формата A5"
+msgstr "Canvas format A5"
+
+#: PCADViewerMain.cpp:392
+msgid "A6"
+msgstr "A6"
+
+#: PCADViewerMain.cpp:392
+msgid "Холст формата A6"
+msgstr "Canvas format A6"
+
+#: PCADViewerMain.cpp:394
+msgid "A7"
+msgstr "A7"
+
+#: PCADViewerMain.cpp:394
+msgid "Холст формата A7"
+msgstr "Canvas format A7"
+
+#: PCADViewerMain.cpp:396
+msgid "A8"
+msgstr "A8"
+
+#: PCADViewerMain.cpp:396
+msgid "Холст формата A8"
+msgstr "Canvas format A8"
+
+#: PCADViewerMain.cpp:398
+msgid "Переменный"
+msgstr "Variable"
+
+#: PCADViewerMain.cpp:398
+msgid "Холст переменного размера"
+msgstr "Variable canvas size"
+
+#: PCADViewerMain.cpp:400
+msgid "Тип"
+msgstr "Canvas type"
+
+#: PCADViewerMain.cpp:402
+msgid "Портретный"
+msgstr "Portrait"
+
+#: PCADViewerMain.cpp:404
+msgid "Ландшафтный"
+msgstr "Landscape"
+
+#: PCADViewerMain.cpp:407
+msgid "Включить/Выключить"
+msgstr "Enable/Disable"
+
+#: PCADViewerMain.cpp:407
+msgid "Отключить вывод холста"
+msgstr "Disable canvas output"
+
+#: PCADViewerMain.cpp:409
+msgid "Установка размера"
+msgstr "Size Setting"
+
+#: PCADViewerMain.cpp:411
+msgid "Холст"
+msgstr "Canvas"
+
+#: PCADViewerMain.cpp:413
+msgid "Параметры"
+msgstr "Options"
+
+#: PCADViewerMain.cpp:413
+msgid "Установка некоторых параметров программы"
+msgstr "Setting some program parameters"
+
+#: PCADViewerMain.cpp:415
+msgid "Настройка"
+msgstr "Configuration"
+
+#: PCADViewerMain.cpp:417
+msgid "Индекс\tF1"
+msgstr "Index\tF1"
+
+#: PCADViewerMain.cpp:417
+msgid "Главная страница системы помощи"
+msgstr "Help system home page"
+
+#: PCADViewerMain.cpp:419
+msgid "О программе"
+msgstr "Displaying information about this program"
+
+#: PCADViewerMain.cpp:419
+msgid "Вывод сведений о программе"
+msgstr "Displaying information about this program"
+
+#: PCADViewerMain.cpp:557
+msgid "Выбор языка"
+msgstr "Selecting a language"
+
+#: PCADViewerMain.cpp:627
+msgid "ПиКАДоГляд - просмотрщик-преобразователь файлов PCAD для DOS."
+msgstr "PicADoGlance is a viewer-converter for DOS PCAD family of programs."
+
+#: PCADViewerMain.cpp:628
+msgid "Обеспечивает просмотр, печать и конвертирование ряда форматов "
+msgstr "Allows viewing, printing and converting of a number of formats "
+
+#: PCADViewerMain.cpp:629
+msgid "графических файлов PCAD3 - PCAD8 в некоторые другие широко "
+msgstr "pCAD3 - PCAD8 graphic files into some other widely "
+
+#: PCADViewerMain.cpp:630
+msgid "распространённые типы растровых и векторных графических файлов.\n"
+msgstr "common types of raster and vector graphic files.\n"
+
+#: PCADViewerMain.cpp:632
+msgid "Федотов Евгений (fedotov_ev@rambler.ru)\n"
+msgstr "Yevgeny Fedotov (fedotov_ev@rambler.ru)\n"
+
+#: PCADViewerMain.cpp:633
+msgid ""
+"\n"
+"http://www.github.com/FedotovEv/PicadoGlance"
+msgstr ""
+"\n"
+"http://www.github.com/FedotovEv/PicadoGlance"
+
+#: PCADViewerMain.cpp:634
+msgid "Кто я??? Где я???"
+msgstr "Who am I? Where am I?"
+
+#: PCADViewerMain.cpp:844 PCADViewerMain.cpp:968
+msgid "Ошибка при открытии файла "
+msgstr "Error opening a file "
+
+#: PCADViewerMain.cpp:865 PCADViewerMain.cpp:1015
+msgid "Файл апертур не найден или имеет неверный формат"
+msgstr "The aperture file was not found or has the wrong format"
+
+#: PCADViewerMain.cpp:942 PCADViewerMain.cpp:994
+msgid "Открыть файл изображения PCAD"
+msgstr "Open a PCAD picture file"
+
+#: PCADViewerMain.cpp:992
+msgid "Все файлы"
+msgstr "All files"
+
+#: PCADViewerMain.cpp:1077
+msgid "текстовый файл"
+msgstr "text file"
+
+#: PCADViewerMain.cpp:1077
+msgid "Текстовые файлы"
+msgstr "Text files"
+
+#: PCADViewerMain.cpp:1728
+msgid "Ошибка создания файла при экспорте изображения"
+msgstr "File creation error when exporting an image"
+
+#: PCADViewerMain.cpp:1731
+msgid "Ошибка записи файла при экспорте изображения"
+msgstr "File recording error when exporting an image"
+
+#: PCADViewerMain.cpp:1734
+msgid "Не удалось захватить буфер обмена"
+msgstr "Failed to capture clipboard"
+
+#: PCADViewerMain.cpp:1739
+msgid "Ошибка экспорта"
+msgstr "Export error"
+
+#: PCADViewerMain.cpp:1761
+msgid "Экспорт изображения в "
+msgstr "Picture export to "
+
+#: PCADViewerMain.cpp:1928
+msgid "BMP-файл"
+msgstr "BMP-file"
+
+#: PCADViewerMain.cpp:1928
+msgid "Растровые графические BMP-файлы"
+msgstr "Bitmap graphic BMP files"
+
+#: PCADViewerMain.cpp:1948
+msgid "JPEG-файл"
+msgstr "JPEG-file"
+
+#: PCADViewerMain.cpp:1948
+msgid "Растровые графические JPEG-файлы"
+msgstr "Bitmap graphic JPEG files"
+
+#: PCADViewerMain.cpp:2039
+msgid "Информация о слоях рисунка не найдена"
+msgstr "No information about drawing layers was found"
+
+#: PCADViewerMain.cpp:2172
+msgid "Предпросмотр печати "
+msgstr "Print preview "
+
+#: PCADViewerMain.cpp:2401
+msgid "SVG-файл"
+msgstr "SVG-file"
+
+#: PCADViewerMain.cpp:2401
+msgid "Векторные графические SVG-файлы"
+msgstr "Vector graphic SVG files"
+
+#: PCADViewerMain.cpp:2421
+msgid "DXF-файл"
+msgstr "DXF-file"
+
+#: PCADViewerMain.cpp:2421
+msgid "Векторные графические DXF-файлы AutoCAD"
+msgstr "Vector graphic DXF files AutoCAD"
+
+#: PCADViewerMain.cpp:2425 PCADViewerMain.cpp:2438
+msgid "Не реализовано. Надеемся, пока."
+msgstr "Not implemented. We hope so, for now."
+
+#: PCADViewerMain.cpp:2425 PCADViewerMain.cpp:2438
+msgid "Увы..."
+msgstr "Alas..."
+
+#: PCADViewerMain.cpp:2434
+msgid "WMF-метафайл"
+msgstr "WMF-metafile"
+
+#: PCADViewerMain.cpp:2434
+msgid "Векторные графические Windows-метафайлы"
+msgstr "Vector graphic Windows metafiles"
+
+#: scrollingdialog.h:185
+msgid "Диалог"
+msgstr "Dialog"
+
+#: scrollingdialog.h:201
+msgid "dialogBox"
+msgstr "dialogBox"
+
+#: SetCanvasSize.cpp:65
+msgid "Размер области операций"
+msgstr "Area of operation size"
+
+#: SetCanvasSize.cpp:69
+msgid "Ширина"
+msgstr "Width"
+
+#: SetCanvasSize.cpp:76
+msgid "Высота"
+msgstr "Height"
+
+#: SetCanvasSize.cpp:83
+msgid "Единицы измерения"
+msgstr ""
+"Measurement\n"
+"units"
+
+#: SetCanvasSize.cpp:85
+msgid "миллиметр"
+msgstr "millimeter"
+
+#: SetCanvasSize.cpp:88
+msgid "сотая дюйма"
+msgstr "point"
+
+#: SetCanvasSize.cpp:92
+msgid "Соотношение сторон"
+msgstr "Sides ratio"
+
+#: SetCanvasSize.cpp:98
+msgid "Фикс"
+msgstr "Fixed"
+
+#: SetCanvasSize.cpp:103
+msgid "Установить"
+msgstr "Set"
+
+#: SetCanvasSize.cpp:107
+msgid "Сбросить"
+msgstr "Reset"
+
+#: SetCanvasSize.cpp:109
+msgid "Стандартные"
+msgstr "Standard formats"
+
+#: SetCanvasSize.cpp:131
+msgid "Формат A3"
+msgstr "Format A3"
+
+#: SetCanvasSize.cpp:131
+msgid "Выбрать формат A3"
+msgstr "Select format A3"
+
+#: SetCanvasSize.cpp:133
+msgid "Формат A4"
+msgstr "Format A4"
+
+#: SetCanvasSize.cpp:133
+msgid "Выбрать формат A4"
+msgstr "Select format A4"
+
+#: SetCanvasSize.cpp:135
+msgid "Формат A5"
+msgstr "Format A5"
+
+#: SetCanvasSize.cpp:135
+msgid "Выбрать формат A5"
+msgstr "Select format A5"
+
+#: SetCanvasSize.cpp:137
+msgid "Формат A6"
+msgstr "Format A6"
+
+#: SetCanvasSize.cpp:137
+msgid "Выбрать формат A6"
+msgstr "Select format A6"
+
+#: SetCanvasSize.cpp:139
+msgid "Формат A7"
+msgstr "Format A7"
+
+#: SetCanvasSize.cpp:139
+msgid "Выбрать формат A7"
+msgstr "Select format A7"
+
+#: SetCanvasSize.cpp:141
+msgid "Формат A8"
+msgstr "Format A8"
+
+#: SetCanvasSize.cpp:141
+msgid "Выбрать формат A8"
+msgstr "Select format A8"
+
+#: SetCanvasSize.cpp:143
+msgid "Текущий Формат"
+msgstr "Current format"
+
+#: SetCanvasSize.cpp:143
+msgid "Выбрать текущий формат"
+msgstr "Select the current format"
