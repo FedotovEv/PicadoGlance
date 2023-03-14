@@ -28,6 +28,7 @@ struct VaryCanvasEditorStatus
     wxSize canvas_size = wxSize(210, 297);
     bool is_metric = true;
     bool is_fixed_ratio = false;
+    std::string canvas_name;
 };
 
 enum class GraphExportType
@@ -183,10 +184,6 @@ class PCADViewerApp : public wxApp
         double current_x_screen_subscale = 1, current_y_screen_subscale = 1;
         // Контекст, который использовался для последнего обновления просматриваемого изображения
         DrawContext last_draw_context;
-        // Актуальное состояние холста-подложки
-        CanvasContext canvas_context;
-        // Состояние диалога редактирования переменного размера подложки
-        VaryCanvasEditorStatus vary_canvas_status;
         // Текущее состояние выделяющего контура
         SelectContourData select_contour;
         // Структура и массив, описывающие внутреннее содержание пункта меню "Загрузить как..."
@@ -198,6 +195,12 @@ class PCADViewerApp : public wxApp
             FileWorkshop* file_workshop_ptr = nullptr;
         };
         std::vector<MenuLoadAsItemDesc> menu_load_as_desc;
+        // Актуальное состояние холста-подложки
+        CanvasContext canvas_context;
+        // Состояние диалога редактирования переменного размера подложки
+        VaryCanvasEditorStatus vary_canvas_status;
+        std::vector<VaryCanvasEditorStatus> vary_canvas_list;
+        std::vector<MenuLoadAsItemDesc> menu_vary_canvas_select_desc;
         // Массив поддерживаемых (русский плюс найденные при сканировании) программой языков
         std::vector<LanguageDescriptType> languages_descs;
         wxHtmlHelpController HtmlHelp;

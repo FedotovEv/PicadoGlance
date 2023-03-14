@@ -116,6 +116,8 @@ struct CanvasContext
     wxSize canvas_size = wxSize(100000, 200000);
     wxPoint canvas_position;
     wxColor canvas_color;
+    double canvas_ratio; // Пропорция отношения ширины холста к его высоте.
+                         // Используется при is_fixed_ratio == true.
     bool is_portrait = true;
     bool is_metric = true;
     bool is_fixed_ratio = false;

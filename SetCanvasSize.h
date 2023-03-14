@@ -6,6 +6,7 @@
 	#include <wx/button.h>
 	#include <wx/checkbox.h>
 	#include <wx/dialog.h>
+	#include <wx/listbox.h>
 	#include <wx/radiobut.h>
 	#include <wx/sizer.h>
 	#include <wx/stattext.h>
@@ -16,6 +17,7 @@
 #include <wx/spinctrl.h>
 //*)
 
+#include "PCADViewerApp.h"
 #include "PCADViewDraw.h"
 
 class SetCanvasSize: public wxDialog
@@ -25,12 +27,21 @@ class SetCanvasSize: public wxDialog
 		SetCanvasSize(wxWindow* parent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
 		virtual ~SetCanvasSize();
 
+        std::vector<VaryCanvasEditorStatus> canvas_list_;
+        VaryCanvasEditorStatus* current_canvas_ptr_ = nullptr;
+
 		//(*Declarations(SetCanvasSize)
 		wxButton* ButtonCancel;
+		wxButton* ButtonLoadFromFile;
 		wxButton* ButtonReset;
+		wxButton* ButtonSaveToFile;
 		wxButton* ButtonSet;
 		wxButton* ButtonSetStandart;
+		wxButton* CanvasVaryAdd;
+		wxButton* CanvasVaryDelete;
+		wxButton* CanvasVaryName;
 		wxCheckBox* FixedAspectRatio;
+		wxListBox* CanvasVaryList;
 		wxRadioButton* MeasureUnitInch;
 		wxRadioButton* MeasureUnitMM;
 		wxSpinCtrl* HorSize;
@@ -45,6 +56,10 @@ class SetCanvasSize: public wxDialog
 	protected:
 
 		//(*Identifiers(SetCanvasSize)
+		static const long ID_LISTBOX1;
+		static const long ID_BUTTON_CANVAS_VARY_ADD;
+		static const long ID_BUTTON_CANVAS_VARY_DELETE;
+		static const long ID_BUTTON_CANVAS_VARY_NAME;
 		static const long ID_STATICTEXT1;
 		static const long ID_SPINCTRL_HOR_SIZE;
 		static const long ID_STATICTEXT2;
@@ -58,7 +73,9 @@ class SetCanvasSize: public wxDialog
 		static const long ID_BUTTON_SET;
 		static const long ID_BUTTON_CANCEL;
 		static const long ID_BUTTON_RESET;
-		static const long ID_BUTTON1;
+		static const long ID_BUTTON_STD_CANVAS;
+		static const long ID_BUTTON_SAVE_TO_FILE;
+		static const long ID_BUTTON_LOAD_FROM_FILE;
 		//*)
 
 	private:
@@ -74,19 +91,29 @@ class SetCanvasSize: public wxDialog
 		void OnMeasureUnitMMSelect(wxCommandEvent& event);
 		void OnMeasureUnitInchSelect(wxCommandEvent& event);
 		void OnButtonSetStandartClick(wxCommandEvent& event);
+		void OnCanvasVaryAddClick(wxCommandEvent& event);
+		void OnCanvasVaryDeleteClick(wxCommandEvent& event);
+		void OnCanvasVaryListSelect(wxCommandEvent& event);
+		void OnCanvasVaryNameClick(wxCommandEvent& event);
+		void OnButtonSaveToFileClick(wxCommandEvent& event);
+		void OnButtonLoadFromFileClick(wxCommandEvent& event);
 		//*)
 
 		static constexpr double CANVAS_ASPECT_MIN = 0.01;
 		static constexpr double CANVAS_ASPECT_MAX = 100;
 
-        void CorrectAspectRatioValue();
-        void CorrectAspectRatioAndSetSizes();
+        double CorrectAspectRatioValue();
         void SetAspectByCurrentSizes();
         void SetSizesByCurrentAspect();
         void ResetData();
+        void UpdateCurrentCanvas();
 
         void OnAspectRatioKillFocus(wxFocusEvent& event);
         void OnMenuItemSetStdSizeSelected(wxCommandEvent& event);
+        void ConstructCanvasVaryList();
+        void SetControlsByCanvasVaryList();
+        wxString GetCanvasVaryListValue(int list_index);
+        void SwitchMeasureUnit(bool is_unit_metric);
 
         static const long IdMenuCanvasA3;
         static const long IdMenuCanvasA4;

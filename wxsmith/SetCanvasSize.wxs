@@ -10,20 +10,47 @@
 				<object class="wxBoxSizer" variable="BoxSizer3" member="no">
 					<object class="sizeritem">
 						<object class="wxBoxSizer" variable="BoxSizer4" member="no">
-							<orient>wxVERTICAL</orient>
 							<object class="sizeritem">
-								<object class="wxStaticText" name="ID_STATICTEXT1" variable="StaticText1" member="yes">
-									<label>Ширина</label>
+								<object class="wxListBox" name="ID_LISTBOX1" variable="CanvasVaryList" member="yes">
+									<default>-1</default>
+									<handler function="OnCanvasVaryListSelect" entry="EVT_LISTBOX" />
 								</object>
-								<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+								<flag>wxALL|wxEXPAND</flag>
 								<border>5</border>
-								<option>1</option>
+								<option>2</option>
 							</object>
 							<object class="sizeritem">
-								<object class="wxSpinCtrl" name="ID_SPINCTRL_HOR_SIZE" variable="HorSize" member="yes">
-									<value>0</value>
-									<max>5000</max>
-									<handler function="OnHorSizeChange" entry="EVT_SPINCTRL" />
+								<object class="wxBoxSizer" variable="BoxSizer10" member="no">
+									<orient>wxVERTICAL</orient>
+									<object class="sizeritem">
+										<object class="wxButton" name="ID_BUTTON_CANVAS_VARY_ADD" variable="CanvasVaryAdd" member="yes">
+											<label>Добавить</label>
+											<tooltip>Добавить формат в список</tooltip>
+											<help>Добавить ещё один формат в список пользователя</help>
+											<handler function="OnCanvasVaryAddClick" entry="EVT_BUTTON" />
+										</object>
+										<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+										<border>5</border>
+									</object>
+									<object class="sizeritem">
+										<object class="wxButton" name="ID_BUTTON_CANVAS_VARY_DELETE" variable="CanvasVaryDelete" member="yes">
+											<label>Удалить</label>
+											<tooltip>Удалить формат из списка</tooltip>
+											<help>Удалить текущий формат из пользовательского списка</help>
+											<handler function="OnCanvasVaryDeleteClick" entry="EVT_BUTTON" />
+										</object>
+										<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+										<border>5</border>
+									</object>
+									<object class="sizeritem">
+										<object class="wxButton" name="ID_BUTTON_CANVAS_VARY_NAME" variable="CanvasVaryName" member="yes">
+											<label>Имя</label>
+											<handler function="OnCanvasVaryNameClick" entry="EVT_BUTTON" />
+										</object>
+										<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+										<border>5</border>
+										<option>1</option>
+									</object>
 								</object>
 								<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
 								<border>5</border>
@@ -38,27 +65,54 @@
 						<object class="wxBoxSizer" variable="BoxSizer5" member="no">
 							<orient>wxVERTICAL</orient>
 							<object class="sizeritem">
-								<object class="wxStaticText" name="ID_STATICTEXT2" variable="StaticText2" member="yes">
-									<label>Высота</label>
+								<object class="wxBoxSizer" variable="BoxSizer9" member="no">
+									<object class="sizeritem">
+										<object class="wxStaticText" name="ID_STATICTEXT1" variable="StaticText1" member="yes">
+											<label>Ширина</label>
+										</object>
+										<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+										<border>5</border>
+									</object>
+									<object class="sizeritem">
+										<object class="wxSpinCtrl" name="ID_SPINCTRL_HOR_SIZE" variable="HorSize" member="yes">
+											<value>0</value>
+											<max>5000</max>
+											<handler function="OnHorSizeChange" entry="EVT_SPINCTRL" />
+										</object>
+										<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+										<border>5</border>
+										<option>1</option>
+									</object>
 								</object>
-								<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+								<flag>wxALL|wxEXPAND</flag>
 								<border>5</border>
-								<option>1</option>
 							</object>
 							<object class="sizeritem">
-								<object class="wxSpinCtrl" name="ID_SPINCTRL_VERT_SIZE" variable="VertSize" member="yes">
-									<value>0</value>
-									<max>5000</max>
-									<handler function="OnVertSizeChange" entry="EVT_SPINCTRL" />
+								<object class="wxBoxSizer" variable="BoxSizer8" member="no">
+									<object class="sizeritem">
+										<object class="wxStaticText" name="ID_STATICTEXT2" variable="StaticText2" member="yes">
+											<label>Высота</label>
+										</object>
+										<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+										<border>5</border>
+									</object>
+									<object class="sizeritem">
+										<object class="wxSpinCtrl" name="ID_SPINCTRL_VERT_SIZE" variable="VertSize" member="yes">
+											<value>0</value>
+											<max>5000</max>
+											<handler function="OnVertSizeChange" entry="EVT_SPINCTRL" />
+										</object>
+										<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+										<border>5</border>
+										<option>1</option>
+									</object>
 								</object>
-								<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+								<flag>wxALL|wxEXPAND</flag>
 								<border>5</border>
-								<option>1</option>
 							</object>
 						</object>
 						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
 						<border>5</border>
-						<option>1</option>
 					</object>
 					<object class="sizeritem">
 						<object class="wxBoxSizer" variable="BoxSizer7" member="no">
@@ -91,9 +145,8 @@
 								<option>1</option>
 							</object>
 						</object>
-						<flag>wxALL</flag>
+						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
 						<border>5</border>
-						<option>1</option>
 					</object>
 					<object class="sizeritem">
 						<object class="wxBoxSizer" variable="BoxSizer6" member="no">
@@ -102,9 +155,8 @@
 								<object class="wxStaticText" name="ID_STATICTEXT3" variable="StaticText3" member="yes">
 									<label>Соотношение сторон</label>
 								</object>
-								<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+								<flag>wxALL|wxALIGN_CENTER_HORIZONTAL</flag>
 								<border>5</border>
-								<option>1</option>
 							</object>
 							<object class="sizeritem">
 								<object class="wxTextCtrl" name="ID_TEXTCTRL_ASPECT_RATIO" variable="AspectRatio" member="yes">
@@ -117,23 +169,21 @@
 								<border>5</border>
 								<option>1</option>
 							</object>
-						</object>
-						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
-						<border>5</border>
-						<option>1</option>
-					</object>
-					<object class="sizeritem">
-						<object class="wxCheckBox" name="ID_CHECKBOX_FIXED_ASPECT_RATIO" variable="FixedAspectRatio" member="yes">
-							<label>Фикс</label>
-							<handler function="OnFixedAspectRatioClick" entry="EVT_CHECKBOX" />
+							<object class="sizeritem">
+								<object class="wxCheckBox" name="ID_CHECKBOX_FIXED_ASPECT_RATIO" variable="FixedAspectRatio" member="yes">
+									<label>Фикс</label>
+									<handler function="OnFixedAspectRatioClick" entry="EVT_CHECKBOX" />
+								</object>
+								<flag>wxALL|wxALIGN_CENTER_HORIZONTAL</flag>
+								<border>5</border>
+							</object>
 						</object>
 						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
 						<border>5</border>
 					</object>
 				</object>
-				<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+				<flag>wxALL|wxEXPAND</flag>
 				<border>5</border>
-				<option>2</option>
 			</object>
 			<object class="sizeritem">
 				<object class="wxBoxSizer" variable="BoxSizer2" member="no">
@@ -165,9 +215,27 @@
 						<option>1</option>
 					</object>
 					<object class="sizeritem">
-						<object class="wxButton" name="ID_BUTTON1" variable="ButtonSetStandart" member="yes">
+						<object class="wxButton" name="ID_BUTTON_STD_CANVAS" variable="ButtonSetStandart" member="yes">
 							<label>Стандартные</label>
 							<handler function="OnButtonSetStandartClick" entry="EVT_BUTTON" />
+						</object>
+						<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxButton" name="ID_BUTTON_SAVE_TO_FILE" variable="ButtonSaveToFile" member="yes">
+							<label>Сохранить</label>
+							<handler function="OnButtonSaveToFileClick" entry="EVT_BUTTON" />
+						</object>
+						<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxButton" name="ID_BUTTON_LOAD_FROM_FILE" variable="ButtonLoadFromFile" member="yes">
+							<label>Загрузить</label>
+							<handler function="OnButtonLoadFromFileClick" entry="EVT_BUTTON" />
 						</object>
 						<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
 						<border>5</border>

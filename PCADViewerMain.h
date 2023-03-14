@@ -111,7 +111,22 @@ class PCADViewerFrame: public wxFrame
         void OnToolBarItemInvertMarkClicked(wxCommandEvent& event);
         void OnToolBarItemUnmarkClicked(wxCommandEvent& event);
         void OnScrolledCanvasLeftUp(wxMouseEvent& event);
+        void OnMenuItemCanvasFixRatioSelected(wxCommandEvent& event);
+        void OnMenuItemCanvasMetricSelected(wxCommandEvent& event);
         //*)
+
+        enum UpdateSpinCanvasMode
+        {
+            UPDATE_NONE_CANVAS_SPIN = 0,
+            UPDATE_HOR_CANVAS_SPIN = 1,
+            UPDATE_VERT_CANVAS_SPIN = 2
+        };
+
+        enum class ProportionateWhat
+        {
+            PROPORTION_WIDTH = 0,
+            PROPORTION_HEIGHT = 1
+        };
 
         wxString main_windows_name = _("ПиКАДоГляд - просмотрщик-конвертер PCAD-файлов");
         static constexpr double scale_value_array[] =
@@ -135,15 +150,18 @@ class PCADViewerFrame: public wxFrame
         void SetScaleX(double new_scale_x);
         void SetScaleY(double new_scale_y);
         void SetEqualScalesStatus(bool new_equal_scale_status);
-        void SetContextCanvasSize(CanvasSizeCode canvas_size_code);
-        void SwitchCanvasYesNo(bool is_yes);
         void InitOpenedFile();
         const GraphObj* RecognizeGraphObj(int coord_x, int coord_y);
         bool LoadPCADFileAllWorkshops(const wxString& pict_filename);
         double CountRatioFromScroll(wxScrollBar* scroll_bar_ptr);
         void SetScrollByRatio(wxScrollBar* scroll_bar_ptr, double scroll_ratio);
+        // Набор функций-членов для работы с холстами и их параметрами
+        void SetContextCanvasSize(CanvasSizeCode canvas_size_code);
+        void SwitchCanvasYesNo(bool is_yes);
         void SetCanvasSpinSizeRange();
-        void ChangeCanvasSize(int new_cnv_width, int new_cnv_height);
+        void ChangeCanvasSize(int new_cnv_width, int new_cnv_height, int update_spin_mode);
+        void ProportionateCanvas(ProportionateWhat what_proportionate);
+        //-------------
         void ExportErrorMessageBox(ExportErrorType export_error_type);
         wxString SaveExportDialog(const wxString& head_file_type, const wxString& list_file_type,
                                   const wxString& file_ext);
@@ -247,10 +265,12 @@ class PCADViewerFrame: public wxFrame
         static const long IdMenuCanvasA8;
         static const long IdMenuCanvasVary;
         static const long IdMenuStdSizes;
+        static const long IdMenuCanvasFixRatio;
+        static const long IdMenuCanvasMetric;
         static const long IdMenuCanvasPortrait;
         static const long IdMenuCanvasLandscape;
         static const long IdMenuCanvasYesNo;
-        static const long IdMenuSetConvasSize;
+        static const long IdMenuSetCanvasSize;
         static const long IdMenuOptions;
         static const long IdMenuHelpIndex;
         static const long IdMenuAbout;
@@ -265,6 +285,7 @@ class PCADViewerFrame: public wxFrame
         wxMenu* MenuEdit;
         wxMenu* MenuFile;
         wxMenu* MenuHelp;
+        wxMenu* MenuItemCanvasVary;
         wxMenu* MenuItemExportHead;
         wxMenu* MenuItemLoadAs;
         wxMenu* MenuItemPrintHead;
@@ -286,9 +307,10 @@ class PCADViewerFrame: public wxFrame
         wxMenuItem* MenuItemCanvasA6;
         wxMenuItem* MenuItemCanvasA7;
         wxMenuItem* MenuItemCanvasA8;
+        wxMenuItem* MenuItemCanvasFixRatio;
         wxMenuItem* MenuItemCanvasLandscape;
+        wxMenuItem* MenuItemCanvasMetric;
         wxMenuItem* MenuItemCanvasPortrait;
-        wxMenuItem* MenuItemCanvasVary;
         wxMenuItem* MenuItemCanvasYesNo;
         wxMenuItem* MenuItemClose;
         wxMenuItem* MenuItemDiffScales;

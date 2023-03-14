@@ -1755,7 +1755,7 @@
 
 1186404052 c:\wxwidgets_2_8_12\include\wx\msw\filedlg.h
 
-1677112236 source:c:\codeblocksprojects\pcadviewer\pcadviewerapp.cpp
+1678139784 source:c:\codeblocksprojects\pcadviewer\pcadviewerapp.cpp
 	"wx_pch.h"
 	"PCADFile.h"
 	"HandlerPLT.h"
@@ -1780,7 +1780,7 @@
 	<wx/wxprec.h>
 	<wx/wx.h>
 
-1674457810 c:\codeblocksprojects\pcadviewer\pcadviewerapp.h
+1678233778 c:\codeblocksprojects\pcadviewer\pcadviewerapp.h
 	<fstream>
 	<filesystem>
 	<wx/app.h>
@@ -1794,7 +1794,7 @@
 	"PCADFile.h"
 	"svg.h"
 
-1676057742 c:\codeblocksprojects\pcadviewer\pcadviewermain.h
+1678306670 c:\codeblocksprojects\pcadviewer\pcadviewermain.h
 	<filesystem>
 	"PCADViewerApp.h"
 	"ApertureFile.h"
@@ -1808,7 +1808,7 @@
 	<wx/statusbr.h>
 	<wx/toolbar.h>
 
-1677112323 source:c:\codeblocksprojects\pcadviewer\pcadviewermain.cpp
+1678337618 source:c:\codeblocksprojects\pcadviewer\pcadviewermain.cpp
 	<iostream>
 	<iomanip>
 	<fstream>
@@ -1919,7 +1919,7 @@
 	"PCADViewDraw.h"
 	"ApertureProvider.h"
 
-1676641159 c:\codeblocksprojects\pcadviewer\pcadviewdraw.h
+1678235008 c:\codeblocksprojects\pcadviewer\pcadviewdraw.h
 	<string>
 	<vector>
 	<variant>
@@ -2045,7 +2045,7 @@
 	<wx/colour.h>
 	<wx/gdicmn.h>
 
-1677112405 source:c:\codeblocksprojects\pcadviewer\setcanvassize.cpp
+1678230181 source:c:\codeblocksprojects\pcadviewer\setcanvassize.cpp
 	<string>
 	"wx_pch.h"
 	"SetCanvasSize.h"
@@ -2053,15 +2053,17 @@
 	<wx/intl.h>
 	<wx/string.h>
 
-1653386920 c:\codeblocksprojects\pcadviewer\setcanvassize.h
+1678225168 c:\codeblocksprojects\pcadviewer\setcanvassize.h
 	<wx/button.h>
 	<wx/checkbox.h>
 	<wx/dialog.h>
+	<wx/listbox.h>
 	<wx/radiobut.h>
 	<wx/sizer.h>
 	<wx/stattext.h>
 	<wx/textctrl.h>
 	<wx/spinctrl.h>
+	"PCADViewerApp.h"
 	"PCADViewDraw.h"
 
 1186404092 c:\wxwidgets_2_8_12\include\wx\spinctrl.h
@@ -2399,7 +2401,7 @@
 	"wx/string.h"
 	"wx/arrstr.h"
 
-1676353888 c:\codeblocksprojects\pcadviewer\version.h
+1678337629 c:\codeblocksprojects\pcadviewer\version.h
 
 1194606978 c:\wxwidgets_2_8_12\include\wx\clipbrd.h
 	"wx/defs.h"
@@ -2425,7 +2427,7 @@
 	"wx/bitmap.h"
 	"wx/icon.h"
 
-1673624922 c:\codeblocksprojects\pcadviewer\macroses.h
+1678111974 c:\codeblocksprojects\pcadviewer\macroses.h
 	<string>
 
 1668412619 source:c:\codeblocksprojects\pcadviewer\svg.cpp

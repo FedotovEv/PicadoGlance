@@ -91,15 +91,14 @@ bool MyPrintout::OnPrintPage(int page_num)
     return true;
 }
 
-wxCmdLineEntryDesc const static cmdLineDesc[] =
+wxCmdLineEntryDesc const static cmd_line_desc[] =
 {
- {wxCMD_LINE_SWITCH, wxT("h"), wxT("help"), wxT("вывод помощи по формату командной строки программы"),
-  wxCMD_LINE_VAL_NONE, wxCMD_LINE_OPTION_HELP},
- {wxCMD_LINE_OPTION, wxT("a"), wxT("aperture-name"), wxT("имя файла апертур")},
- {wxCMD_LINE_SWITCH, wxT("l"), wxT("aperture-laser"), wxT("использовать множество апертур GERBER LASER"),
-  wxCMD_LINE_VAL_NONE},
- {wxCMD_LINE_PARAM, NULL, NULL, L"входной файл", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL},
- {wxCMD_LINE_NONE}
+    {wxCMD_LINE_SWITCH, wxT("h"), wxT("help"), wxT("вывод помощи по формату командной строки программы"),
+     wxCMD_LINE_VAL_NONE, wxCMD_LINE_OPTION_HELP},
+    {wxCMD_LINE_OPTION, wxT("a"), wxT("aperture-name"), wxT("имя файла апертур")},
+    {wxCMD_LINE_SWITCH, wxT("l"), wxT("aperture-laser"), wxT("использовать множество апертур GERBER LASER")},
+    {wxCMD_LINE_PARAM, NULL, NULL, wxT("входной файл"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL},
+    {wxCMD_LINE_NONE}
 };
 
 //IMPLEMENT_APP(PCADViewerApp);
@@ -187,7 +186,7 @@ void PCADViewerApp::RecreateGUI()
 
 void PCADViewerApp::OnInitCmdLine(wxCmdLineParser& parser)
 {
-    parser.SetDesc(cmdLineDesc);
+    parser.SetDesc(cmd_line_desc);
     // Используем для предварения параметров символ '-', чтобы не путать его с маршрутами файлов
     parser.SetSwitchChars(wxT("-"));
 }

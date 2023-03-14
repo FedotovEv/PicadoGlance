@@ -147,10 +147,12 @@ const long PCADViewerFrame::IdMenuCanvasA7 = wxNewId();
 const long PCADViewerFrame::IdMenuCanvasA8 = wxNewId();
 const long PCADViewerFrame::IdMenuCanvasVary = wxNewId();
 const long PCADViewerFrame::IdMenuStdSizes = wxNewId();
+const long PCADViewerFrame::IdMenuCanvasFixRatio = wxNewId();
+const long PCADViewerFrame::IdMenuCanvasMetric = wxNewId();
 const long PCADViewerFrame::IdMenuCanvasPortrait = wxNewId();
 const long PCADViewerFrame::IdMenuCanvasLandscape = wxNewId();
 const long PCADViewerFrame::IdMenuCanvasYesNo = wxNewId();
-const long PCADViewerFrame::IdMenuSetConvasSize = wxNewId();
+const long PCADViewerFrame::IdMenuSetCanvasSize = wxNewId();
 const long PCADViewerFrame::IdMenuOptions = wxNewId();
 const long PCADViewerFrame::IdMenuHelpIndex = wxNewId();
 const long PCADViewerFrame::IdMenuAbout = wxNewId();
@@ -389,18 +391,24 @@ PCADViewerFrame::PCADViewerFrame(wxWindow* parent, wxWindowID id) : select_timer
     MenuItemStdSizes->Append(MenuItemCanvasA7);
     MenuItemCanvasA8 = new wxMenuItem(MenuItemStdSizes, IdMenuCanvasA8, _("A8"), _("Холст формата A8"), wxITEM_NORMAL);
     MenuItemStdSizes->Append(MenuItemCanvasA8);
-    MenuItemCanvasVary = new wxMenuItem(MenuItemStdSizes, IdMenuCanvasVary, _("Переменный"), _("Холст переменного размера"), wxITEM_NORMAL);
-    MenuItemStdSizes->Append(MenuItemCanvasVary);
+    MenuItemCanvasVary = new wxMenu();
+    MenuItemCanvasVary->AppendSeparator();
+    MenuItemStdSizes->Append(IdMenuCanvasVary, _("Пользовательские холсты"), MenuItemCanvasVary, _("Выбор холстов нестандартного размера"));
     MenuCanvas->Append(IdMenuStdSizes, _("Тип"), MenuItemStdSizes, wxEmptyString);
     MenuCanvas->AppendSeparator();
-    MenuItemCanvasPortrait = new wxMenuItem(MenuCanvas, IdMenuCanvasPortrait, _("Портретный"), wxEmptyString, wxITEM_RADIO);
+    MenuItemCanvasFixRatio = new wxMenuItem(MenuCanvas, IdMenuCanvasFixRatio, _("Фикс. пропорция"), _("Фиксация/расфиксация соотношения сторон холста"), wxITEM_CHECK);
+    MenuCanvas->Append(MenuItemCanvasFixRatio);
+    MenuItemCanvasMetric = new wxMenuItem(MenuCanvas, IdMenuCanvasMetric, _("Метрический"), _("Переключение типа единиц ихмерения размеров холста"), wxITEM_CHECK);
+    MenuCanvas->Append(MenuItemCanvasMetric);
+    MenuCanvas->AppendSeparator();
+    MenuItemCanvasPortrait = new wxMenuItem(MenuCanvas, IdMenuCanvasPortrait, _("Портретный"), _("Установка портретной (вертикальной) ориентации холста"), wxITEM_RADIO);
     MenuCanvas->Append(MenuItemCanvasPortrait);
-    MenuItemCanvasLandscape = new wxMenuItem(MenuCanvas, IdMenuCanvasLandscape, _("Ландшафтный"), wxEmptyString, wxITEM_RADIO);
+    MenuItemCanvasLandscape = new wxMenuItem(MenuCanvas, IdMenuCanvasLandscape, _("Ландшафтный"), _("Установка ландшафтной (горзонтальной) ориентации холста"), wxITEM_RADIO);
     MenuCanvas->Append(MenuItemCanvasLandscape);
     MenuCanvas->AppendSeparator();
     MenuItemCanvasYesNo = new wxMenuItem(MenuCanvas, IdMenuCanvasYesNo, _("Включить/Выключить"), _("Отключить вывод холста"), wxITEM_CHECK);
     MenuCanvas->Append(MenuItemCanvasYesNo);
-    MenuItemSetCanvasSize = new wxMenuItem(MenuCanvas, IdMenuSetConvasSize, _("Установка размера"), wxEmptyString, wxITEM_NORMAL);
+    MenuItemSetCanvasSize = new wxMenuItem(MenuCanvas, IdMenuSetCanvasSize, _("Установка размера"), wxEmptyString, wxITEM_NORMAL);
     MenuCanvas->Append(MenuItemSetCanvasSize);
     MenuBar1->Append(MenuCanvas, _("Холст"));
     MenuParams = new wxMenu();
@@ -495,11 +503,12 @@ PCADViewerFrame::PCADViewerFrame(wxWindow* parent, wxWindowID id) : select_timer
     Connect(IdMenuCanvasA6,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemCanvasA6Selected);
     Connect(IdMenuCanvasA7,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemCanvasA7Selected);
     Connect(IdMenuCanvasA8,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemCanvasA8Selected);
-    Connect(IdMenuCanvasVary,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemCanvasVarySelected);
+    Connect(IdMenuCanvasFixRatio,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemCanvasFixRatioSelected);
+    Connect(IdMenuCanvasMetric,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemCanvasMetricSelected);
     Connect(IdMenuCanvasPortrait,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemCanvasPortraitSelected);
     Connect(IdMenuCanvasLandscape,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemCanvasLandscapeSelected);
     Connect(IdMenuCanvasYesNo,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemCanvasYesNoSelected);
-    Connect(IdMenuSetConvasSize,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemSetCanvasSizeSelected);
+    Connect(IdMenuSetCanvasSize,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemSetCanvasSizeSelected);
     Connect(IdMenuOptions,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemOptionsSelected);
     Connect(IdMenuHelpIndex,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemHelpIndexSelected);
     Connect(IdMenuAbout,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnAbout);
@@ -522,7 +531,7 @@ PCADViewerFrame::PCADViewerFrame(wxWindow* parent, wxWindowID id) : select_timer
         new_memu_item.menu_item_id = wxNewId();
 
         wxString wxmenu_item_name(new_memu_item.menu_item_name.c_str(), wxConvUTF8);
-        wxString wxmenu_comment = _("") + wxmenu_item_name;
+        wxString wxmenu_comment = _("Загрузить как ") + wxmenu_item_name;
         new_memu_item.menu_item_ptr =
             new wxMenuItem(MenuItemLoadAs, new_memu_item.menu_item_id, wxmenu_item_name,
                            wxmenu_comment, wxITEM_NORMAL);
@@ -582,6 +591,8 @@ PCADViewerFrame::PCADViewerFrame(wxWindow* parent, wxWindowID id) : select_timer
     SetContextCanvasSize(CanvasSizeCode::CANVAS_SIZE_A8);
     SwitchCanvasYesNo(false);
     MainToolBar->ToggleTool(ToolCanvasLandscape, !this_app->canvas_context.is_portrait);
+    MenuItemCanvasFixRatio->Check(this_app->canvas_context.is_fixed_ratio);
+    MenuItemCanvasMetric->Check(this_app->canvas_context.is_metric);
     MenuItemCanvasPortrait->Check(this_app->canvas_context.is_portrait);
     // Пределы установки масштаба
     this_app->min_scale_x = 0.1;
@@ -1520,7 +1531,8 @@ void PCADViewerFrame::SetContextCanvasSize(CanvasSizeCode canvas_size_code)
     this_app->canvas_context.canvas_size_code = canvas_size_code;
     double cnv_width, cnv_height;
     if (canvas_size_code == CanvasSizeCode::CANVAS_SIZE_NOT_STANDART)
-    {
+    { // Сейчас размеры холста внутри this_app->vary_canvas_status.canvas_size хранятся либо
+      // в миллиметрах (в метрической системе), либо в сотых дюйма (в английской системе).
         cnv_width = this_app->vary_canvas_status.canvas_size.GetWidth();
         cnv_height = this_app->vary_canvas_status.canvas_size.GetHeight();
         if (!this_app->vary_canvas_status.is_metric)
@@ -1528,17 +1540,27 @@ void PCADViewerFrame::SetContextCanvasSize(CanvasSizeCode canvas_size_code)
             cnv_width /= POINTS_IN_MILLIMETER;
             cnv_height /= POINTS_IN_MILLIMETER;
         }
+        this_app->canvas_context.is_fixed_ratio = this_app->vary_canvas_status.is_fixed_ratio;
+        this_app->canvas_context.is_metric = this_app->vary_canvas_status.is_metric;
     }
     else
     {
         wxSize tmp_cnv_sz = std_wx_objects.GetStandartCanvasSize(canvas_size_code, true);
         cnv_width = tmp_cnv_sz.GetWidth();
         cnv_height = tmp_cnv_sz.GetHeight();
+        this_app->canvas_context.is_fixed_ratio = true;
+        this_app->canvas_context.is_metric = true;
     }
+    this_app->canvas_context.canvas_ratio = cnv_width / cnv_height;
 
-    // На выходе, в поле canvas_size состояния холста, его размер должен задаваться в DBU загруженной картинки
+    MenuItemCanvasFixRatio->Check(this_app->canvas_context.is_fixed_ratio);
+    MenuItemCanvasMetric->Check(this_app->canvas_context.is_metric);
+    SetCanvasSpinSizeRange();
+    // На вход функции ChangeCanvasSize новые размеры холста должны подаваться в DBU.
     ChangeCanvasSize(this_app->pcad_file.ConvertMMToDBU(cnv_width),
-                     this_app->pcad_file.ConvertMMToDBU(cnv_height));
+                     this_app->pcad_file.ConvertMMToDBU(cnv_height),
+                     UpdateSpinCanvasMode::UPDATE_HOR_CANVAS_SPIN |
+                     UpdateSpinCanvasMode::UPDATE_VERT_CANVAS_SPIN);
 }
 
 void PCADViewerFrame::OnMenuItemCanvasA4Selected(wxCommandEvent& event)
@@ -1568,7 +1590,9 @@ void PCADViewerFrame::OnMenuItemCanvasPortraitSelected(wxCommandEvent& event)
     {
         MainToolBar->ToggleTool(ToolCanvasLandscape, false);
         this_app->canvas_context.is_portrait = true;
-        ChangeCanvasSize(-1, -1);
+        ChangeCanvasSize(-1, -1,
+                         UpdateSpinCanvasMode::UPDATE_HOR_CANVAS_SPIN |
+                         UpdateSpinCanvasMode::UPDATE_VERT_CANVAS_SPIN);
     }
 }
 
@@ -1579,26 +1603,73 @@ void PCADViewerFrame::OnMenuItemCanvasLandscapeSelected(wxCommandEvent& event)
     {
         MainToolBar->ToggleTool(ToolCanvasLandscape, true);
         this_app->canvas_context.is_portrait = false;
-        ChangeCanvasSize(-1, -1);
+        ChangeCanvasSize(-1, -1,
+                         UpdateSpinCanvasMode::UPDATE_HOR_CANVAS_SPIN |
+                         UpdateSpinCanvasMode::UPDATE_VERT_CANVAS_SPIN);
     }
 }
 
 void PCADViewerFrame::OnMenuItemCanvasVarySelected(wxCommandEvent& event)
 {
+    PCADViewerApp* this_app = static_cast<PCADViewerApp*>(wxTheApp);
+    for (PCADViewerApp::MenuLoadAsItemDesc menu_item_desc :
+         this_app->menu_vary_canvas_select_desc)
+    {
+        if (menu_item_desc.menu_item_id == event.GetId())
+        { // Описатель сработавшего пункта меню найден - копируем соответствующий холст
+          // в this_app->vary_canvas_status.
+            this_app->vary_canvas_status = this_app->vary_canvas_list
+                [reinterpret_cast<intptr_t>(menu_item_desc.file_workshop_ptr)];
+            break;
+        }
+    }
+    // Следующий вызов делает холст из this_app->vary_canvas_status текущим.
     SetContextCanvasSize(CanvasSizeCode::CANVAS_SIZE_NOT_STANDART);
 }
 
 void PCADViewerFrame::OnMenuItemSetCanvasSizeSelected(wxCommandEvent& event)
 {
+    PCADViewerApp* this_app = static_cast<PCADViewerApp*>(wxTheApp);
     SetCanvasSize set_canvas_size_dialog(this);
+
     if (set_canvas_size_dialog.ShowModal())
     {
-        PCADViewerApp* this_app = static_cast<PCADViewerApp*>(wxTheApp);
-        this_app->canvas_context.is_metric = this_app->vary_canvas_status.is_metric;
-        this_app->canvas_context.is_fixed_ratio = this_app->vary_canvas_status.is_fixed_ratio;
-        SetCanvasSpinSizeRange();
-        SetContextCanvasSize(CanvasSizeCode::CANVAS_SIZE_NOT_STANDART);
-        MenuItemCanvasVary->Check(true);
+        this_app->vary_canvas_list = set_canvas_size_dialog.canvas_list_;
+        if (this_app->vary_canvas_list.size() > VARY_CANVASES_MAX_NAME_LEN)
+            this_app->vary_canvas_list.resize(VARY_CANVASES_MAX_NAME_LEN);
+        // Пересоздаём меню пользовательских (нестандартных) форматов холста
+        MenuItemStdSizes->Destroy(IdMenuCanvasVary);
+        MenuItemCanvasVary = new wxMenu();
+        MenuItemCanvasVary->AppendSeparator();
+        size_t i = 0;
+        for (const VaryCanvasEditorStatus& current_canvas : this_app->vary_canvas_list)
+        {
+            PCADViewerApp::MenuLoadAsItemDesc new_memu_item;
+            if (current_canvas.canvas_name.size())
+                new_memu_item.menu_item_name = current_canvas.canvas_name;
+            else
+                new_memu_item.menu_item_name =
+                    to_string(current_canvas.canvas_size.GetWidth()) + 'x' +
+                    to_string(current_canvas.canvas_size.GetHeight());
+
+            new_memu_item.menu_item_id = wxNewId();
+            new_memu_item.file_workshop_ptr = reinterpret_cast<FileWorkshop*>(i++);
+            wxString wxmenu_item_name(new_memu_item.menu_item_name.c_str(), wxConvLocal);
+            wxString wxmenu_comment = _("Выбрать холст формата ") + wxmenu_item_name;
+            new_memu_item.menu_item_ptr =
+                new wxMenuItem(MenuItemLoadAs, new_memu_item.menu_item_id, wxmenu_item_name,
+                               wxmenu_comment, wxITEM_NORMAL);
+            // Очередной пункт меню выбора пользовательских холстов приготовлен - присоединим
+            // его к меню MenuItemCanvasVary и добавим его в список menu_vary_canvas_select_desc.
+            MenuItemCanvasVary->Append(new_memu_item.menu_item_ptr);
+            Connect(new_memu_item.menu_item_id, wxEVT_COMMAND_MENU_SELECTED,
+                    (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemCanvasVarySelected);
+            this_app->menu_vary_canvas_select_desc.push_back(move(new_memu_item));
+        }
+        // Новое меню MenuItemCanvasVary сформировано, привязываем его к вышележащему
+        // меню MenuItemStdSizes.
+        MenuItemStdSizes->Append(IdMenuCanvasVary, _("Пользовательские холсты"),
+                                 MenuItemCanvasVary, _("Выбор холстов нестандартного размера"));
     }
 }
 
@@ -1703,7 +1774,7 @@ bool PCADViewerFrame::DoGraphExporting(GraphExportContext& export_context)
         source_rect = fdv.frame_rect;
     }
     // draw_context.clipping_rect - регион отсечения, который будет использоваться для удаления лишних
-    // элементов как функциями типа DrawOnject, так и будет установлен как регион отсечения для wxWidgets.
+    // элементов как функциями типа DrawObject, так и будет установлен как регион отсечения для wxWidgets.
     draw_context.clipping_rect = source_rect;
     if (export_context.is_contour_export)
         draw_context.clipping_rect.Intersect(this_app->select_contour.contour_rect);
@@ -2233,16 +2304,18 @@ void PCADViewerFrame::OnToolBarItemMarkClicked(wxCommandEvent& event)
     DoSelectObjectsOp(export_context, SelectOpType::SELECT_OP_SELECT);
 }
 
-void PCADViewerFrame::ChangeCanvasSize(int new_cnv_width, int new_cnv_height)
-{
+void PCADViewerFrame::ChangeCanvasSize(int new_cnv_width, int new_cnv_height, int update_spin_mode)
+{ // Входные аргументы функции - новые размеры холста - задаются здесь в единиццах DBU.
+  // Если какой-либо аргумент имеет специальное сигнальное значение (< 0), то соответствующая
+  // величина размера холста не меняется (заимствуется для пересчёта из текущих значений поля
+  // this_app->canvas_context.canvas_size).
     PCADViewerApp* this_app = static_cast<PCADViewerApp*>(wxTheApp);
     SizePositionData old_pd = CountSizePosition();
-    bool is_set_width = new_cnv_width > 0, is_set_height = new_cnv_height > 0;
-    if (is_set_width)
+    if (new_cnv_width > 0)
         this_app->canvas_context.canvas_size.SetWidth(new_cnv_width);
     else
         new_cnv_width = this_app->canvas_context.canvas_size.GetWidth();
-    if (is_set_height)
+    if (new_cnv_height > 0)
         this_app->canvas_context.canvas_size.SetHeight(new_cnv_height);
     else
         new_cnv_height = this_app->canvas_context.canvas_size.GetHeight();
@@ -2251,27 +2324,41 @@ void PCADViewerFrame::ChangeCanvasSize(int new_cnv_width, int new_cnv_height)
     if (this_app->canvas_context.is_portrait)
     {
         if (new_cnv_width > new_cnv_height)
+        {
+            this_app->canvas_context.canvas_ratio = 1 / this_app->canvas_context.canvas_ratio;
             this_app->canvas_context.canvas_size = wxSize(new_cnv_height, new_cnv_width);
+        }
+        else
+        {
+            this_app->canvas_context.canvas_size = wxSize(new_cnv_width, new_cnv_height);
+        }
     }
     else
     {
         if (new_cnv_height > new_cnv_width)
+        {
+            this_app->canvas_context.canvas_ratio = 1 / this_app->canvas_context.canvas_ratio;
             this_app->canvas_context.canvas_size = wxSize(new_cnv_height, new_cnv_width);
+        }
+        else
+        {
+            this_app->canvas_context.canvas_size = wxSize(new_cnv_width, new_cnv_height);
+        }
     }
     // Ну а теперь обновляем содержимое полей управления размерами холста на панельке инструментов.
     wxSize cnvs(this_app->canvas_context.canvas_size);
     if (this_app->canvas_context.is_metric)
     {
-        if (is_set_width)
+        if (update_spin_mode & UpdateSpinCanvasMode::UPDATE_HOR_CANVAS_SPIN)
             SpinCanvasSizeHor->SetValue(this_app->pcad_file.ConvertDBUToMM(cnvs.GetWidth()));
-        if (is_set_height)
+        if (update_spin_mode & UpdateSpinCanvasMode::UPDATE_VERT_CANVAS_SPIN)
             SpinCanvasSizeVert->SetValue(this_app->pcad_file.ConvertDBUToMM(cnvs.GetHeight()));
     }
     else
     {
-        if (is_set_width)
+        if (update_spin_mode & UpdateSpinCanvasMode::UPDATE_HOR_CANVAS_SPIN)
             SpinCanvasSizeHor->SetValue(this_app->pcad_file.ConvertDBUToInch(cnvs.GetWidth()) * POINTS_IN_INCH);
-        if (is_set_height)
+        if (update_spin_mode & UpdateSpinCanvasMode::UPDATE_VERT_CANVAS_SPIN)
             SpinCanvasSizeVert->SetValue(this_app->pcad_file.ConvertDBUToInch(cnvs.GetHeight()) * POINTS_IN_INCH);
     }
     SwitchCanvasYesNo(true);
@@ -2281,7 +2368,6 @@ void PCADViewerFrame::ChangeCanvasSize(int new_cnv_width, int new_cnv_height)
 void PCADViewerFrame::SetCanvasSpinSizeRange()
 {
     PCADViewerApp* this_app = static_cast<PCADViewerApp*>(wxTheApp);
-    wxSize cnvs(this_app->canvas_context.canvas_size);
     bool save_is_event_handling = is_event_handling;
     is_event_handling = false;
     if (this_app->canvas_context.is_metric)
@@ -2306,20 +2392,24 @@ void PCADViewerFrame::OnSpinCanvasSizeHorChange(wxSpinEvent& event)
     if (!is_event_handling)
         return;
     PCADViewerApp* this_app = static_cast<PCADViewerApp*>(wxTheApp);
-    double cnv_width, cnv_height, cnv_ratio;
-    cnv_width = SpinCanvasSizeHor->GetValue();
-    // На выходе, в поле canvas_size состояния холста, его размер должен задаваться в DBU загруженной картинки
+    double cnv_width = SpinCanvasSizeHor->GetValue();
+    // В поле canvas_size структуры canvas_context размер холста должен
+    // задаваться в DBU загруженной картинки.
     if (!this_app->canvas_context.is_metric)
         cnv_width = this_app->pcad_file.ConvertInchToDBU(cnv_width / POINTS_IN_INCH);
     else
         cnv_width = this_app->pcad_file.ConvertMMToDBU(cnv_width);
-    cnv_height = this_app->canvas_context.canvas_size.GetHeight();
-    cnv_ratio = cnv_width / cnv_height;
-
+    this_app->canvas_context.canvas_size.SetWidth(round(cnv_width));
+    // Если нужно обеспечить нужную фиксированную пропорцию, подправим также и высоту холста.
     if (this_app->canvas_context.is_fixed_ratio)
-        cnv_height = cnv_width / cnv_ratio;
-
-    ChangeCanvasSize(cnv_width, cnv_height);
+    {
+        ProportionateCanvas(ProportionateWhat::PROPORTION_HEIGHT);
+        ChangeCanvasSize(-1, -1, UpdateSpinCanvasMode::UPDATE_VERT_CANVAS_SPIN);
+    }
+    else
+    {
+        ChangeCanvasSize(-1, -1, UpdateSpinCanvasMode::UPDATE_NONE_CANVAS_SPIN);
+    }
 }
 
 void PCADViewerFrame::OnSpinCanvasSizeVertChange(wxSpinEvent& event)
@@ -2327,20 +2417,24 @@ void PCADViewerFrame::OnSpinCanvasSizeVertChange(wxSpinEvent& event)
     if (!is_event_handling)
         return;
     PCADViewerApp* this_app = static_cast<PCADViewerApp*>(wxTheApp);
-    double cnv_width, cnv_height, cnv_ratio;
-    cnv_height = SpinCanvasSizeVert->GetValue();
-    // На выходе, в поле canvas_size состояния холста, его размер должен задаваться в DBU загруженной картинки
+    double cnv_height = SpinCanvasSizeVert->GetValue();
+    // На выходе, в поле canvas_size состояния холста, его размер должен
+    // задаваться в DBU загруженной картинки.
     if (!this_app->canvas_context.is_metric)
         cnv_height = this_app->pcad_file.ConvertInchToDBU(cnv_height / POINTS_IN_INCH);
     else
         cnv_height = this_app->pcad_file.ConvertMMToDBU(cnv_height);
-    cnv_width = this_app->canvas_context.canvas_size.GetWidth();
-    cnv_ratio = cnv_width / cnv_height;
-
+    this_app->canvas_context.canvas_size.SetHeight(round(cnv_height));
+    // Если нужно обеспечить нужную фиксированную пропорцию, подправим также и ширину холста.
     if (this_app->canvas_context.is_fixed_ratio)
-        cnv_width = cnv_height * cnv_ratio;
-
-    ChangeCanvasSize(cnv_width, cnv_height);
+    {
+        ProportionateCanvas(ProportionateWhat::PROPORTION_WIDTH);
+        ChangeCanvasSize(-1, -1, UpdateSpinCanvasMode::UPDATE_HOR_CANVAS_SPIN);
+    }
+    else
+    {
+        ChangeCanvasSize(-1, -1, UpdateSpinCanvasMode::UPDATE_NONE_CANVAS_SPIN);
+    }
 }
 
 void PCADViewerFrame::OnMenuItemExportSVGSelected(wxCommandEvent& event)
@@ -2659,5 +2753,46 @@ void PCADViewerFrame::OnScrolledCanvasLeftUp(wxMouseEvent& event)
         use_context.ResetProjectRect(this_app->last_draw_context.project_rect);
         use_context.ResetTargetDC(&scrolled_canvas_dc, false);
         RestoreContourBackgroud(use_context, this_app->select_contour);
+    }
+}
+
+void PCADViewerFrame::ProportionateCanvas(ProportionateWhat what_proportionate)
+{ // Функция пропорционирует холст - изменяет его размеры
+    PCADViewerApp* this_app = static_cast<PCADViewerApp*>(wxTheApp);
+    if (what_proportionate == ProportionateWhat::PROPORTION_WIDTH)
+    { // Пропорционируем ширину холста, сохраняя высоту
+        int new_width = round(this_app->canvas_context.canvas_size.GetHeight() *
+                        this_app->canvas_context.canvas_ratio);
+        this_app->canvas_context.canvas_size.SetWidth(max(new_width, 1));
+    }
+    else
+    {  // Пропорционируем высоту холста, сохраняя ширину
+        int new_height = round(this_app->canvas_context.canvas_size.GetWidth() /
+                         this_app->canvas_context.canvas_ratio);
+        this_app->canvas_context.canvas_size.SetHeight(max(new_height, 1));
+    }
+}
+
+void PCADViewerFrame::OnMenuItemCanvasFixRatioSelected(wxCommandEvent& event)
+{
+    PCADViewerApp* this_app = static_cast<PCADViewerApp*>(wxTheApp);
+    if (this_app->canvas_context.is_fixed_ratio != MenuItemCanvasFixRatio->IsChecked())
+    {
+        this_app->canvas_context.is_fixed_ratio = MenuItemCanvasFixRatio->IsChecked();
+        ProportionateCanvas(ProportionateWhat::PROPORTION_HEIGHT);
+        ChangeCanvasSize(-1, -1, UpdateSpinCanvasMode::UPDATE_VERT_CANVAS_SPIN);
+    }
+}
+
+void PCADViewerFrame::OnMenuItemCanvasMetricSelected(wxCommandEvent& event)
+{
+    PCADViewerApp* this_app = static_cast<PCADViewerApp*>(wxTheApp);
+    if (this_app->canvas_context.is_metric != MenuItemCanvasMetric->IsChecked())
+    {
+        this_app->canvas_context.is_metric = MenuItemCanvasMetric->IsChecked();
+        SetCanvasSpinSizeRange();
+        ChangeCanvasSize(-1, -1,
+                         UpdateSpinCanvasMode::UPDATE_HOR_CANVAS_SPIN |
+                         UpdateSpinCanvasMode::UPDATE_VERT_CANVAS_SPIN);
     }
 }

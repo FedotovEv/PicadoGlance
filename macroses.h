@@ -24,6 +24,8 @@
 #define DOT_SIZE_INT 10
 #define LIMIT_RAY_LENGTH 100.0
 #define SELECT_CONTOUR_WIDTH 6 // Толщина выделяющего контура
+#define MAX_VARY_CANVASES 20 // Максимальное количество переменных (нестандартных) холстов
+#define VARY_CANVASES_MAX_NAME_LEN 20 // Максимальная длина имени пользовательского холста
 
 enum class MeasureUnitTypeData
 {

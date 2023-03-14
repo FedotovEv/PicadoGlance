@@ -588,20 +588,35 @@
 						<help>Холст формата A8</help>
 						<handler function="OnMenuItemCanvasA8Selected" entry="EVT_MENU" />
 					</object>
-					<object class="wxMenuItem" name="IdMenuCanvasVary" variable="MenuItemCanvasVary" member="yes">
-						<label>Переменный</label>
-						<help>Холст переменного размера</help>
-						<handler function="OnMenuItemCanvasVarySelected" entry="EVT_MENU" />
+					<object class="wxMenu" name="IdMenuCanvasVary" variable="MenuItemCanvasVary" member="yes">
+						<label>Пользовательские холсты</label>
+						<help>Выбор холстов нестандартного размера</help>
+						<object class="separator" />
 					</object>
+				</object>
+				<object class="separator" />
+				<object class="wxMenuItem" name="IdMenuCanvasFixRatio" variable="MenuItemCanvasFixRatio" member="yes">
+					<label>Фикс. пропорция</label>
+					<help>Фиксация/расфиксация соотношения сторон холста</help>
+					<handler function="OnMenuItemCanvasFixRatioSelected" entry="EVT_MENU" />
+					<checkable>1</checkable>
+				</object>
+				<object class="wxMenuItem" name="IdMenuCanvasMetric" variable="MenuItemCanvasMetric" member="yes">
+					<label>Метрический</label>
+					<help>Переключение типа единиц ихмерения размеров холста</help>
+					<handler function="OnMenuItemCanvasMetricSelected" entry="EVT_MENU" />
+					<checkable>1</checkable>
 				</object>
 				<object class="separator" />
 				<object class="wxMenuItem" name="IdMenuCanvasPortrait" variable="MenuItemCanvasPortrait" member="yes">
 					<label>Портретный</label>
+					<help>Установка портретной (вертикальной) ориентации холста</help>
 					<handler function="OnMenuItemCanvasPortraitSelected" entry="EVT_MENU" />
 					<radio>1</radio>
 				</object>
 				<object class="wxMenuItem" name="IdMenuCanvasLandscape" variable="MenuItemCanvasLandscape" member="yes">
 					<label>Ландшафтный</label>
+					<help>Установка ландшафтной (горзонтальной) ориентации холста</help>
 					<handler function="OnMenuItemCanvasLandscapeSelected" entry="EVT_MENU" />
 					<radio>1</radio>
 				</object>
@@ -612,7 +627,7 @@
 					<handler function="OnMenuItemCanvasYesNoSelected" entry="EVT_MENU" />
 					<checkable>1</checkable>
 				</object>
-				<object class="wxMenuItem" name="IdMenuSetConvasSize" variable="MenuItemSetCanvasSize" member="yes">
+				<object class="wxMenuItem" name="IdMenuSetCanvasSize" variable="MenuItemSetCanvasSize" member="yes">
 					<label>Установка размера</label>
 					<handler function="OnMenuItemSetCanvasSizeSelected" entry="EVT_MENU" />
 				</object>

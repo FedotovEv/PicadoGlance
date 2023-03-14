@@ -51,6 +51,10 @@
 		<param name="Local" value="file_information.html">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="&Yacute;&ecirc;&ntilde;&iuml;&icirc;&eth;&ograve; &egrave;&ccedil;&icirc;&aacute;&eth;&agrave;&aelig;&aring;&iacute;&egrave;&yuml;">
+		<param name="Local" value="export.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="&Ecirc;&icirc;&iacute;&ocirc;&egrave;&atilde;&oacute;&eth;&agrave;&ouml;&egrave;&yuml; &egrave; &iacute;&agrave;&ntilde;&ograve;&eth;&icirc;&eacute;&ecirc;&agrave;">
 		<param name="Local" value="configuration.html">
 		</OBJECT>
