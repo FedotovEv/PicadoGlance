@@ -11,7 +11,7 @@
 				<object class="wxBoxSizer" variable="BoxSizer2" member="yes">
 					<orient>wxVERTICAL</orient>
 					<object class="sizeritem">
-						<object class="wxPanel" name="ID_PANEL1" variable="ScrolledCanvas" member="yes">
+						<object class="wxPanel" name="ID_PANEL_VIEW_CANVAS" variable="ScrolledCanvas" member="yes">
 							<style>wxTAB_TRAVERSAL|wxWANTS_CHARS|wxFULL_REPAINT_ON_RESIZE</style>
 							<handler function="OnScrolledCanvasPaint" entry="EVT_PAINT" />
 							<handler function="OnScrolledCanvasKeyDown" entry="EVT_KEY_DOWN" />
@@ -20,13 +20,14 @@
 							<handler function="OnScrolledCanvasMiddleDown" entry="EVT_MIDDLE_DOWN" />
 							<handler function="OnScrolledCanvasRightDown" entry="EVT_RIGHT_DOWN" />
 							<handler function="OnScrolledCanvasMouseMove" entry="EVT_MOTION" />
+							<handler function="OnScrolledCanvasMouseWheel" entry="EVT_MOUSEWHEEL" />
 							<handler function="OnScrolledCanvasResize" entry="EVT_SIZE" />
 						</object>
 						<flag>wxALL|wxEXPAND</flag>
 						<option>10</option>
 					</object>
 					<object class="sizeritem">
-						<object class="wxScrollBar" name="ID_SCROLLBAR3" variable="ScrollBarHorPos" member="yes">
+						<object class="wxScrollBar" name="ID_SCROLLBAR_HOR_POS" variable="ScrollBarHorPos" member="yes">
 							<thumbsize>1</thumbsize>
 							<range>10</range>
 							<pagesize>1</pagesize>
@@ -50,7 +51,7 @@
 				<option>10</option>
 			</object>
 			<object class="sizeritem">
-				<object class="wxScrollBar" name="ID_SCROLLBAR1" variable="ScrollBarVertPos" member="yes">
+				<object class="wxScrollBar" name="ID_SCROLLBAR_VERT_POS" variable="ScrollBarVertPos" member="yes">
 					<thumbsize>1</thumbsize>
 					<range>10</range>
 					<pagesize>1</pagesize>

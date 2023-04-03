@@ -22,6 +22,7 @@
 
 #include "PCADFile.h"
 #include "svg.h"
+#include "chr_font.h"
 
 struct VaryCanvasEditorStatus
 {
@@ -66,29 +67,6 @@ struct SizePositionData
     wxRect source_draw_part;
     // Размер и положение холста в области (на поверхности) исходного изображения
     wxRect source_canvas;
-};
-
-enum class AdditionalScaleModeType
-{
-    ADDITIONAL_SCALE_NONE = 0,
-    ADDITIONAL_SCALE_RUSSIAN_INCH,
-    ADDITIONAL_SCALE_ANY
-};
-
-struct OptionsData
-{
-    // Параметры для загрузки файла апертур (вспышек)
-    wxString aperture_filename; // Полное имя нужного файла апертур
-    bool is_aperture_gerber_laser = false; // == true, если следует использовать апертуры типа GERBER LASER
-    // Флаг необходимости использования корректирующих подмасштабов при рисовании на экране
-    bool is_use_screen_subscale = false;
-    // Используемый вид единиц измерения размеров (только для целей ввода-вывода размеров)
-    MeasureUnitTypeData measure_unit_type = MeasureUnitTypeData::MEASURE_UNIT_DBU;
-    // Параметры режима "дополнительный масштаб изображения"
-    AdditionalScaleModeType additional_scale_mode = AdditionalScaleModeType::ADDITIONAL_SCALE_NONE;
-    double additional_scale_x = 1;
-    double additional_scale_y = 1;
-    wxString picture_filename; // Имя рисунка для загрузки, переданного через командную строку
 };
 
 enum WhatStatusType
@@ -167,6 +145,9 @@ class PCADViewerApp : public wxApp
         // Глобальные данные программы, описывающие её состояние
         int return_code = 0;
         wxFontData font_data;
+        wxString executable_path;
+        wxString resource_filename;
+        chr::CHRProcessor chr_processor;
         PCADFileFactory file_factory;
         // Значения параметров настройки программы (которые можно указать в диалоге настройки)
         OptionsData options_data;

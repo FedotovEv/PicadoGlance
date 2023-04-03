@@ -30,6 +30,8 @@
 #include "wx/fs_zip.h"
 //*)
 
+#include <wx/xrc/xh_bmp.h>
+
 extern const StdWXObjects std_wx_objects;
 
 using namespace std;
@@ -75,7 +77,7 @@ namespace
         }
         else
         {
-            localized_dir =  wxFileName::DirName(wxStandardPaths::Get().GetResourcesDir());
+            localized_dir = wxFileName::DirName(wxStandardPaths::Get().GetResourcesDir());
             return localized_dir.GetFullPath();
         }
     }
@@ -97,6 +99,7 @@ wxCmdLineEntryDesc const static cmd_line_desc[] =
      wxCMD_LINE_VAL_NONE, wxCMD_LINE_OPTION_HELP},
     {wxCMD_LINE_OPTION, wxT("a"), wxT("aperture-name"), wxT("имя файла апертур")},
     {wxCMD_LINE_SWITCH, wxT("l"), wxT("aperture-laser"), wxT("использовать множество апертур GERBER LASER")},
+    {wxCMD_LINE_SWITCH, wxT("t"), wxT("text-engine"), wxT("использовать собственный движок рисования текста")},
     {wxCMD_LINE_PARAM, NULL, NULL, wxT("входной файл"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL},
     {wxCMD_LINE_NONE}
 };
@@ -197,6 +200,7 @@ bool PCADViewerApp::OnCmdLineParsed(wxCmdLineParser& parser)
         options_data.aperture_filename.clear();
 
     options_data.is_aperture_gerber_laser = parser.Found(wxT("l"));
+    options_data.is_use_chr_text_engine = parser.Found(wxT("t"));
 
     if (parser.GetParamCount() > 0)
         options_data.picture_filename = parser.GetParam(0);
@@ -210,11 +214,31 @@ bool PCADViewerApp::OnInit()
 {
     if (!wxApp::OnInit())
         return false;
-    options_data.is_use_screen_subscale = true;
+    options_data.is_use_chr_text_engine = true;
+    // Настроим указатели на данные конфигурации, которые могут использоваться графическими
+    // примитивами при своём конструировании и/или рисовании.
+    GraphObjGlobalConfig set_graph_glob_conf;
+    set_graph_glob_conf.options_data_ptr = &options_data;
+    set_graph_glob_conf.font_data_ptr = &font_data;
+    set_graph_glob_conf.chr_proc_ptr = &chr_processor;
+    GraphObj::SetGlobalConfigPtrs(set_graph_glob_conf);
+
+    executable_path = wxFileName(wxStandardPaths::Get().GetExecutablePath()).GetPath();
+    resource_filename = executable_path + wxT("\\PCADViewer.xrs");
     //Загружаем файл с ресурсами программы (пока там только иконки кнопок инструментария)
     wxFileSystem::AddHandler(new wxZipFSHandler);
-    wxXmlResource::Get()->InitAllHandlers();
-    wxXmlResource::Get()->Load(wxT("PCADViewer.xrs"));
+    //wxXmlResource::Get()->InitAllHandlers();
+    wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler); // Других ресурсов, кроме растров, у нас пока нет
+    wxXmlResource::Get()->AddHandler(new chr::CHRFontXmlHandler(resource_filename));
+    wxXmlResource::Get()->Load(resource_filename);
+
+    wxObject* chr_font_obj_ptr =
+        wxXmlResource::Get()->LoadObject(nullptr, wxT("default_chr_font"), wxT("fontCHR"));
+    if (chr_font_obj_ptr)
+    {
+        chr_processor.LoadFont(static_cast<wxFSFile*>(chr_font_obj_ptr));
+        delete chr_font_obj_ptr;
+    }
     StampProvider::InitStampProvider();
     GetInstalledLanguages();
 
@@ -259,7 +283,7 @@ bool PCADViewerApp::OnInit()
     wxHelpControllerHelpProvider* provider = new wxHelpControllerHelpProvider;
     wxHelpProvider::Set(provider);
     provider->SetHelpController(&HtmlHelp);
-    HtmlHelp.AddBook(wxFileName(wxT("PCADViewerHelp.zip")));
+    HtmlHelp.AddBook(wxFileName(executable_path + wxT("\\PCADViewerHelp.zip")));
     setlocale(LC_NUMERIC, "C");
 
     return wxsOK;

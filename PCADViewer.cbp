@@ -120,6 +120,8 @@
 		<Unit filename="ProviderStamp.h" />
 		<Unit filename="SetCanvasSize.cpp" />
 		<Unit filename="SetCanvasSize.h" />
+		<Unit filename="chr_font.cpp" />
+		<Unit filename="chr_font.h" />
 		<Unit filename="gerber.cpp" />
 		<Unit filename="gerber.h" />
 		<Unit filename="macroses.cpp" />

@@ -186,8 +186,8 @@ namespace
         }
     }
 
-    TextSignature GetTextSignature(TextOrientation text_orientation, TextAlign text_align)
-    {
+    TextSignature GetTextSignatureBasis(TextOrientation text_orientation, TextAlign text_align)
+    { // Функция заполняет ряд полей сигнатуры текста, общих для всех текстовых движков.
         TextSignature result;
 
         result.text_orientation = text_orientation;
@@ -243,7 +243,12 @@ namespace
                 result.is_mirror = true;
                 break;
         }
+        return result;
+    }
 
+    TextSignature GetTextSignature(TextOrientation text_orientation, TextAlign text_align)
+    { // Функция завершает формирование сигнатуры текста для системного текстового движка.
+        TextSignature result = GetTextSignatureBasis(text_orientation, text_align);
         switch (text_align)
         {
             case TextAlign::TEXT_CENTER_DOWN: // Точка привязки текста по центру снизу
@@ -300,8 +305,16 @@ namespace
             case TextAlign::TEXT_CENTER_CENTER:
                 if (result.is_horizontal)
                 {
-                    result.coord_x = TextCoordAlign::TEXTCOORD_PLUS_HALFWIDTH;
-                    result.coord_y = TextCoordAlign::TEXTCOORD_PLUS_HALFHEIGHT;
+                    if (!result.is_reverse)
+                    {
+                        result.coord_x = TextCoordAlign::TEXTCOORD_MINUS_HALFWIDTH;
+                        result.coord_y = TextCoordAlign::TEXTCOORD_MINUS_HALFHEIGHT;
+                    }
+                    else
+                    {
+                        result.coord_x = TextCoordAlign::TEXTCOORD_PLUS_HALFWIDTH;
+                        result.coord_y = TextCoordAlign::TEXTCOORD_PLUS_HALFHEIGHT;
+                    }
                 }
                 else
                 {
@@ -318,16 +331,8 @@ namespace
                 }
                 break;
             case TextAlign::TEXT_LEFT_DOWN:
-                if (result.is_horizontal)
-                {
-                    result.coord_x = TextCoordAlign::TEXTCOORD_NOOP_WIDTH;
-                    result.coord_y = TextCoordAlign::TEXTCOORD_NOOP_HEIGHT;
-                }
-                else
-                {
-                    result.coord_x = TextCoordAlign::TEXTCOORD_NOOP_HEIGHT;
-                    result.coord_y = TextCoordAlign::TEXTCOORD_NOOP_WIDTH;
-                }
+                result.coord_x = TextCoordAlign::TEXTCOORD_NOOP_WIDTH;
+                result.coord_y = TextCoordAlign::TEXTCOORD_NOOP_HEIGHT;
                 break;
             case TextAlign::TEXT_LEFT_UP:
                 if (result.is_horizontal)
@@ -557,6 +562,252 @@ namespace
         return result;
     }
 
+    TextSignature GetCHRTextSignature(TextOrientation text_orientation, TextAlign text_align)
+    { // Функция завершает формирование сигнатуры текста для CHR-тексторисователя (CHR-текстового движка).
+        TextSignature result = GetTextSignatureBasis(text_orientation, text_align);
+        switch (text_align)
+        {
+        case TextAlign::TEXT_CENTER_DOWN: // Center-Top - CT - точка привязки текста по центру снизу
+            if (result.is_horizontal)
+            {
+                if (!result.is_reverse)
+                {
+                    result.coord_x = TextCoordAlign::TEXTCOORD_MINUS_HALFWIDTH;
+                    result.coord_y = TextCoordAlign::TEXTCOORD_PLUS_HEIGHT;
+                }
+                else
+                {
+                    result.coord_x = TextCoordAlign::TEXTCOORD_PLUS_HALFWIDTH;
+                    result.coord_y = TextCoordAlign::TEXTCOORD_MINUS_HEIGHT;
+                }
+            }
+            else
+            {
+                if (!result.is_reverse)
+                {
+                    result.coord_x = TextCoordAlign::TEXTCOORD_MINUS_HEIGHT;
+                    result.coord_y = TextCoordAlign::TEXTCOORD_MINUS_HALFWIDTH;
+                }
+                else
+                {
+                    result.coord_x = TextCoordAlign::TEXTCOORD_PLUS_HEIGHT;
+                    result.coord_y = TextCoordAlign::TEXTCOORD_PLUS_HALFWIDTH;
+                }
+            }
+            break;
+        case TextAlign::TEXT_CENTER_UP: // Center-Bottom - CB
+            if (result.is_horizontal)
+            {
+                if (!result.is_reverse)
+                    result.coord_x = TextCoordAlign::TEXTCOORD_MINUS_HALFWIDTH;
+                else
+                    result.coord_x = TextCoordAlign::TEXTCOORD_PLUS_HALFWIDTH;
+                result.coord_y = TextCoordAlign::TEXTCOORD_NOOP_HEIGHT;
+            }
+            else
+            {
+                result.coord_x = TextCoordAlign::TEXTCOORD_NOOP_HEIGHT;
+                if (!result.is_reverse)
+                    result.coord_y = TextCoordAlign::TEXTCOORD_MINUS_HALFWIDTH;
+                else
+                    result.coord_y = TextCoordAlign::TEXTCOORD_PLUS_HALFWIDTH;
+            }
+            break;
+        case TextAlign::TEXT_CENTER_CENTER: // Center-Center - CC
+            if (result.is_horizontal)
+            {
+                if (!result.is_reverse)
+                {
+                    result.coord_x = TextCoordAlign::TEXTCOORD_MINUS_HALFWIDTH;
+                    result.coord_y = TextCoordAlign::TEXTCOORD_PLUS_HALFHEIGHT;
+                }
+                else
+                {
+                    result.coord_x = TextCoordAlign::TEXTCOORD_PLUS_HALFWIDTH;
+                    result.coord_y = TextCoordAlign::TEXTCOORD_MINUS_HALFHEIGHT;
+                }
+            }
+            else
+            {
+                if (!result.is_reverse)
+                {
+                    result.coord_x = TextCoordAlign::TEXTCOORD_MINUS_HALFHEIGHT;
+                    result.coord_y = TextCoordAlign::TEXTCOORD_MINUS_HALFWIDTH;
+                }
+                else
+                {
+                    result.coord_x = TextCoordAlign::TEXTCOORD_PLUS_HALFHEIGHT;
+                    result.coord_y = TextCoordAlign::TEXTCOORD_PLUS_HALFWIDTH;
+                }
+            }
+            break;
+        case TextAlign::TEXT_LEFT_DOWN: // Left-Top - LT
+            if (result.is_horizontal)
+            {
+                result.coord_x = TextCoordAlign::TEXTCOORD_NOOP_WIDTH;
+                if (!result.is_reverse)
+                    result.coord_y = TextCoordAlign::TEXTCOORD_PLUS_HEIGHT;
+                else
+                    result.coord_y = TextCoordAlign::TEXTCOORD_MINUS_HEIGHT;
+            }
+            else
+            {
+                result.coord_y = TextCoordAlign::TEXTCOORD_NOOP_WIDTH;
+                if (!result.is_reverse)
+                    result.coord_x = TextCoordAlign::TEXTCOORD_MINUS_HEIGHT;
+                else
+                    result.coord_x = TextCoordAlign::TEXTCOORD_PLUS_HEIGHT;
+            }
+            break;
+        case TextAlign::TEXT_LEFT_UP: // Left-Bottom - LB
+            result.coord_x = TextCoordAlign::TEXTCOORD_NOOP_WIDTH;
+            result.coord_y = TextCoordAlign::TEXTCOORD_NOOP_HEIGHT;
+            break;
+        case TextAlign::TEXT_LEFT_CENTER: // Left-Center - LC
+            if (result.is_horizontal)
+            {
+                result.coord_x = TextCoordAlign::TEXTCOORD_NOOP_WIDTH;
+                if (!result.is_reverse)
+                    result.coord_y = TextCoordAlign::TEXTCOORD_PLUS_HALFHEIGHT;
+                else
+                    result.coord_y = TextCoordAlign::TEXTCOORD_MINUS_HALFHEIGHT;
+            }
+            else
+            {
+                if (!result.is_reverse)
+                    result.coord_x = TextCoordAlign::TEXTCOORD_MINUS_HALFHEIGHT;
+                else
+                    result.coord_x = TextCoordAlign::TEXTCOORD_PLUS_HALFHEIGHT;
+                result.coord_y = TextCoordAlign::TEXTCOORD_NOOP_WIDTH;
+            }
+            break;
+        case TextAlign::TEXT_RIGHT_DOWN: // Right-Top - RT
+            if (result.is_horizontal)
+            {
+                if (!result.is_reverse)
+                {
+                    result.coord_x = TextCoordAlign::TEXTCOORD_MINUS_WIDTH;
+                    result.coord_y = TextCoordAlign::TEXTCOORD_PLUS_HEIGHT;
+                }
+                else
+                {
+                    result.coord_x = TextCoordAlign::TEXTCOORD_PLUS_WIDTH;
+                    result.coord_y = TextCoordAlign::TEXTCOORD_MINUS_HEIGHT;
+                }
+            }
+            else
+            {
+                if (!result.is_reverse)
+                {
+                    result.coord_x = TextCoordAlign::TEXTCOORD_MINUS_HEIGHT;
+                    result.coord_y = TextCoordAlign::TEXTCOORD_MINUS_WIDTH;
+                }
+                else
+                {
+                    result.coord_x = TextCoordAlign::TEXTCOORD_PLUS_HEIGHT;
+                    result.coord_y = TextCoordAlign::TEXTCOORD_PLUS_WIDTH;
+                }
+            }
+            break;
+        case TextAlign::TEXT_RIGHT_UP: // Right-Bottom - RB
+            if (result.is_horizontal)
+            {
+                if (!result.is_reverse)
+                    result.coord_x = TextCoordAlign::TEXTCOORD_MINUS_WIDTH;
+                else
+                    result.coord_x = TextCoordAlign::TEXTCOORD_PLUS_WIDTH;
+                result.coord_y = TextCoordAlign::TEXTCOORD_NOOP_HEIGHT;
+            }
+            else
+            {
+                result.coord_x = TextCoordAlign::TEXTCOORD_NOOP_WIDTH;
+                if (!result.is_reverse)
+                    result.coord_y = TextCoordAlign::TEXTCOORD_MINUS_WIDTH;
+                else
+                    result.coord_y = TextCoordAlign::TEXTCOORD_PLUS_WIDTH;
+            }
+            break;
+        case TextAlign::TEXT_RIGHT_CENTER: // Right-Center - RC - точка привязки текста справа по центру
+            if (result.is_horizontal)
+            {
+                if (!result.is_reverse)
+                {
+                    result.coord_x = TextCoordAlign::TEXTCOORD_MINUS_WIDTH;
+                    result.coord_y = TextCoordAlign::TEXTCOORD_PLUS_HALFHEIGHT;
+                }
+                else
+                {
+                    result.coord_x = TextCoordAlign::TEXTCOORD_PLUS_WIDTH;
+                    result.coord_y = TextCoordAlign::TEXTCOORD_MINUS_HALFHEIGHT;
+                }
+            }
+            else
+            {
+                if (!result.is_reverse)
+                {
+                    result.coord_x = TextCoordAlign::TEXTCOORD_MINUS_HALFHEIGHT;
+                    result.coord_y = TextCoordAlign::TEXTCOORD_MINUS_WIDTH;
+                }
+                else
+                {
+                    result.coord_x = TextCoordAlign::TEXTCOORD_PLUS_HALFHEIGHT;
+                    result.coord_y = TextCoordAlign::TEXTCOORD_PLUS_WIDTH;
+                }
+            }
+            break;
+        }
+
+        if (result.is_mirror)
+        {
+            if (!result.is_horizontal)
+            {
+                switch (result.coord_x)
+                { // Текст вертикальный, координата x отражается, исходя из высоты текста
+                case TextCoordAlign::TEXTCOORD_MINUS_HEIGHT:
+                    result.coord_x = TextCoordAlign::TEXTCOORD_PLUS_HEIGHT; // LT14M
+                    break;
+                case TextCoordAlign::TEXTCOORD_MINUS_HALFHEIGHT:
+                    result.coord_x = TextCoordAlign::TEXTCOORD_PLUS_HALFHEIGHT; // CC14M
+                    break;
+                case TextCoordAlign::TEXTCOORD_NOOP_HEIGHT:
+                    break; // CB14M
+                case TextCoordAlign::TEXTCOORD_PLUS_HALFHEIGHT:
+                    result.coord_x = TextCoordAlign::TEXTCOORD_MINUS_HALFHEIGHT; // CC14M
+                    break;
+                case TextCoordAlign::TEXTCOORD_PLUS_HEIGHT:
+                    result.coord_x = TextCoordAlign::TEXTCOORD_MINUS_HEIGHT; // LT14M
+                    break;
+                default:
+                    break;
+                }
+            }
+            else
+            {
+                switch (result.coord_y)
+                {
+                case TextCoordAlign::TEXTCOORD_MINUS_HEIGHT:
+                    result.coord_y = TextCoordAlign::TEXTCOORD_PLUS_HEIGHT; // LT14M
+                    break;
+                case TextCoordAlign::TEXTCOORD_MINUS_HALFHEIGHT:
+                    result.coord_y = TextCoordAlign::TEXTCOORD_PLUS_HALFHEIGHT; //CC14M
+                    break;
+                case TextCoordAlign::TEXTCOORD_NOOP_HEIGHT:
+                    break; //CB14M
+                case TextCoordAlign::TEXTCOORD_PLUS_HALFHEIGHT:
+                    result.coord_y = TextCoordAlign::TEXTCOORD_MINUS_HALFHEIGHT;//
+                    break;
+                case TextCoordAlign::TEXTCOORD_PLUS_HEIGHT:
+                    result.coord_y = TextCoordAlign::TEXTCOORD_MINUS_HEIGHT; // LT14M
+                    break;
+                default:
+                    break;
+                }
+            }
+        }
+
+        return result;
+    }
+
     wxPoint GetCorrectedTextPos(TextSignature text_signat, wxPoint text_pos, wxSize text_size)
     {
         wxPoint text_pos_corr;
@@ -631,7 +882,6 @@ namespace
     wxRect GetCorrectedTextRect(TextSignature text_signat, wxPoint text_pos_corr, wxSize text_size)
     { // Функция рассчитывает положение и размер прямоугольника, описанного вокруг текста с
       // сигнатурой text_signat, начальной точкой вывода text_pos и размером text_size.
-        wxRect result;
         if (abs(text_signat.text_angle) < ZERO_TOLERANCE)
             // Вывод текста слева направо (угол 0 градусов)
             return wxRect(text_pos_corr, text_size);
@@ -650,8 +900,36 @@ namespace
         else
             // Прочие варианты, которые не должны встречаться
             return wxRect(text_pos_corr, text_size);
+    }
 
-        return result;
+    wxRect GetCHRCorrectedTextRect(TextSignature text_signat, wxPoint text_pos_corr, wxSize text_size)
+    {
+        if (text_signat.is_mirror)
+        {
+            return GetCorrectedTextRect(text_signat, text_pos_corr, text_size);
+        }
+        else
+        {
+            if (abs(text_signat.text_angle) < ZERO_TOLERANCE)
+                // Вывод текста слева направо (угол 0 градусов)
+                return wxRect(text_pos_corr.x, text_pos_corr.y - text_size.GetHeight(),
+                              text_size.GetWidth(), text_size.GetHeight());
+            else if (abs(text_signat.text_angle - 90) < ZERO_TOLERANCE)
+                // Вывод текста снизу вверх (угол 90 градусов)
+                return wxRect(text_pos_corr.x - text_size.GetHeight(), text_pos_corr.y - text_size.GetWidth(),
+                              text_size.GetHeight(), text_size.GetWidth());
+            else if (abs(text_signat.text_angle - 180) < ZERO_TOLERANCE)
+                // Вывод текста справа налево (угол 180 градусов)
+                return wxRect(text_pos_corr.x - text_size.GetWidth(), text_pos_corr.y,
+                              text_size.GetWidth(), text_size.GetHeight());
+            else if (abs(text_signat.text_angle - 270) < ZERO_TOLERANCE)
+                // Вывод текста сверху вниз (угол 270 градусов)
+                return wxRect(text_pos_corr.x, text_pos_corr.y,
+                              text_size.GetHeight(), text_size.GetWidth());
+            else
+                // Прочие варианты, которые не должны встречаться
+                return wxRect(text_pos_corr, text_size);
+        }
     }
 
     std::pair<svg::TextAnchorType, svg::StringPoint> GetSVGCorrTextParams(TextSignature& text_signat)
@@ -768,22 +1046,28 @@ void DrawContext::InitColorPenBrush()
     InitDrawContextByColor(*wxWHITE);
 }
 
-DrawContext::DrawContext()
-{
+void DrawContext::InitThisAppFields()
+{  // Инициализируем поля контекста, содержащие информацию из текущей конфигуации программы.
     PCADViewerApp* this_app = static_cast<PCADViewerApp*>(wxTheApp);
 
     pcad_doc_ptr = &this_app->pcad_file;
+    chr_processor_ptr = &this_app->chr_processor;
+    context_font = this_app->font_data.GetChosenFont();
+    measure_unit_type = this_app->options_data.measure_unit_type;
+    is_use_chr_font = this_app->options_data.is_use_chr_text_engine;
+}
+
+DrawContext::DrawContext()
+{
+    InitThisAppFields();
     target_dc_ptr = nullptr;
     target_dc_size = wxSize(0, 0);
     InitColorPenBrush();
 }
 
 DrawContext::DrawContext(wxDC* arg_target_dc_ptr, bool is_create_recognize_dc)
-{
-    PCADViewerApp* this_app = static_cast<PCADViewerApp*>(wxTheApp);
-
-    // Инициализируем значащие поля контекста соответствующими значениями
-    pcad_doc_ptr = &this_app->pcad_file;
+{  // Инициализируем значащие поля контекста соответствующими значениями
+    InitThisAppFields();
     target_dc_ptr = arg_target_dc_ptr;
     target_dc_size = arg_target_dc_ptr->GetSize();
     InitColorPenBrush();
@@ -799,6 +1083,10 @@ DrawContext::DrawContext(wxDC* arg_target_dc_ptr, bool is_create_recognize_dc)
 void DrawContext::Copier(const DrawContext& rhs)
 { // Копируем в целевую переменную значащие поля переменной-источника.
     pcad_doc_ptr = rhs.pcad_doc_ptr;
+    chr_processor_ptr = rhs.chr_processor_ptr;
+    context_font = rhs.context_font;
+    measure_unit_type = rhs.measure_unit_type;
+    is_use_chr_font = rhs.is_use_chr_font;
     target_dc_ptr = rhs.target_dc_ptr;
     target_dc_size = rhs.target_dc_size;
     context_font = rhs.context_font;
@@ -1026,16 +1314,33 @@ ObjText::ObjText(int layer_number, wxPoint text_point, TextOrientation text_orie
     GraphObj(layer_number), text_point_(text_point), text_orientation_(text_orientation),
     text_height_(text_height), text_align_(text_align), text_(std::move(text))
 {
-    TextSignature text_signat(GetTextSignature(text_orientation_, text_align_));
+    bool is_use_chr = false;
+    if (glob_cfg_.options_data_ptr && glob_cfg_.chr_proc_ptr &&
+        glob_cfg_.options_data_ptr->is_use_chr_text_engine)
+        is_use_chr = glob_cfg_.chr_proc_ptr->GetActiveFontNumber() >= 0;
+
     wxString wx_text(text_.c_str(), wxConvUTF8);
-    wxFont text_font(wxSize(text_height_, 0), wxFontFamily::wxFONTFAMILY_ROMAN,
-                     wxFontStyle::wxFONTSTYLE_NORMAL, wxFontWeight::wxFONTWEIGHT_NORMAL);
     wxBitmap wx_bitmap(10, 10);
     wxMemoryDC memoDC(wx_bitmap);
-    memoDC.SetFont(text_font);
-    wxSize text_size(memoDC.GetTextExtent(wx_text));
-    wxPoint text_point_corr = GetCorrectedTextPos(text_signat, text_point_, text_size);
-    frame_rect_ = GetCorrectedTextRect(text_signat, text_point_corr, text_size);
+    if (is_use_chr)
+    {
+        TextSignature text_signat(GetCHRTextSignature(text_orientation_, text_align_));
+        glob_cfg_.chr_proc_ptr->SetDCFontNumber(&memoDC, -1);
+        glob_cfg_.chr_proc_ptr->SetDCPixelSize(&memoDC, wxSize(0, text_height_));
+        wxSize text_size(glob_cfg_.chr_proc_ptr->GetTextExtent(&memoDC, wx_text));
+        wxPoint text_point_corr = GetCorrectedTextPos(text_signat, text_point_, text_size);
+        frame_rect_ = GetCHRCorrectedTextRect(text_signat, text_point_corr, text_size);
+    }
+    else
+    {
+        TextSignature text_signat(GetTextSignature(text_orientation_, text_align_));
+        wxFont text_font(wxSize(0, text_height_), wxFontFamily::wxFONTFAMILY_ROMAN,
+                         wxFontStyle::wxFONTSTYLE_NORMAL, wxFontWeight::wxFONTWEIGHT_NORMAL);
+        memoDC.SetFont(text_font);
+        wxSize text_size(memoDC.GetTextExtent(wx_text));
+        wxPoint text_point_corr = GetCorrectedTextPos(text_signat, text_point_, text_size);
+        frame_rect_ = GetCorrectedTextRect(text_signat, text_point_corr, text_size);
+    }
 }
 
 void ObjFlash::RecountFrameRect(const FileDefValues& file_values, const ApertureProvider& aperture_provider)
@@ -1628,37 +1933,52 @@ void ObjArc::ShiftObject(int shift_direction_x, int shift_direction_y)
 wxRect ObjText::DrawObject(DrawContext& draw_context) const
 {
     InitDrawContextByLayerNum(draw_context);
-    int text_height_conv;
-    TextSignature text_signat(GetTextSignature(text_orientation_, text_align_));
-    if (text_signat.is_horizontal)
-        text_height_conv = max(text_height_ * draw_context.scale_x, 1.0);
-    else
-        text_height_conv = max(text_height_ * draw_context.scale_y, 1.0);
-
+    int text_height_conv = max(text_height_ * draw_context.scale_x, 1.0);
+    int text_width_conv = max(text_height_ * draw_context.scale_y, 1.0);
     wxString wx_text(text_.c_str(), wxConvUTF8);
-    wxFont text_font(wxSize(0, text_height_conv), draw_context.context_font.GetFamily(),
-                     draw_context.context_font.GetStyle(), draw_context.context_font.GetWeight(),
-                     draw_context.context_font.GetUnderlined(), draw_context.context_font.GetFaceName(),
-                     draw_context.context_font.GetEncoding());
-    draw_context.target_dc_ptr->SetFont(text_font);
     wxPoint text_point_conv = draw_context.ConvertPointToDevice(text_point_);
-    wxSize text_size(draw_context.target_dc_ptr->GetTextExtent(wx_text));
-    wxPoint text_point_corr = GetCorrectedTextPos(text_signat, text_point_conv, text_size);
-    wxRect bound_rect = GetCorrectedTextRect(text_signat, text_point_corr, text_size);
-
     SetPenBrushExt(draw_context);
-    draw_context.target_dc_ptr->DrawRotatedText(wx_text, text_point_corr, text_signat.text_angle);
-    draw_context.target_dc_ptr->SetPen(*wxWHITE_PEN);
+    wxPoint text_point_corr;
+    wxSize text_size;
+    wxRect bound_rect;
+
+    if (draw_context.is_use_chr_font)
+    { // Используем внутренний chr-тексторисователь
+        TextSignature text_signat(GetCHRTextSignature(text_orientation_, text_align_));
+        if (!text_signat.is_horizontal)
+            swap(text_height_conv, text_width_conv);
+        draw_context.chr_processor_ptr->SetDCFontNumber(draw_context.target_dc_ptr, -1)
+                    .SetDCPixelSize(draw_context.target_dc_ptr, wxSize(0, text_height_conv));
+        text_size = draw_context.chr_processor_ptr->GetTextExtent(draw_context.target_dc_ptr, wx_text);
+        text_point_corr = GetCorrectedTextPos(text_signat, text_point_conv, text_size);
+
+        bound_rect = draw_context.chr_processor_ptr->DrawOrientedText(draw_context.target_dc_ptr,
+                     wx_text, text_point_corr, text_orientation_);
+    }
+    else
+    {  // Используем системный текстовый движок
+        TextSignature text_signat(GetTextSignature(text_orientation_, text_align_));
+        if (!text_signat.is_horizontal)
+            swap(text_height_conv, text_width_conv);
+        wxFont text_font(wxSize(0, text_height_conv), draw_context.context_font.GetFamily(),
+                         draw_context.context_font.GetStyle(), draw_context.context_font.GetWeight(),
+                         draw_context.context_font.GetUnderlined(), draw_context.context_font.GetFaceName(),
+                         draw_context.context_font.GetEncoding());
+        draw_context.target_dc_ptr->SetFont(text_font);
+        text_size = draw_context.target_dc_ptr->GetTextExtent(wx_text);
+        text_point_corr = GetCorrectedTextPos(text_signat, text_point_conv, text_size);
+        bound_rect = GetCorrectedTextRect(text_signat, text_point_corr, text_size);
+
+        draw_context.target_dc_ptr->DrawRotatedText(wx_text, text_point_corr, text_signat.text_angle);
+    }
+    //draw_context.target_dc_ptr->SetPen(*wxWHITE_PEN);
     //draw_context.target_dc_ptr->SetBrush(*wxTRANSPARENT_BRUSH);
     //draw_context.target_dc_ptr->DrawCircle(text_point_corr, 2);
     //draw_context.target_dc_ptr->DrawRectangle(bound_rect);
     if (draw_context.recognize_dc.IsOk())
-    {
-        //draw_context.recognize_dc.SetFont(text_font);
-        //draw_context.recognize_dc.DrawRotatedText(wx_text, text_point_corr, text_signat.text_angle);
         draw_context.recognize_dc.DrawRectangle(bound_rect);
-    }
 
+    ClearPenBrush(draw_context);
     return bound_rect;
 }
 

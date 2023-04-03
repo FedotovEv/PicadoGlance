@@ -113,6 +113,7 @@ class PCADViewerFrame: public wxFrame
         void OnScrolledCanvasLeftUp(wxMouseEvent& event);
         void OnMenuItemCanvasFixRatioSelected(wxCommandEvent& event);
         void OnMenuItemCanvasMetricSelected(wxCommandEvent& event);
+        void OnScrolledCanvasMouseWheel(wxMouseEvent& event);
         //*)
 
         enum UpdateSpinCanvasMode
@@ -177,10 +178,10 @@ class PCADViewerFrame: public wxFrame
         wxTimer select_timer;
 
         //(*Identifiers(PCADViewerFrame)
-        static const long ID_PANEL1;
-        static const long ID_SCROLLBAR3;
+        static const long ID_PANEL_VIEW_CANVAS;
+        static const long ID_SCROLLBAR_HOR_POS;
         static const long ID_SCROLLBAR_HOR_CANVAS;
-        static const long ID_SCROLLBAR1;
+        static const long ID_SCROLLBAR_VERT_POS;
         static const long ID_SCROLLBAR_VERT_CANVAS;
         static const long ID_STATUSBAR1;
         static const long ToolOpenFile;

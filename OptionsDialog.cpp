@@ -34,6 +34,7 @@ const long OptionsDialog::ID_TEXTCTRL_UNIT_SCALE_VALUE_X = wxNewId();
 const long OptionsDialog::ID_STATICTEXT5 = wxNewId();
 const long OptionsDialog::ID_TEXTCTRL_UNIT_SCALE_VALUE_Y = wxNewId();
 const long OptionsDialog::ID_CHECKBOX_SCREEN_SUBSCALE = wxNewId();
+const long OptionsDialog::ID_CHECKBOX_OWN_TEXT_ENGINE = wxNewId();
 const long OptionsDialog::ID_BUTTON_OPTION_OK = wxNewId();
 const long OptionsDialog::ID_BUTTON_OPTION_CANCEL = wxNewId();
 //*)
@@ -46,6 +47,7 @@ END_EVENT_TABLE()
 OptionsDialog::OptionsDialog(wxWindow* parent,wxWindowID id)
 {
 	//(*Initialize(OptionsDialog)
+	wxBoxSizer* BoxSizer10;
 	wxBoxSizer* BoxSizer1;
 	wxBoxSizer* BoxSizer2;
 	wxBoxSizer* BoxSizer3;
@@ -124,10 +126,15 @@ OptionsDialog::OptionsDialog(wxWindow* parent,wxWindowID id)
 	GridSizer1->Add(TextAdditionalUnitScaleYValue, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	StaticBoxSizer2->Add(GridSizer1, 2, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	BoxSizer1->Add(StaticBoxSizer2, 4, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	BoxSizer10 = new wxBoxSizer(wxHORIZONTAL);
 	CheckBoxScreenSubscale = new wxCheckBox(this, ID_CHECKBOX_SCREEN_SUBSCALE, _("Подмасштабы для экрана"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_CHECKBOX_SCREEN_SUBSCALE"));
 	CheckBoxScreenSubscale->SetValue(false);
 	CheckBoxScreenSubscale->SetHelpText(_("Выводить изображение на экран с учётом его физического разрешения"));
-	BoxSizer1->Add(CheckBoxScreenSubscale, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	BoxSizer10->Add(CheckBoxScreenSubscale, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	CheckBoxOwnTextEngine = new wxCheckBox(this, ID_CHECKBOX_OWN_TEXT_ENGINE, _("Использовать собственный текстовый движок"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_CHECKBOX_OWN_TEXT_ENGINE"));
+	CheckBoxOwnTextEngine->SetValue(false);
+	BoxSizer10->Add(CheckBoxOwnTextEngine, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	BoxSizer1->Add(BoxSizer10, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	BoxSizer3 = new wxBoxSizer(wxHORIZONTAL);
 	ButtonOptionOk = new wxButton(this, ID_BUTTON_OPTION_OK, _("Принять"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_BUTTON_OPTION_OK"));
 	BoxSizer3->Add(ButtonOptionOk, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);

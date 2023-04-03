@@ -65,7 +65,33 @@ enum class PCADLoadError
     LOAD_FILE_MEMORY_ERROR
 };
 
+enum class AdditionalScaleModeType
+{
+    ADDITIONAL_SCALE_NONE = 0,
+    ADDITIONAL_SCALE_RUSSIAN_INCH,
+    ADDITIONAL_SCALE_ANY
+};
+
 #include <string>
+#include <wx/string.h>
+
+struct OptionsData
+{
+    // Параметры для загрузки файла апертур (вспышек)
+    wxString aperture_filename; // Полное имя нужного файла апертур
+    bool is_aperture_gerber_laser = false; // == true, если следует использовать апертуры типа GERBER LASER
+    // Флаг необходимости использования корректирующих подмасштабов при рисовании на экране
+    bool is_use_screen_subscale = false;
+    // Флажок включения внутреннего chr текстового движка для рисовки текстовых примитивов
+    bool is_use_chr_text_engine = false;
+    // Используемый вид единиц измерения размеров (только для целей ввода-вывода размеров)
+    MeasureUnitTypeData measure_unit_type = MeasureUnitTypeData::MEASURE_UNIT_DBU;
+    // Параметры режима "дополнительный масштаб изображения"
+    AdditionalScaleModeType additional_scale_mode = AdditionalScaleModeType::ADDITIONAL_SCALE_NONE;
+    double additional_scale_x = 1;
+    double additional_scale_y = 1;
+    wxString picture_filename; // Имя рисунка для загрузки, переданного через командную строку
+};
 
 std::string UpcaseString(const std::string& arg_string);
 std::string TrimString(const std::string& arg_string);

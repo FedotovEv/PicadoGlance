@@ -1755,7 +1755,7 @@
 
 1186404052 c:\wxwidgets_2_8_12\include\wx\msw\filedlg.h
 
-1678139784 source:c:\codeblocksprojects\pcadviewer\pcadviewerapp.cpp
+1679922570 source:c:\codeblocksprojects\pcadviewer\pcadviewerapp.cpp
 	"wx_pch.h"
 	"PCADFile.h"
 	"HandlerPLT.h"
@@ -1775,12 +1775,13 @@
 	<wx/xrc/xmlres.h>
 	"wx/filesys.h"
 	"wx/fs_zip.h"
+	<wx/xrc/xh_bmp.h>
 
 1648838245 c:\codeblocksprojects\pcadviewer\wx_pch.h
 	<wx/wxprec.h>
 	<wx/wx.h>
 
-1678233778 c:\codeblocksprojects\pcadviewer\pcadviewerapp.h
+1679917220 c:\codeblocksprojects\pcadviewer\pcadviewerapp.h
 	<fstream>
 	<filesystem>
 	<wx/app.h>
@@ -1793,8 +1794,9 @@
 	<wx/intl.h>
 	"PCADFile.h"
 	"svg.h"
+	"chr_font.h"
 
-1678306670 c:\codeblocksprojects\pcadviewer\pcadviewermain.h
+1680318752 c:\codeblocksprojects\pcadviewer\pcadviewermain.h
 	<filesystem>
 	"PCADViewerApp.h"
 	"ApertureFile.h"
@@ -1808,7 +1810,7 @@
 	<wx/statusbr.h>
 	<wx/toolbar.h>
 
-1678337618 source:c:\codeblocksprojects\pcadviewer\pcadviewermain.cpp
+1680523205 source:c:\codeblocksprojects\pcadviewer\pcadviewermain.cpp
 	<iostream>
 	<iomanip>
 	<fstream>
@@ -1919,7 +1921,7 @@
 	"PCADViewDraw.h"
 	"ApertureProvider.h"
 
-1678235008 c:\codeblocksprojects\pcadviewer\pcadviewdraw.h
+1679859158 c:\codeblocksprojects\pcadviewer\pcadviewdraw.h
 	<string>
 	<vector>
 	<variant>
@@ -1981,7 +1983,7 @@
 	<wx/colour.h>
 	<wx/gdicmn.h>
 
-1677112198 source:c:\codeblocksprojects\pcadviewer\pcadviewdraw.cpp
+1679900557 source:c:\codeblocksprojects\pcadviewer\pcadviewdraw.cpp
 	<iostream>
 	<string>
 	<vector>
@@ -2401,7 +2403,7 @@
 	"wx/string.h"
 	"wx/arrstr.h"
 
-1678337629 c:\codeblocksprojects\pcadviewer\version.h
+1680461611 c:\codeblocksprojects\pcadviewer\version.h
 
 1194606978 c:\wxwidgets_2_8_12\include\wx\clipbrd.h
 	"wx/defs.h"
@@ -2427,8 +2429,9 @@
 	"wx/bitmap.h"
 	"wx/icon.h"
 
-1678111974 c:\codeblocksprojects\pcadviewer\macroses.h
+1679856061 c:\codeblocksprojects\pcadviewer\macroses.h
 	<string>
+	<wx/string.h>
 
 1668412619 source:c:\codeblocksprojects\pcadviewer\svg.cpp
 	<iostream>
@@ -2546,7 +2549,7 @@
 1264663566 c:\wxwidgets_2_8_12\include\wx\dcmirror.h
 	"wx/dc.h"
 
-1673802965 source:c:\codeblocksprojects\pcadviewer\optionsdialog.cpp
+1679424897 source:c:\codeblocksprojects\pcadviewer\optionsdialog.cpp
 	"wx_pch.h"
 	"OptionsDialog.h"
 	"ApertureProvider.h"
@@ -2554,7 +2557,7 @@
 	<wx/intl.h>
 	<wx/string.h>
 
-1673796457 c:\codeblocksprojects\pcadviewer\optionsdialog.h
+1679424897 c:\codeblocksprojects\pcadviewer\optionsdialog.h
 	"macroses.h"
 	"ApertureProvider.h"
 	<wx/button.h>
@@ -2574,7 +2577,7 @@
 	<wx/gdicmn.h>
 	"PCADViewDraw.h"
 
-1675883775 source:c:\codeblocksprojects\pcadviewer\gerber.cpp
+1679980744 source:c:\codeblocksprojects\pcadviewer\gerber.cpp
 	<iostream>
 	<string>
 	<vector>
@@ -2608,4 +2611,19 @@
 1673626241 source:c:\codeblocksprojects\pcadviewer\macroses.cpp
 	"macroses.h"
 	<string>
+
+1680196621 source:c:\codeblocksprojects\pcadviewer\chr_font.cpp
+	"chr_font.h"
+	<wx/filesys.h>
+	<iostream>
+	<fstream>
+
+1679922290 c:\codeblocksprojects\pcadviewer\chr_font.h
+	"PCADViewDraw.h"
+	"wx/xrc/xmlres.h"
+	<string>
+	<filesystem>
+
+1186404080 c:\wxwidgets_2_8_12\include\wx\xrc\xh_bmp.h
+	"wx/xrc/xmlres.h"
 

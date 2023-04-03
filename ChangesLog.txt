@@ -1,3 +1,24 @@
+02 April 2023
+   released version 1.7.7 of PCADViewer
+
+     Change log:
+        -Added: Реализована прокрутка изображения колесом мыши
+
+30 March 2023
+   released version 1.7.6 of PCADViewer
+
+     Change log:
+        -Fixed: Исправления и дополнения в загрузчике CHR
+        -Added: Организовано хранение шрифта по умолчанию в файле xrs-ресурсов
+
+27 March 2023
+   released version 1.7.3 of PCADViewer
+
+     Change log:
+        -Added: Новый шрифтовой движок на основе CHR- формата.
+        -Fixed: Исправление ошибок выравнивания шрифтов при использовании системного движка
+        -Added: Хранение умолчального CHR-шрифта в ресурсах
+
 09 March 2023
    released version 1.6.2 of PCADViewer
 

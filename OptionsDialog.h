@@ -29,6 +29,7 @@ class OptionsDialog: public wxDialog
 		wxButton* ButtonLoadAperture;
 		wxButton* ButtonOptionCancel;
 		wxButton* ButtonOptionOk;
+		wxCheckBox* CheckBoxOwnTextEngine;
 		wxCheckBox* CheckBoxScreenSubscale;
 		wxComboBox* ComboBoxApertureSection;
 		wxListBox* ListBoxApertures;
@@ -70,6 +71,7 @@ class OptionsDialog: public wxDialog
 		static const long ID_STATICTEXT5;
 		static const long ID_TEXTCTRL_UNIT_SCALE_VALUE_Y;
 		static const long ID_CHECKBOX_SCREEN_SUBSCALE;
+		static const long ID_CHECKBOX_OWN_TEXT_ENGINE;
 		static const long ID_BUTTON_OPTION_OK;
 		static const long ID_BUTTON_OPTION_CANCEL;
 		//*)

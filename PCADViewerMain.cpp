@@ -59,10 +59,10 @@ enum wxbuildinfoformat {
 const long PCADViewerFrame::SELECT_TIMER_ID = wxNewId();
 
 //(*IdInit(PCADViewerFrame)
-const long PCADViewerFrame::ID_PANEL1 = wxNewId();
-const long PCADViewerFrame::ID_SCROLLBAR3 = wxNewId();
+const long PCADViewerFrame::ID_PANEL_VIEW_CANVAS = wxNewId();
+const long PCADViewerFrame::ID_SCROLLBAR_HOR_POS = wxNewId();
 const long PCADViewerFrame::ID_SCROLLBAR_HOR_CANVAS = wxNewId();
-const long PCADViewerFrame::ID_SCROLLBAR1 = wxNewId();
+const long PCADViewerFrame::ID_SCROLLBAR_VERT_POS = wxNewId();
 const long PCADViewerFrame::ID_SCROLLBAR_VERT_CANVAS = wxNewId();
 const long PCADViewerFrame::ID_STATUSBAR1 = wxNewId();
 const long PCADViewerFrame::ToolOpenFile = wxNewId();
@@ -194,16 +194,16 @@ PCADViewerFrame::PCADViewerFrame(wxWindow* parent, wxWindowID id) : select_timer
     SetMinSize(wxSize(50,50));
     BoxSizer1 = new wxBoxSizer(wxHORIZONTAL);
     BoxSizer2 = new wxBoxSizer(wxVERTICAL);
-    ScrolledCanvas = new wxPanel(this, ID_PANEL1, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL|wxWANTS_CHARS|wxFULL_REPAINT_ON_RESIZE, _T("ID_PANEL1"));
+    ScrolledCanvas = new wxPanel(this, ID_PANEL_VIEW_CANVAS, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL|wxWANTS_CHARS|wxFULL_REPAINT_ON_RESIZE, _T("ID_PANEL_VIEW_CANVAS"));
     BoxSizer2->Add(ScrolledCanvas, 10, wxALL|wxEXPAND, 0);
-    ScrollBarHorPos = new wxScrollBar(this, ID_SCROLLBAR3, wxDefaultPosition, wxDefaultSize, wxSB_HORIZONTAL, wxDefaultValidator, _T("ID_SCROLLBAR3"));
+    ScrollBarHorPos = new wxScrollBar(this, ID_SCROLLBAR_HOR_POS, wxDefaultPosition, wxDefaultSize, wxSB_HORIZONTAL, wxDefaultValidator, _T("ID_SCROLLBAR_HOR_POS"));
     ScrollBarHorPos->SetScrollbar(0, 1, 10, 1);
     BoxSizer2->Add(ScrollBarHorPos, 0, wxALL|wxEXPAND, 0);
     ScrollBarHorCanvasPos = new wxScrollBar(this, ID_SCROLLBAR_HOR_CANVAS, wxDefaultPosition, wxDefaultSize, wxSB_HORIZONTAL, wxDefaultValidator, _T("ID_SCROLLBAR_HOR_CANVAS"));
     ScrollBarHorCanvasPos->SetScrollbar(0, 1, 10, 1);
     BoxSizer2->Add(ScrollBarHorCanvasPos, 0, wxALL|wxEXPAND, 0);
     BoxSizer1->Add(BoxSizer2, 10, wxALL|wxEXPAND, 0);
-    ScrollBarVertPos = new wxScrollBar(this, ID_SCROLLBAR1, wxDefaultPosition, wxDefaultSize, wxSB_VERTICAL, wxDefaultValidator, _T("ID_SCROLLBAR1"));
+    ScrollBarVertPos = new wxScrollBar(this, ID_SCROLLBAR_VERT_POS, wxDefaultPosition, wxDefaultSize, wxSB_VERTICAL, wxDefaultValidator, _T("ID_SCROLLBAR_VERT_POS"));
     ScrollBarVertPos->SetScrollbar(0, 1, 10, 1);
     BoxSizer1->Add(ScrollBarVertPos, 0, wxALL|wxEXPAND, 0);
     ScrollBarVertCanvasPos = new wxScrollBar(this, ID_SCROLLBAR_VERT_CANVAS, wxDefaultPosition, wxDefaultSize, wxSB_VERTICAL, wxDefaultValidator, _T("ID_SCROLLBAR_VERT_CANVAS"));
@@ -432,10 +432,11 @@ PCADViewerFrame::PCADViewerFrame(wxWindow* parent, wxWindowID id) : select_timer
     ScrolledCanvas->Connect(wxEVT_MIDDLE_DOWN,(wxObjectEventFunction)&PCADViewerFrame::OnScrolledCanvasMiddleDown,0,this);
     ScrolledCanvas->Connect(wxEVT_RIGHT_DOWN,(wxObjectEventFunction)&PCADViewerFrame::OnScrolledCanvasRightDown,0,this);
     ScrolledCanvas->Connect(wxEVT_MOTION,(wxObjectEventFunction)&PCADViewerFrame::OnScrolledCanvasMouseMove,0,this);
+    ScrolledCanvas->Connect(wxEVT_MOUSEWHEEL,(wxObjectEventFunction)&PCADViewerFrame::OnScrolledCanvasMouseWheel,0,this);
     ScrolledCanvas->Connect(wxEVT_SIZE,(wxObjectEventFunction)&PCADViewerFrame::OnScrolledCanvasResize,0,this);
-    Connect(ID_SCROLLBAR3,wxEVT_SCROLL_CHANGED,(wxObjectEventFunction)&PCADViewerFrame::OnScrollBarHorPosScrollChanged);
+    Connect(ID_SCROLLBAR_HOR_POS,wxEVT_SCROLL_CHANGED,(wxObjectEventFunction)&PCADViewerFrame::OnScrollBarHorPosScrollChanged);
     Connect(ID_SCROLLBAR_HOR_CANVAS,wxEVT_SCROLL_CHANGED,(wxObjectEventFunction)&PCADViewerFrame::OnScrollBarHorCanvasPosScrollChanged);
-    Connect(ID_SCROLLBAR1,wxEVT_SCROLL_CHANGED,(wxObjectEventFunction)&PCADViewerFrame::OnScrollBarVertPosScrollChanged);
+    Connect(ID_SCROLLBAR_VERT_POS,wxEVT_SCROLL_CHANGED,(wxObjectEventFunction)&PCADViewerFrame::OnScrollBarVertPosScrollChanged);
     Connect(ID_SCROLLBAR_VERT_CANVAS,wxEVT_SCROLL_CHANGED,(wxObjectEventFunction)&PCADViewerFrame::OnScrollBarVertCanvasPosScrollChanged);
     Connect(ToolOpenFile,wxEVT_COMMAND_TOOL_CLICKED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuOpenSelected);
     Connect(ToolCloseFile,wxEVT_COMMAND_TOOL_CLICKED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuCloseSelected);
@@ -762,11 +763,10 @@ void PCADViewerFrame::OnScrolledCanvasPaint(wxPaintEvent& event)
     DrawContext& use_context = this_app->last_draw_context;
     SizePositionData pd = CountSizePosition();
 
+    use_context.InitThisAppFields();
     wxPaintDC target_dc(ScrolledCanvas);
     use_context.ResetTargetDC(&target_dc, true);
     use_context.InitColorPenBrush();
-    use_context.context_font = this_app->font_data.GetChosenFont();
-    use_context.measure_unit_type = this_app->options_data.measure_unit_type;
     // И так, прямоугольник-источник pd.source_draw_part нужно спроецировать на target_dc.
     use_context.ResetProjectRect(pd.source_draw_part);
     // Прямоугольник холста в пространстве исходного изображения - pd.source_canvas.
@@ -999,7 +999,6 @@ void PCADViewerFrame::OnMenuExportToTextSelected(wxCommandEvent& event)
     wxRect canvas_rect = wxRect(this_app->canvas_context.canvas_position, canvas_size);
 
     DrawContext draw_context;
-    draw_context.measure_unit_type = this_app->options_data.measure_unit_type;
     draw_context.text_export_style = TextExportStyleType::TEXT_EXPORT_PRECISION_STYLE;
     string picture_filename = this_app->pcad_file.GetPictureFilePath().filename().string();
     string zpt = " , ";
@@ -1780,7 +1779,6 @@ bool PCADViewerFrame::DoGraphExporting(GraphExportContext& export_context)
         draw_context.clipping_rect.Intersect(this_app->select_contour.contour_rect);
 
     draw_context.InitColorPenBrush();
-    draw_context.context_font = this_app->font_data.GetChosenFont();
     draw_context.is_use_selected = false;
     // Совершаем предварительные предэкспортные действия, необходимые до рисовки экспортного изображения
     if (export_context.export_type == GraphExportType::GRAPH_EXPORT_PRINTER)
@@ -2565,11 +2563,29 @@ void PCADViewerFrame::OnMenuItemNearestStdScaleXSelected(wxCommandEvent& event)
 void PCADViewerFrame::OnMenuItemFontsSelected(wxCommandEvent& event)
 {
     PCADViewerApp* this_app = static_cast<PCADViewerApp*>(wxTheApp);
-    wxFontDialog font_dialog(this, this_app->font_data);
 
-    if (font_dialog.ShowModal() != wxID_OK)
-        return;
-    this_app->font_data = font_dialog.GetFontData();
+    if (this_app->options_data.is_use_chr_text_engine)
+    {
+        wxFileDialog open_chr_font_dialog(this, _("Установить CHR-шрифт"), {}, {},
+                                          _("Шрифты CHR|*.chr"), wxFD_OPEN|wxFD_FILE_MUST_EXIST);
+        if (open_chr_font_dialog.ShowModal() == wxID_CANCEL)
+            return;
+
+        this_app->chr_processor.Clear();
+        auto load_font_result_pair =
+            this_app->chr_processor.LoadFont(open_chr_font_dialog.GetPath());
+        if (load_font_result_pair.second != chr::CHRLoadErrCode::CHR_ERR_NO_ERROR)
+            wxMessageBox(this_app->chr_processor.GetTextErrMessage(load_font_result_pair.second),
+                         _("Ошибка при обработке CHR-шрифта"));
+    }
+    else
+    {
+        wxFontDialog font_dialog(this, this_app->font_data);
+
+        if (font_dialog.ShowModal() != wxID_OK)
+            return;
+        this_app->font_data = font_dialog.GetFontData();
+    }
     ScrolledCanvas->Refresh();
 }
 
@@ -2585,6 +2601,7 @@ void PCADViewerFrame::OnMenuItemOptionsSelected(wxCommandEvent& event)
         options_dialog.ComboBoxApertureSection->SetValue(wxT("GERBER 32"));
 
     options_dialog.CheckBoxScreenSubscale->SetValue(this_app->options_data.is_use_screen_subscale);
+    options_dialog.CheckBoxOwnTextEngine->SetValue(this_app->options_data.is_use_chr_text_engine);
 
     switch (this_app->options_data.additional_scale_mode)
     {
@@ -2633,6 +2650,7 @@ void PCADViewerFrame::OnMenuItemOptionsSelected(wxCommandEvent& event)
         return;
 
     this_app->options_data.is_use_screen_subscale = options_dialog.CheckBoxScreenSubscale->GetValue();
+    this_app->options_data.is_use_chr_text_engine = options_dialog.CheckBoxOwnTextEngine->GetValue();
 
     if (options_dialog.RadioAdditionalUnitScaleOff->GetValue())
         this_app->options_data.additional_scale_mode = AdditionalScaleModeType::ADDITIONAL_SCALE_NONE;
@@ -2795,4 +2813,58 @@ void PCADViewerFrame::OnMenuItemCanvasMetricSelected(wxCommandEvent& event)
                          UpdateSpinCanvasMode::UPDATE_HOR_CANVAS_SPIN |
                          UpdateSpinCanvasMode::UPDATE_VERT_CANVAS_SPIN);
     }
+}
+
+void PCADViewerFrame::OnScrolledCanvasMouseWheel(wxMouseEvent& event)
+{
+    PCADViewerApp* this_app = static_cast<PCADViewerApp*>(wxTheApp);
+    if (event.AltDown() || event.MiddleIsDown())
+    { // Движение колеса при удержании Alt или средней кнопки мыши - смена масштаба
+        wxCommandEvent cmd_event;
+        if (event.GetWheelRotation() >= event.GetWheelDelta())
+        {
+            if (event.ControlDown())
+                OnMenuScaleUpYSelected(cmd_event);
+            else
+                OnMenuScaleUpXSelected(cmd_event);
+        }
+        else if (event.GetWheelRotation() <= event.GetWheelDelta())
+        {
+            if (event.ControlDown())
+                OnMenuScaleDownYSelected(cmd_event);
+            else
+                OnMenuScaleDownXSelected(cmd_event);
+        }
+        return;
+    }
+    // При нажатом Ctrl или левой кнопке мыши выполняем движение холста,
+    // при отпущенных как Ctrl, так и левой кнопке мыши - движение самой картинки.
+    bool is_move_canvas = event.ControlDown() || event.LeftIsDown();
+    if (is_move_canvas && !this_app->canvas_context.is_canvas)
+        return; // Движение холста разрешаем только, если он включён
+
+    wxKeyEvent key_event;
+    if (event.GetWheelRotation() >= event.GetWheelDelta())
+    {
+        if (event.ShiftDown() || event.RightIsDown())
+            key_event.m_keyCode = WXK_RIGHT; // Нажатый Shift или правая кнопка мыши - прокрутка по горизонтали
+        else
+            key_event.m_keyCode = WXK_DOWN; // Отпущен как Shift, так и правая кнопка мыши - прокрутка по вертикали
+    }
+    else if (event.GetWheelRotation() <= event.GetWheelDelta())
+    {
+        if (event.ShiftDown() || event.RightIsDown())
+            key_event.m_keyCode = WXK_LEFT; // Нажатый Shift или правая кнопка мыши - прокрутка по горизонтали
+        else
+            key_event.m_keyCode = WXK_UP; // Отпущен как Shift, так и правая кнопка мыши - прокрутка по вертикали
+    }
+    else
+    {
+        return;
+    }
+    key_event.m_controlDown = is_move_canvas;
+    key_event.m_shiftDown = false;
+    key_event.m_altDown = false;
+    key_event.m_metaDown = false;
+    OnScrolledCanvasKeyDown(key_event);
 }

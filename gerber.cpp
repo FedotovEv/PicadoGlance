@@ -495,18 +495,23 @@ namespace HandlerGERBER
         aperture::FlashDesc current_aperture = addit_load_info.aperture_provider.GetFlashDesc(0);
         wxPoint current_point(0, 0);
         bool is_light_on = false;
+        PCADLoadError load_err_val = PCADLoadError::LOAD_FILE_NO_ERROR;
 
         while (istr.good())
         {
             GraphObj* graph_obj_ptr = nullptr;
+            bool is_invalid_command_block = false;
             // Считываем очередной кадр команд, отделённый символами '*'
             string gerber_command;
             getline(istr, gerber_command, '*');
             gerber_command = TrimString(gerber_command);
             if (!gerber_command.size())
                 continue;
+
             for (GerberOpDescription& command : DecodeGerberCommandPacket(gerber_command))
             {
+                if (is_invalid_command_block)
+                    break;
                 switch (command.opcode)
                 {
                 case GerberOpCode::GERBER_LIGHT_ON:
@@ -551,13 +556,14 @@ namespace HandlerGERBER
                     break;
                 case GerberOpCode::GERBER_WORK_END:
                     return ProcessExitData(move(graph_objects), move(layers), addit_load_info,
-                                           move(file_values), PCADLoadError::LOAD_FILE_NO_ERROR);
+                                           move(file_values), load_err_val);
                 case GerberOpCode::GERBER_OPCODE_NOP:
                     break;
                 case GerberOpCode::GERBER_ERROR:
                 default:
-                    return ProcessExitData(move(graph_objects), move(layers), addit_load_info,
-                                           move(file_values), PCADLoadError::LOAD_FILE_BAD_RECORD_FORMAT);
+                    load_err_val = PCADLoadError::LOAD_FILE_BAD_RECORD_FORMAT;
+                    is_invalid_command_block = true;
+                    break;
                 }
                 if (graph_obj_ptr)
                     // Успешно сформирован очередной графический примитив - добавим его в список примитивов чертежа.
@@ -570,7 +576,7 @@ namespace HandlerGERBER
         }
 
         return ProcessExitData(move(graph_objects), move(layers), addit_load_info,
-                               move(file_values), PCADLoadError::LOAD_FILE_NO_ERROR);
+                               move(file_values), load_err_val);
     }
 
     FileWorkshop::LoadFileResult EXCELLONFileWorkshop::LoadPCADFile(std::istream& istr,
@@ -601,12 +607,13 @@ namespace HandlerGERBER
         unordered_map<int, double> bit_number_to_diameter;
         wxPoint last_drill_point(0, 0);
         DrillBitIdent current_drill_bit{1, 1.0};
+        PCADLoadError load_err_val = PCADLoadError::LOAD_FILE_NO_ERROR;
 
         while (istr.good())
         {
             GraphObj* graph_obj_ptr = nullptr;
             double work_drill_diameter;
-            // Считываем очередной кадр команд, отделённый символами '*'
+            // Считываем очередную команду сверловки, размещённую в отдельной строке
             string excellon_command;
             getline(istr, excellon_command);
             excellon_command = TrimString(excellon_command);
@@ -622,14 +629,12 @@ namespace HandlerGERBER
                 if (file_values.DBU_in_measure_unit > 0)
                     return ProcessExitData(move(graph_objects), move(layers), addit_load_info,
                                            move(file_values), PCADLoadError::LOAD_FILE_BAD_RECORD_FORMAT);
-
                 file_values.DBU_in_measure_unit = MM_DBU_IN_MEASURE_UNIT; // 100 DBU на миллиметр
                 break;
             case ExcellonOpCode::EXCELLON_SET_UNIT_INCH:
                 if (file_values.DBU_in_measure_unit > 0)
                     return ProcessExitData(move(graph_objects), move(layers), addit_load_info,
                                            move(file_values), PCADLoadError::LOAD_FILE_BAD_RECORD_FORMAT);
-
                 file_values.DBU_in_measure_unit = INCH_DBU_IN_MEASURE_UNIT; // 10000 DBU на дюйм
                 file_values.file_flags = FILE_FLAG_UNIT_INCHES;
                 break;
@@ -652,8 +657,10 @@ namespace HandlerGERBER
                 break;
             case ExcellonOpCode::EXCELLON_PROCEED_DRILL:
                 if (file_values.DBU_in_measure_unit <= 0)
-                    return ProcessExitData(move(graph_objects), move(layers), addit_load_info,
-                                           move(file_values), PCADLoadError::LOAD_FILE_BAD_RECORD_FORMAT);
+                {
+                    load_err_val = PCADLoadError::LOAD_FILE_BAD_RECORD_FORMAT;
+                    break;
+                }
                 if (!command.is_x_specified)
                     command.point.x = last_drill_point.x;
                 if (!command.is_y_specified)
@@ -684,13 +691,13 @@ namespace HandlerGERBER
                 break;
             case ExcellonOpCode::EXCELLION_WORK_END:
                 return ProcessExitData(move(graph_objects), move(layers), addit_load_info,
-                                       move(file_values), PCADLoadError::LOAD_FILE_NO_ERROR);
+                                       move(file_values), load_err_val);
             case ExcellonOpCode::EXCELLON_OPCODE_NOP:
                 break;
             case ExcellonOpCode::EXCELLON_ERROR:
             default:
-                return ProcessExitData(move(graph_objects), move(layers), addit_load_info,
-                                       move(file_values), PCADLoadError::LOAD_FILE_BAD_RECORD_FORMAT);
+                load_err_val = PCADLoadError::LOAD_FILE_BAD_RECORD_FORMAT;
+                break;
             }
 
             if (graph_obj_ptr)
@@ -703,6 +710,6 @@ namespace HandlerGERBER
         }
 
         return ProcessExitData(move(graph_objects), move(layers), addit_load_info,
-                               move(file_values), PCADLoadError::LOAD_FILE_NO_ERROR);
+                               move(file_values), load_err_val);
     }
 } // namespace HandlerGERBER

@@ -194,6 +194,12 @@ struct StdWXObjects
 };
 
 class PCADFile;
+
+namespace chr
+{
+    class CHRProcessor;
+}
+
 struct FileDefValues;
 
 struct DrawContext
@@ -206,6 +212,8 @@ struct DrawContext
     PCADFile* pcad_doc_ptr = nullptr;
     wxDC* target_dc_ptr = nullptr;
     wxSize target_dc_size;
+    chr::CHRProcessor* chr_processor_ptr = nullptr;
+    bool is_use_chr_font = false; // Флажок применения chr-текторисователя.
     wxFont context_font; // Текущий шрифт, атрибуты которого (вся информация о шрифте, кроме высоты)
                          // будут использоваться для вывода текстовых элементов на изображение.
     // Блок полей определения инструментов рисования - перьев и кистей.
@@ -256,6 +264,7 @@ struct DrawContext
     void Copier(const DrawContext& rhs);
     void InitDrawContextByColor(const SelColorType& set_color);
     void InitColorPenBrush();
+    void InitThisAppFields();
     void ResetTargetDC(wxDC* arg_target_dc_ptr, bool is_create_recognize_dc = false);
     void ResetTargetSize(wxSize new_target_size, bool is_from_target_dc = false);
     void ResetRecognizeDC(wxSize new_dc_size);
@@ -266,6 +275,13 @@ struct DrawContext
     // Преобразует точку на целевой поверхности target_dc в точку в координатном пространстве PCAD-изображения.
     wxPoint ConvertPointFromDevice(wxPoint pict_point);
     wxRect ConvertRectFromDevice(wxRect pict_rect);
+};
+
+struct GraphObjGlobalConfig
+{
+    OptionsData* options_data_ptr = nullptr; // Указатель на структуру глобальной конфигурации
+    wxFontData* font_data_ptr = nullptr; // Указатель на текущий системный шрифт
+    chr::CHRProcessor* chr_proc_ptr = nullptr; // Указатель на используемый в системе CHR-обработчик
 };
 
 struct GraphObjAttributes
@@ -314,6 +330,11 @@ public:
     int GetLayerNumber()
     {
         return layer_number_;
+    }
+
+    static void SetGlobalConfigPtrs(GraphObjGlobalConfig glob_cfg)
+    {
+        glob_cfg_ = glob_cfg;
     }
 
 protected:
@@ -383,7 +404,10 @@ protected:
     int layer_number_ = -1; // Номер слоя, к которому относится примитив.
                             // Значение -1 указывает, что объект внеслоевой.
     mutable GraphObjAttributes graph_obj_attributes_; // Некоторая дополнительная информация,
-                                            // хранящаяся вместе с примитивом.
+                                                      // хранящаяся вместе с примитивом.
+    inline static GraphObjGlobalConfig glob_cfg_; // Коллекция указателей на различные структуры,
+                                           // описывающие нужные нам настройки глобальной конфигурации.
+
 private:
     inline static uint32_t last_graph_object_ordinal_ = 0;
 };

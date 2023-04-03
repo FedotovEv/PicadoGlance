@@ -238,12 +238,27 @@
 				<option>4</option>
 			</object>
 			<object class="sizeritem">
-				<object class="wxCheckBox" name="ID_CHECKBOX_SCREEN_SUBSCALE" variable="CheckBoxScreenSubscale" member="yes">
-					<label>Подмасштабы для экрана</label>
-					<help>Выводить изображение на экран с учётом его физического разрешения</help>
+				<object class="wxBoxSizer" variable="BoxSizer10" member="no">
+					<object class="sizeritem">
+						<object class="wxCheckBox" name="ID_CHECKBOX_SCREEN_SUBSCALE" variable="CheckBoxScreenSubscale" member="yes">
+							<label>Подмасштабы для экрана</label>
+							<help>Выводить изображение на экран с учётом его физического разрешения</help>
+						</object>
+						<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+					</object>
+					<object class="sizeritem">
+						<object class="wxCheckBox" name="ID_CHECKBOX_OWN_TEXT_ENGINE" variable="CheckBoxOwnTextEngine" member="yes">
+							<label>Использовать собственный текстовый движок</label>
+						</object>
+						<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
 				</object>
 				<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
 				<border>5</border>
+				<option>1</option>
 			</object>
 			<object class="sizeritem">
 				<object class="wxBoxSizer" variable="BoxSizer3" member="no">
