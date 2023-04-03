@@ -2575,8 +2575,17 @@ void PCADViewerFrame::OnMenuItemFontsSelected(wxCommandEvent& event)
         auto load_font_result_pair =
             this_app->chr_processor.LoadFont(open_chr_font_dialog.GetPath());
         if (load_font_result_pair.second != chr::CHRLoadErrCode::CHR_ERR_NO_ERROR)
+        {
+            wxObject* chr_font_obj_ptr =
+                wxXmlResource::Get()->LoadObject(nullptr, wxT("default_chr_font"), wxT("fontCHR"));
+            if (chr_font_obj_ptr)
+            {
+                this_app->chr_processor.LoadFont(static_cast<wxFSFile*>(chr_font_obj_ptr));
+                delete chr_font_obj_ptr;
+            }
             wxMessageBox(this_app->chr_processor.GetTextErrMessage(load_font_result_pair.second),
                          _("Ошибка при обработке CHR-шрифта"));
+        }
     }
     else
     {
