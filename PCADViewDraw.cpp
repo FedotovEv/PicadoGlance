@@ -35,6 +35,27 @@ namespace
     const uint32_t std_line_masks[] =
         {SOLID_LINE_MASK, DOTTED_LINE_MASK, DASHED_LINE_MASK};
 
+    struct ArcTask
+    {
+        // arc_center;
+        double arc_center_x;
+        double arc_center_y;
+        // arc_begin;
+        double arc_begin_x;
+        double arc_begin_y;
+        // arc_end;
+        double arc_end_x;
+        double arc_end_y;
+        double line_width_hor;
+        double line_width_vert;
+    };
+
+    struct DoublePoint
+    {
+        double x = 0;
+        double y = 0;
+    };
+
     int AngleQuarterNumber(double angle)
     { // Возвращает номер четверти (от 1 до 4), к которой принадлежит угол angle.
       // Угол принадлежит диапазону [-M_PI, M_PI], как его возвращает функция atan2().
@@ -80,24 +101,26 @@ namespace
         return 0.0;
     }
 
-    wxRect CountArcBoundRect(wxPoint arc_center, wxPoint arc_begin, wxPoint arc_end, int line_width_hor, int line_width_vert)
+    void CountArcBoundRect(ArcTask& arc, const function<void(DoublePoint, double, double)>& point_processor)
     { //Функция вычисляет параметры прямоугольника, описанного вокруг дуги, заданной центром и двумя граничными точками
-        wxRect frame_rect;
-        double radius_arc = sqrt((arc_begin.x - arc_center.x) * (arc_begin.x - arc_center.x) +
-                                 (arc_center.y - arc_begin.y) * (arc_center.y - arc_begin.y));
-        double start_angle = atan2(arc_center.y - arc_begin.y, arc_begin.x - arc_center.x);
-        double end_angle = atan2(arc_center.y - arc_end.y, arc_end.x - arc_center.x);
+        double radius_arc = sqrt((arc.arc_begin_x - arc.arc_center_x) * (arc.arc_begin_x - arc.arc_center_x) +
+                                 (arc.arc_center_y - arc.arc_begin_y) * (arc.arc_center_y - arc.arc_begin_y));
+        double start_angle = atan2(arc.arc_center_y - arc.arc_begin_y, arc.arc_begin_x - arc.arc_center_x);
+        double end_angle = atan2(arc.arc_center_y - arc.arc_end_y, arc.arc_end_x - arc.arc_center_x);
 
-        arc_end = wxPoint(arc_center.x + radius_arc * cos(end_angle),
-                          arc_center.y - radius_arc * sin(end_angle));
-        line_width_hor = max(line_width_hor, 1);
-        line_width_vert = max(line_width_hor, 1);
+        arc.arc_end_x = arc.arc_center_x + radius_arc * cos(end_angle);
+        arc.arc_end_y = arc.arc_center_y - radius_arc * sin(end_angle);
 
-        int current_line_width = CountCurrentLineWidth(ConvertTO2PI(start_angle), line_width_hor, line_width_vert);
-        frame_rect.Union(wxRect(arc_begin.x, arc_begin.y, current_line_width, current_line_width));
+        arc.line_width_hor = max(arc.line_width_hor, 1.0);
+        arc.line_width_vert = max(arc.line_width_hor, 1.0);
 
-        current_line_width = CountCurrentLineWidth(ConvertTO2PI(end_angle), line_width_hor, line_width_vert);
-        frame_rect.Union(wxRect(arc_end.x, arc_end.y, current_line_width, current_line_width));
+        double current_line_width = CountCurrentLineWidthDbl
+            (ConvertTO2PI(start_angle), arc.line_width_hor, arc.line_width_vert);
+        point_processor(DoublePoint{arc.arc_begin_x, arc.arc_begin_y}, current_line_width, current_line_width);
+
+        current_line_width = CountCurrentLineWidthDbl
+            (ConvertTO2PI(end_angle), arc.line_width_hor, arc.line_width_vert);
+        point_processor(DoublePoint{arc.arc_end_x, arc.arc_end_y}, current_line_width, current_line_width);
 
         int start_angle_quarter = AngleQuarterNumber(start_angle);
         int end_angle_quarter = AngleQuarterNumber(end_angle);
@@ -108,17 +131,21 @@ namespace
             { // Рисуется почти полная окружность, добавляем к вычисляемому описанному
               // прямоугольнику все 4 крайние точки окружности
                 // Правая крайняя точка окружности
-                current_line_width = CountCurrentLineWidth(0, line_width_hor, line_width_vert);
-                frame_rect.Union(wxRect(arc_center.x + radius_arc, arc_center.y, current_line_width, current_line_width));
+                current_line_width = CountCurrentLineWidthDbl(0, arc.line_width_hor, arc.line_width_vert);
+                point_processor(DoublePoint{arc.arc_center_x + radius_arc, arc.arc_center_y},
+                                current_line_width, current_line_width);
                 // Верхняя крайняя точка окружности
-                current_line_width = CountCurrentLineWidth(M_PI / 2, line_width_hor, line_width_vert);
-                frame_rect.Union(wxRect(arc_center.x, arc_center.y - radius_arc, current_line_width, current_line_width));
+                current_line_width = CountCurrentLineWidthDbl(M_PI / 2, arc.line_width_hor, arc.line_width_vert);
+                point_processor(DoublePoint{arc.arc_center_x, arc.arc_center_y - radius_arc},
+                                current_line_width, current_line_width);
                 // Левая крайняя точка окружности
-                current_line_width = CountCurrentLineWidth(M_PI, line_width_hor, line_width_vert);
-                frame_rect.Union(wxRect(arc_center.x - radius_arc, arc_center.y, current_line_width, current_line_width));
+                current_line_width = CountCurrentLineWidthDbl(M_PI, arc.line_width_hor, arc.line_width_vert);
+                point_processor(DoublePoint{arc.arc_center_x - radius_arc, arc.arc_center_y},
+                                current_line_width, current_line_width);
                 // Нижняя крайняя точка окружности
-                current_line_width = CountCurrentLineWidth(3 *  (M_PI / 2), line_width_hor, line_width_vert);
-                frame_rect.Union(wxRect(arc_center.x, arc_center.y + radius_arc, current_line_width, current_line_width));
+                current_line_width = CountCurrentLineWidthDbl(3 *  (M_PI / 2), arc.line_width_hor, arc.line_width_vert);
+                point_processor(DoublePoint{arc.arc_center_x, arc.arc_center_y + radius_arc},
+                                current_line_width, current_line_width);
             }
         }
         else
@@ -130,23 +157,27 @@ namespace
                 {
                 case 1: // Дуга переходит из первого квардранта во второй - добавляем верхнюю точку окружности
                     // Угол PI / 2 - верхняя крайняя точка окружности
-                    current_line_width = CountCurrentLineWidth(M_PI / 2, line_width_hor, line_width_vert);
-                    frame_rect.Union(wxRect(arc_center.x, arc_center.y - radius_arc, current_line_width, current_line_width));
+                    current_line_width = CountCurrentLineWidthDbl(M_PI / 2, arc.line_width_hor, arc.line_width_vert);
+                    point_processor(DoublePoint{arc.arc_center_x, arc.arc_center_y - radius_arc},
+                                    current_line_width, current_line_width);
                     break;
                 case 2: // Дуга переходит из второго квардранта в третий - добавляем левую точку окружности
                     // Угол PI - левая крайняя точка окружности
-                    current_line_width = CountCurrentLineWidth(M_PI, line_width_hor, line_width_vert);
-                    frame_rect.Union(wxRect(arc_center.x - radius_arc, arc_center.y, current_line_width, current_line_width));
+                    current_line_width = CountCurrentLineWidthDbl(M_PI, arc.line_width_hor, arc.line_width_vert);
+                    point_processor(DoublePoint{arc.arc_center_x - radius_arc, arc.arc_center_y},
+                                    current_line_width, current_line_width);
                     break;
                 case 3: // Дуга переходит из третьего квардранта в четвёртый - добавляем нижнюю точку окружности
                     // Угол 3 * PI / 2 - нижняя крайняя точка окружности
-                    current_line_width = CountCurrentLineWidth(3 *  (M_PI / 2), line_width_hor, line_width_vert);
-                    frame_rect.Union(wxRect(arc_center.x, arc_center.y + radius_arc, current_line_width, current_line_width));
+                    current_line_width = CountCurrentLineWidthDbl(3 *  (M_PI / 2), arc.line_width_hor, arc.line_width_vert);
+                    point_processor(DoublePoint{arc.arc_center_x, arc.arc_center_y + radius_arc},
+                                    current_line_width, current_line_width);
                     break;
                 case 4: // Дуга переходит из четвёртого квардранта во первый - добавляем правую точку окружности
                     // Угол 0 - правая крайняя точка окружности
-                    current_line_width = CountCurrentLineWidth(0, line_width_hor, line_width_vert);
-                    frame_rect.Union(wxRect(arc_center.x + radius_arc, arc_center.y, current_line_width, current_line_width));
+                    current_line_width = CountCurrentLineWidthDbl(0, arc.line_width_hor, arc.line_width_vert);
+                    point_processor(DoublePoint{arc.arc_center_x + radius_arc, arc.arc_center_y},
+                                    current_line_width, current_line_width);
                     break;
                 }
                 ++i;
@@ -154,7 +185,54 @@ namespace
                     i = 1;
             }
         }
+    }
+
+    wxRect CountArcBoundRect(wxPoint arc_center, wxPoint arc_begin, wxPoint arc_end, int line_width_hor, int line_width_vert)
+    { //Функция вычисляет параметры прямоугольника, описанного вокруг дуги, заданной центром и двумя граничными точками
+        wxRect frame_rect;
+
+        ArcTask arc_task;
+        arc_task.arc_begin_x = arc_begin.x;
+        arc_task.arc_begin_y = arc_begin.y;
+        arc_task.arc_center_x = arc_center.x;
+        arc_task.arc_center_y = arc_center.y;
+        arc_task.arc_end_x = arc_end.x;
+        arc_task.arc_end_y = arc_end.y;
+        arc_task.line_width_hor = line_width_hor;
+        arc_task.line_width_vert = line_width_vert;
+
+        CountArcBoundRect(arc_task,
+                          [&frame_rect](DoublePoint rect_left_up_point, double point_line_width_hor, double point_line_width_vert)
+                            {
+                                int width_hor = max(static_cast<int>(round(point_line_width_hor)), 1);
+                                int width_vert = max(static_cast<int>(round(point_line_width_vert)), 1);;
+                                frame_rect.Union(wxRect(round(rect_left_up_point.x),
+                                                        round(rect_left_up_point.y),
+                                                        width_hor, width_vert));
+                            });
         return frame_rect;
+    }
+
+    void CountArcBoundRect(svg::Document& svg_doc, svg::Point arc_center, svg::Point arc_begin, svg::Point arc_end,
+                           int line_width_hor, int line_width_vert)
+    { //Функция вычисляет параметры прямоугольника, описанного вокруг дуги, заданной центром и двумя граничными точками
+        ArcTask arc_task;
+        arc_task.arc_begin_x = arc_begin.x;
+        arc_task.arc_begin_y = arc_begin.y;
+        arc_task.arc_center_x = arc_center.x;
+        arc_task.arc_center_y = arc_center.y;
+        arc_task.arc_end_x = arc_end.x;
+        arc_task.arc_end_y = arc_end.y;
+        arc_task.line_width_hor = line_width_hor;
+        arc_task.line_width_vert = line_width_vert;
+
+        CountArcBoundRect(arc_task,
+                          [&svg_doc](DoublePoint rect_left_up_point, double point_line_width_hor, double point_line_width_vert)
+                            {
+                                svg_doc.UnionViewportBox(svg::Point(rect_left_up_point.x, rect_left_up_point.y),
+                                                         point_line_width_hor,
+                                                         point_line_width_vert);
+                            });
     }
 
     double CountArcDistance(double start_angle, double end_angle)
@@ -991,6 +1069,24 @@ namespace
 
         return {text_anchor, offset_point};
     }
+
+    void UnionRectInSVGViewport(svg::Document& doc, svg::Point center_point,
+        double radius_x, double stroke_width_x, double radius_y, double stroke_width_y)
+    {
+        double full_width_x = 2 * radius_x + stroke_width_x;
+        double full_width_y = 2 * radius_y + stroke_width_y;
+        svg::Point left_up(center_point.x - full_width_x / 2, center_point.y - full_width_y / 2);
+        doc.UnionViewportBox(left_up, full_width_x, full_width_y);
+    }
+
+    void UnionRectInSVGViewport(svg::Document& doc, svg::Point left_up_point, svg::Point right_down_point,
+        double stroke_width_x, double stroke_width_y)
+    {
+        double full_width_x = (right_down_point.x - left_up_point.x) + stroke_width_x;
+        double full_width_y = (right_down_point.y - left_up_point.y) + stroke_width_y;
+        svg::Point new_left_up(left_up_point.x - stroke_width_x / 2, left_up_point.y - stroke_width_y / 2);
+        doc.UnionViewportBox(new_left_up, full_width_x, full_width_y);
+    }
 } // namespace
 
 const wxSize StdWXObjects::std_canvas_size[] =
@@ -1620,17 +1716,21 @@ void ObjLine::DrawObjectSVG(svg::Document& svg_doc, DrawContext& draw_context) c
 {
     InitDrawContextByLayerNum(draw_context);
     wxPoint point1_conv = draw_context.ConvertPointToDevice(point1_);
+    svg::Point svg_point1_conv = ToSVGPoint(point1_conv);
     wxPoint point2_conv = draw_context.ConvertPointToDevice(point2_);
+    svg::Point svg_point2_conv = ToSVGPoint(point2_conv);
     // Расчёт толщины линии, которой будет рисоваться наш отрезок.
     double line_width_using = CountLineWidth(draw_context, point1_conv, point2_conv);
 
     svg::Line line;
-    line.SetPoint(1, ToSVGPoint(point1_conv))
-        .SetPoint(2, ToSVGPoint(point2_conv))
+    line.SetPoint(1, svg_point1_conv)
+        .SetPoint(2, svg_point2_conv)
         .SetStrokeColor(ToSVGColor(draw_context.color))
         .SetStrokeWidth(line_width_using)
         .SetStrokeDashArray(ToSVGDashArray(line_type_));
     svg_doc.Add(line);
+    UnionRectInSVGViewport(svg_doc, svg_point1_conv, 0, line_width_using, 0, line_width_using);
+    UnionRectInSVGViewport(svg_doc, svg_point2_conv, 0, line_width_using, 0, line_width_using);
 }
 
 void ObjLine::ShiftObject(int shift_direction_x, int shift_direction_y)
@@ -1716,6 +1816,7 @@ void ObjRect::DrawObjectSVG(svg::Document& svg_doc, DrawContext& draw_context) c
         .SetStrokeDashArray(ToSVGDashArray(line_type_))
         .SetFillColor("none"s);
     svg_doc.Add(rect);
+    UnionRectInSVGViewport(svg_doc, top_left, right_bottom, use_line_width, use_line_width);
 }
 
 void ObjRect::ShiftObject(int shift_direction_x, int shift_direction_y)
@@ -1746,7 +1847,7 @@ void ObjFillRect::DrawObjectSVG(svg::Document& svg_doc, DrawContext& draw_contex
     InitDrawContextByLayerNum(draw_context);
     svg::Point top_left = ToSVGPoint(draw_context.ConvertPointToDevice(rect_.GetTopLeft()));
     svg::Point right_bottom = ToSVGPoint(draw_context.ConvertPointToDevice(rect_.GetRightBottom()));
-    svg::Color use_color;
+
     svg::Rectangle rect;
     rect.SetTopLeftCorner(top_left).SetWidth(right_bottom.x - top_left.x)
         .SetHeight(right_bottom.y - top_left.y)
@@ -1754,6 +1855,7 @@ void ObjFillRect::DrawObjectSVG(svg::Document& svg_doc, DrawContext& draw_contex
         .SetFillColor(ToSVGColor(draw_context.color))
         .SetStrokeWidth(1);
     svg_doc.Add(rect);
+    UnionRectInSVGViewport(svg_doc, top_left, right_bottom, 1, 1);
 }
 
 void ObjFillRect::ShiftObject(int shift_direction_x, int shift_direction_y)
@@ -1812,6 +1914,7 @@ void ObjCirc::DrawObjectSVG(svg::Document& svg_doc, DrawContext& draw_context) c
     double radius_x = radius_ * draw_context.scale_x;
     double radius_y = radius_ * draw_context.scale_y;
     wxPoint conv_center = draw_context.ConvertPointToDevice(center_);
+    svg::Point svg_center = ToSVGPoint(conv_center);
     double line_width_hor, line_width_vert;
     CountHorVertWidthDbl(draw_context, &line_width_hor, &line_width_vert);
     double use_line_width = (line_width_hor + line_width_vert) / 2;
@@ -1819,7 +1922,7 @@ void ObjCirc::DrawObjectSVG(svg::Document& svg_doc, DrawContext& draw_context) c
     if (abs(radius_x - radius_y) < ZERO_TOLERANCE)
     {
         svg::Circle circle;
-        circle.SetCenter(ToSVGPoint(conv_center)).SetRadius(radius_x)
+        circle.SetCenter(svg_center).SetRadius(radius_x)
               .SetStrokeColor(ToSVGColor(draw_context.color))
               .SetStrokeWidth(use_line_width)
               .SetStrokeDashArray(ToSVGDashArray(line_type_))
@@ -1829,13 +1932,14 @@ void ObjCirc::DrawObjectSVG(svg::Document& svg_doc, DrawContext& draw_context) c
     else
     {
         svg::Ellipse ellipse;
-        ellipse.SetCenter(ToSVGPoint(conv_center)).SetRadiusX(radius_x).SetRadiusY(radius_y)
+        ellipse.SetCenter(svg_center).SetRadiusX(radius_x).SetRadiusY(radius_y)
                .SetStrokeColor(ToSVGColor(draw_context.color))
                .SetStrokeWidth(use_line_width)
                .SetStrokeDashArray(ToSVGDashArray(line_type_))
                .SetFillColor("none"s);
         svg_doc.Add(ellipse);
     }
+    UnionRectInSVGViewport(svg_doc, svg_center, radius_x, use_line_width, radius_y, use_line_width);
 }
 
 void ObjCirc::ShiftObject(int shift_direction_x, int shift_direction_y)
@@ -1894,8 +1998,12 @@ void ObjArc::DrawObjectSVG(svg::Document& svg_doc, DrawContext& draw_context) co
     double radius_x = radius_arc * draw_context.scale_x;
     double radius_y = radius_arc * draw_context.scale_y;
     wxPoint conv_arc_center = draw_context.ConvertPointToDevice(arc_center_);
+    svg::Point svg_arc_center = ToSVGPoint(conv_arc_center);
     wxPoint conv_arc_begin =  draw_context.ConvertPointToDevice(arc_begin_);
+    svg::Point svg_arc_begin = ToSVGPoint(conv_arc_begin);
     wxPoint conv_arc_end = draw_context.ConvertPointToDevice(arc_end_);
+    svg::Point svg_arc_end = ToSVGPoint(conv_arc_end);
+
     double line_width_hor, line_width_vert;
     CountHorVertWidthDbl(draw_context, &line_width_hor, &line_width_vert);
     double use_line_width = (line_width_hor + line_width_vert) / 2;
@@ -1905,7 +2013,7 @@ void ObjArc::DrawObjectSVG(svg::Document& svg_doc, DrawContext& draw_context) co
     bool is_large_arc = CountArcDistance(start_angle, end_angle) > M_PI;
 
     svg::EllipticArc ellipse_arc;
-    ellipse_arc.SetStartPoint(ToSVGPoint(conv_arc_begin)).SetEndPoint(ToSVGPoint(conv_arc_end))
+    ellipse_arc.SetStartPoint(svg_arc_begin).SetEndPoint(svg_arc_end)
                .SetRadiusX(radius_x).SetRadiusY(radius_y)
                .SetLargeArcFlag(is_large_arc).SetSweepFlag(false)
                .SetStrokeColor(ToSVGColor(draw_context.color))
@@ -1913,6 +2021,8 @@ void ObjArc::DrawObjectSVG(svg::Document& svg_doc, DrawContext& draw_context) co
                .SetStrokeDashArray(ToSVGDashArray(line_type_))
                .SetFillColor("none"s);
     svg_doc.Add(ellipse_arc);
+    CountArcBoundRect(svg_doc, svg_arc_center, svg_arc_begin, svg_arc_end,
+                      line_width_hor, line_width_vert);
 }
 
 void ObjArc::ShiftObject(int shift_direction_x, int shift_direction_y)
@@ -2099,10 +2209,14 @@ void ObjFlash::DrawObjectSVG(svg::Document& svg_doc, DrawContext& draw_context) 
     }
     else
     { // Все остальные засветки обрабатываем как круглые
-        if (abs(aperture_scale_width - aperture_scale_height) < ZERO_TOLERANCE)
+        double aperture_scale_radius_x = aperture_scale_width / 2;
+        double aperture_scale_radius_y = aperture_scale_height / 2;
+        svg::Point flash_svg_point = ToSVGPoint(flash_point_conv);
+
+        if (abs(aperture_scale_radius_x - aperture_scale_radius_y) < ZERO_TOLERANCE)
         { // Эта вспышка получилась действительно круглая
             svg::Circle circle;
-            circle.SetCenter(ToSVGPoint(flash_point_conv)).SetRadius(aperture_scale_width / 2)
+            circle.SetCenter(flash_svg_point).SetRadius(aperture_scale_radius_x)
                   .SetStrokeColor(ToSVGColor(draw_context.color))
                   .SetStrokeWidth(1).SetFillColor(ToSVGColor(draw_context.color));
             svg_doc.Add(circle);
@@ -2110,12 +2224,14 @@ void ObjFlash::DrawObjectSVG(svg::Document& svg_doc, DrawContext& draw_context) 
         else
         { // А здесь она оказалась эллиптической
             svg::Ellipse ellipse;
-            ellipse.SetCenter(ToSVGPoint(flash_point_conv))
-                   .SetRadiusX(aperture_scale_width / 2).SetRadiusY(aperture_scale_height / 2)
+            ellipse.SetCenter(flash_svg_point)
+                   .SetRadiusX(aperture_scale_radius_x).SetRadiusY(aperture_scale_radius_y)
                    .SetStrokeColor(ToSVGColor(draw_context.color))
                    .SetStrokeWidth(1).SetFillColor(ToSVGColor(draw_context.color));
             svg_doc.Add(ellipse);
         }
+        UnionRectInSVGViewport(svg_doc, flash_svg_point, aperture_scale_radius_x, 1,
+                               aperture_scale_radius_y, 1);
     }
 }
 
@@ -2153,15 +2269,16 @@ wxRect ObjCVoid::DrawObject(DrawContext& draw_context) const
 
 void ObjCVoid::DrawObjectSVG(svg::Document& svg_doc, DrawContext& draw_context) const
 {
-    double void_scale_width = void_radius_ * draw_context.scale_x * 2;
-    double void_scale_height = void_radius_ * draw_context.scale_y * 2;
+    double void_scale_radius_x = void_radius_ * draw_context.scale_x;
+    double void_scale_radius_y = void_radius_ * draw_context.scale_y;
 
     wxPoint void_center_conv = draw_context.ConvertPointToDevice(void_center_);
+    svg::Point void_svg_center = ToSVGPoint(void_center_conv);
 
-    if (abs(void_scale_width - void_scale_height) < ZERO_TOLERANCE)
+    if (abs(void_scale_radius_x - void_scale_radius_y) < ZERO_TOLERANCE)
     { // Эта вспышка получилась действительно круглая
         svg::Circle circle;
-        circle.SetCenter(ToSVGPoint(void_center_conv)).SetRadius(void_scale_width / 2)
+        circle.SetCenter(void_svg_center).SetRadius(void_scale_radius_x)
               .SetStrokeColor(ToSVGColor(draw_context.background_color))
               .SetStrokeWidth(1).SetFillColor(ToSVGColor(draw_context.background_color));
         svg_doc.Add(circle);
@@ -2169,12 +2286,13 @@ void ObjCVoid::DrawObjectSVG(svg::Document& svg_doc, DrawContext& draw_context) 
     else
     { // А здесь она оказалась эллиптической
         svg::Ellipse ellipse;
-        ellipse.SetCenter(ToSVGPoint(void_center_conv))
-               .SetRadiusX(void_scale_width / 2).SetRadiusY(void_scale_height / 2)
+        ellipse.SetCenter(void_svg_center)
+               .SetRadiusX(void_scale_radius_x).SetRadiusY(void_scale_radius_y)
                .SetStrokeColor(ToSVGColor(draw_context.background_color))
                .SetStrokeWidth(1).SetFillColor(ToSVGColor(draw_context.background_color));
         svg_doc.Add(ellipse);
     }
+    UnionRectInSVGViewport(svg_doc, void_svg_center, void_scale_radius_x, 1, void_scale_radius_y, 1);
 }
 
 void ObjCVoid::ShiftObject(int shift_direction_x, int shift_direction_y)
@@ -2224,7 +2342,11 @@ void ObjPVoid::DrawObjectSVG(svg::Document& svg_doc, DrawContext& draw_context) 
     polygon.SetStrokeColor(ToSVGColor(draw_context.background_color))
            .SetStrokeWidth(1).SetFillColor(ToSVGColor(draw_context.background_color));
     for (wxPoint wxp : converted_points)
-        polygon.AddPoint(ToSVGPoint(wxp));
+    {
+        svg::Point svg_wxp = ToSVGPoint(wxp);
+        polygon.AddPoint(svg_wxp);
+        UnionRectInSVGViewport(svg_doc, svg_wxp, 0, 1, 0, 1);
+    }
     svg_doc.Add(polygon);
 }
 
@@ -2358,7 +2480,11 @@ void ObjPoly::DrawObjectSVG(svg::Document& svg_doc, DrawContext& draw_context) c
     }
     // Добавляем в список основного полигона все его вершины
     for (wxPoint wxp : converted_points)
-        polygon.AddPoint(ToSVGPoint(wxp));
+    {
+        svg::Point svg_wxp = ToSVGPoint(wxp);
+        polygon.AddPoint(svg_wxp);
+        UnionRectInSVGViewport(svg_doc, svg_wxp, 0, aperture_scale_size, 0, aperture_scale_size);
+    }
     svg_doc.Add(polygon);
     // Отрисуем все выемки, которые включены в состав полигона
     for (const ObjCVoid& cvoid : cvoids_)

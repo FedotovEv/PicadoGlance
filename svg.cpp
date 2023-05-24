@@ -94,12 +94,91 @@ namespace svg
         objects_list_.push_back(std::move(obj));
     }
 
+    Document& Document::SetViewportFillColor(Color color)
+    {
+        viewport_fill_color_ = color;
+        return *this;
+    }
+
+    Document& Document::SetViewportPoint(Point viewport_point)
+    {
+        viewport_point_ = viewport_point;
+        return *this;
+    }
+
+    Document& Document::SetViewportSize(double viewport_size_x, double viewport_size_y)
+    {
+        viewport_size_ = {viewport_size_x, viewport_size_y};
+        return *this;
+    }
+
+    Document& Document::SetViewportBox(Point viewport_point, double viewport_size_x, double viewport_size_y)
+    {
+        viewport_point_ = viewport_point;
+        viewport_size_ = {viewport_size_x, viewport_size_y};
+        return *this;
+    }
+
+    Document& Document::UnionViewportBox(Point u_viewport_point, double u_viewport_size_x, double u_viewport_size_y)
+    {
+        if (u_viewport_size_x < 0 || u_viewport_size_y < 0)
+            return *this;
+        if (viewport_size_.first < 0 || viewport_size_.second < 0)
+        {
+            viewport_point_ = u_viewport_point;
+            viewport_size_ = {u_viewport_size_x, u_viewport_size_y};
+            return *this;
+        }
+
+        Point right_down = Point(viewport_point_.x + viewport_size_.first,
+                                 viewport_point_.y + viewport_size_.second);
+        Point u_right_down = Point(u_viewport_point.x + u_viewport_size_x,
+                                   u_viewport_point.y + u_viewport_size_y);
+        if (u_viewport_point.x < viewport_point_.x)
+            viewport_point_.x = u_viewport_point.x;
+        if (u_viewport_point.y < viewport_point_.y)
+            viewport_point_.y = u_viewport_point.y;
+        if (u_right_down.x > right_down.x)
+            right_down.x = u_right_down.x;
+        if (u_right_down.y > right_down.y)
+            right_down.y = u_right_down.y;
+        viewport_size_ = {right_down.x - viewport_point_.x, right_down.y - viewport_point_.y};
+        return *this;
+    }
+
+    Document& Document::InflateViewportBox(double viewport_dx, double viewport_dy)
+    {
+        if (viewport_size_.first < 0 || viewport_size_.second < 0)
+            return *this;
+        double new_viewport_size_x = std::max(viewport_size_.first + 2 * viewport_dx, 0.0);
+        double new_viewport_size_y = std::max(viewport_size_.second + 2 * viewport_dy, 0.0);
+        double real_viewport_dx = (new_viewport_size_x - viewport_size_.first) / 2;
+        double real_viewport_dy = (new_viewport_size_y - viewport_size_.second) / 2;
+        viewport_point_.x -= real_viewport_dx;
+        viewport_point_.y -= real_viewport_dy;
+        viewport_size_ = {new_viewport_size_x, new_viewport_size_y};
+        return *this;
+    }
+
     void Document::Render(std::ostream& out) const
     {
         const std::string viewport_fill_col = std::visit(ColorHandler{}, viewport_fill_color_);
 
         out << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << std::endl;
-        out << "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\"";
+        out << "<svg";
+        if (viewport_size_.first >= 0 && viewport_size_.second >= 0)
+        {
+            double diff_x = viewport_size_.first * VIEWPORT_EXTEND / 2;
+            double diff_y = viewport_size_.second * VIEWPORT_EXTEND / 2;
+            double corr_x = viewport_point_.x - diff_x;
+            double corr_y = viewport_point_.y - diff_y;
+            double corr_vierport_size_x = viewport_size_.first + diff_x;
+            double corr_vierport_size_y = viewport_size_.second + diff_y;
+            out << " viewBox=\"" << corr_x << ' ' << corr_y << ' '
+                << corr_vierport_size_x << ' ' << corr_vierport_size_y << "\"";
+        }
+
+        out << " xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\"";
         if (viewport_fill_col.size())
             out << " viewport-fill=\"" << viewport_fill_col << "\"";
         out << ">" << std::endl;
@@ -127,20 +206,17 @@ namespace svg
     std::pair<std::weak_ptr<Object>, bool> Document::ResourceManager(ResourceType resource_type,
                                                     const std::string& id, bool is_create)
     {
+        if (resource_type == ResourceType::SVG_RESOURCE_UNKNOWN)
+            return {{}, false};
+
         for (auto& object_ptr : objects_list_)
         {
-            if (resource_type == ResourceType::SVG_RESOURCE_PATTERN)
-            {
-                Pattern* pattern_ptr = dynamic_cast<Pattern*>(object_ptr.get());
-                if (pattern_ptr && pattern_ptr->GetId() == id)
+            Resource* resource_ptr = dynamic_cast<Resource*>(object_ptr.get());
+            if (resource_ptr && resource_ptr->GetId() == id)
+                if (resource_type == ResourceType::SVG_RESOURCE_PATTERN && dynamic_cast<Pattern*>(resource_ptr))
                     return {object_ptr, true};
-            }
-            else
-            {
-                return {{}, false};
-            }
         }
-        if (!is_create || resource_type == ResourceType::SVG_RESOURCE_UNKNOWN)
+        if (!is_create)
             return {{}, false};
 
         if (resource_type == ResourceType::SVG_RESOURCE_PATTERN)
@@ -164,11 +240,19 @@ namespace svg
         context.out << std::endl;
     }
 
+    // ---------- Resource ------------------
+
+    Resource& Resource::SetId(const std::string& id)
+    {
+        id_ = id;
+        return *this;
+    }
+
     // ---------- Pattern ------------------
 
     Pattern& Pattern::SetId(const std::string& id)
     {
-        id_ = id;
+        Resource::SetId(id);
         return *this;
     }
 

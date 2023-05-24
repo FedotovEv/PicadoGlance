@@ -105,6 +105,13 @@ enum class CanvasSizeCode
     CANVAS_SIZE_A8
 };
 
+struct SVGRect
+{
+    svg::Point left_up;
+    double width;
+    double height;
+};
+
 using SelColorType = std::variant<unsigned char, wxColor>;
 
 struct CanvasContext

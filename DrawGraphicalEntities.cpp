@@ -52,18 +52,21 @@ namespace DrawEntities
         return max(static_cast<int>(round(static_cast<double>(full_width) / 2)), 1);
     }
 
-    int CountCurrentLineWidth(double current_angle, int line_width_hor, int line_width_vert)
+    double CountCurrentLineWidthDbl(double current_angle, double line_width_hor, double line_width_vert)
     {  // current_angle должен находиться в диапазоне от 0 до 2 * PI.
-
         if (current_angle > (M_PI / 2) && current_angle <= M_PI)
             current_angle = M_PI - current_angle;
         else if (current_angle > M_PI && current_angle <= 3 * (M_PI / 2))
             current_angle -= M_PI;
         else if (current_angle > 3 * (M_PI / 2))
             current_angle = (2 * M_PI) - current_angle;
-        double current_line_width = round(line_width_hor + (current_angle / (M_PI / 2)) * (line_width_vert - line_width_hor));
+        return line_width_hor + (current_angle / (M_PI / 2)) * (line_width_vert - line_width_hor);
+    }
 
-        return max(static_cast<int>(current_line_width), 1);
+    int CountCurrentLineWidthInt(double current_angle, int line_width_hor, int line_width_vert)
+    {
+        return max(static_cast<int>(round
+            (CountCurrentLineWidthDbl(current_angle, line_width_hor, line_width_vert))), 1);
     }
 
     void DrawDashDotLine(wxDC &target_dc, const wxPoint start_point, const wxPoint end_point,
@@ -322,7 +325,7 @@ namespace DrawEntities
                     monoDC.SetPen(*wxWHITE_PEN);
                     monoDC.SetBrush(*wxWHITE_BRUSH);
 
-                    int current_line_width = ceil(CountCurrentLineWidth(current_angle, line_width_hor, line_width_vert));
+                    int current_line_width = ceil(CountCurrentLineWidthDbl(current_angle, line_width_hor, line_width_vert));
                     wxSize ellipse_size_out(2 * radius_x + current_line_width, 2 * radius_y + current_line_width);
                     wxPoint upper_left_out(center_point.x - ellipse_size_out.GetWidth() / 2,
                                            center_point.y - ellipse_size_out.GetHeight() / 2);

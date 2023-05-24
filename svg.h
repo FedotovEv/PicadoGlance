@@ -271,7 +271,20 @@ namespace svg
     };
 
     class Document;
-    class Pattern final : public Object
+    class Resource : public Object
+    {
+    public:
+        Resource& SetId(const std::string& id);
+        std::string GetId()
+        {
+            return id_;
+        }
+
+    protected:
+        std::string id_;
+    };
+
+    class Pattern final : public Resource
     {
     public:
         Pattern& SetId(const std::string& id);
@@ -279,10 +292,6 @@ namespace svg
         Pattern& SetWidth(double width);
         Pattern& SetHeight(double height);
         Pattern& SetWidthHeight(Point width_height);
-        std::string GetId()
-        {
-            return id_;
-        }
 
         // Добавляет в шаблон новый элемент типа svg::Object
         virtual void AddPtr(std::unique_ptr<Object>&& obj);
@@ -296,7 +305,6 @@ namespace svg
     private:
         void RenderObject(const RenderContext& context) const override;
 
-        std::string id_;
         std::string pattern_units_ = "userSpaceOnUse";
         double width_ = 1;
         double height_ = 1;
@@ -518,10 +526,21 @@ namespace svg
         // Если при вызове функции ресурс уже существовал - возвращается "истина".
         std::pair<std::weak_ptr<Object>, bool> ResourceManager(ResourceType resource_type,
                                                     const std::string& id, bool is_create);
+        Document& SetViewportFillColor(Color color);
+        Document& SetViewportPoint(Point viewport_point);
+        Document& SetViewportSize(double viewport_size_x, double viewport_size_y);
+        Document& SetViewportBox(Point viewport_point, double viewport_size_x, double viewport_size_y);
+        Document& UnionViewportBox(Point u_viewport_point, double u_viewport_size_x, double u_viewport_size_y);
+        Document& InflateViewportBox(double viewport_dx, double viewport_dy);
 
     private:
+        // VIEWPORT_EXTEND - доля расширения поля вывода при экспорте относительно его рассчитанного значения
+        static inline const double VIEWPORT_EXTEND = 0.02;
+
         std::vector<std::shared_ptr<Object>> objects_list_;
         Color viewport_fill_color_;
+        Point viewport_point_; // Левая верхняя точка области рисования svg-документа
+        std::pair<double, double> viewport_size_ = {-1, -1}; // Размеры области рисования svg-документа
     };
 
     class Drawable

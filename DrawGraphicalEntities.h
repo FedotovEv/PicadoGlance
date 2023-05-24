@@ -65,7 +65,8 @@ namespace DrawEntities
     };
 
     int CountHalfWidth(int full_width);
-    int CountCurrentLineWidth(double current_angle, int line_width_hor, int line_width_vert);
+    double CountCurrentLineWidthDbl(double current_angle, double line_width_hor, double line_width_vert);
+    int CountCurrentLineWidthInt(double current_angle, int line_width_hor, int line_width_vert);
     void DrawDashDotLine(wxDC &target_dc, const wxPoint start_point, const wxPoint end_point,
                          int line_width_hor, int line_width_vert, unsigned int line_pattern);
     void DrawDashDotLine(wxDC &target_dc, const wxPoint start_point, const wxPoint end_point,
