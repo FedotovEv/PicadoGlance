@@ -53,27 +53,27 @@ class OptionsDialog: public wxDialog
 	protected:
 
 		//(*Identifiers(OptionsDialog)
-		static const long ID_STATICTEXT2;
-		static const long ID_TEXTCTRL_APERTURE_FILENAME;
-		static const long ID_BUTTON_LOAD_APERTURE;
-		static const long ID_BUTTONAPERTURE_DEFAULT;
-		static const long ID_STATICTEXT3;
-		static const long ID_COMBOBOX_APERTURE_SECTION;
-		static const long ID_LISTBOXAPERTURES_LIST;
-		static const long ID_RADIOBUTTON_USE_DBU;
-		static const long ID_RADIOBUTTON_USE_MILLIMETER;
-		static const long ID_RADIOBUTTON_USE_INCH;
-		static const long ID_RADIOBUTTON_ADDIT_SCALE_OFF;
-		static const long ID_RADIOBUTTON_ADDIT_SCALE_RUSSIAN_INCH;
-		static const long ID_RADIOBUTTON_ADDIT_SCALE_ANY;
-		static const long ID_STATICTEXT4;
-		static const long ID_TEXTCTRL_UNIT_SCALE_VALUE_X;
-		static const long ID_STATICTEXT5;
-		static const long ID_TEXTCTRL_UNIT_SCALE_VALUE_Y;
-		static const long ID_CHECKBOX_SCREEN_SUBSCALE;
-		static const long ID_CHECKBOX_OWN_TEXT_ENGINE;
-		static const long ID_BUTTON_OPTION_OK;
-		static const long ID_BUTTON_OPTION_CANCEL;
+		static const wxWindowID ID_STATICTEXT2;
+		static const wxWindowID ID_TEXTCTRL_APERTURE_FILENAME;
+		static const wxWindowID ID_BUTTON_LOAD_APERTURE;
+		static const wxWindowID ID_BUTTONAPERTURE_DEFAULT;
+		static const wxWindowID ID_STATICTEXT3;
+		static const wxWindowID ID_COMBOBOX_APERTURE_SECTION;
+		static const wxWindowID ID_LISTBOXAPERTURES_LIST;
+		static const wxWindowID ID_RADIOBUTTON_USE_DBU;
+		static const wxWindowID ID_RADIOBUTTON_USE_MILLIMETER;
+		static const wxWindowID ID_RADIOBUTTON_USE_INCH;
+		static const wxWindowID ID_RADIOBUTTON_ADDIT_SCALE_OFF;
+		static const wxWindowID ID_RADIOBUTTON_ADDIT_SCALE_RUSSIAN_INCH;
+		static const wxWindowID ID_RADIOBUTTON_ADDIT_SCALE_ANY;
+		static const wxWindowID ID_STATICTEXT4;
+		static const wxWindowID ID_TEXTCTRL_UNIT_SCALE_VALUE_X;
+		static const wxWindowID ID_STATICTEXT5;
+		static const wxWindowID ID_TEXTCTRL_UNIT_SCALE_VALUE_Y;
+		static const wxWindowID ID_CHECKBOX_SCREEN_SUBSCALE;
+		static const wxWindowID ID_CHECKBOX_OWN_TEXT_ENGINE;
+		static const wxWindowID ID_BUTTON_OPTION_OK;
+		static const wxWindowID ID_BUTTON_OPTION_CANCEL;
 		//*)
 
 	private:

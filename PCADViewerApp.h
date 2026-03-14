@@ -21,6 +21,7 @@
 #include <wx/intl.h>
 
 #include "PCADFile.h"
+#include "TBLFileServer.h"
 #include "svg.h"
 #include "chr_font.h"
 
@@ -187,6 +188,8 @@ class PCADViewerApp : public wxApp
         wxHtmlHelpController HtmlHelp;
         // Указатель на используемую нами локаль
         wxLocale* m_locale = nullptr;
+        // Сервер управления данными об инструментах сверления, их настройках и установках.
+        TBLFileServer* m_tbl_server = nullptr;
 
         inline double GetEffScaleX()
         {

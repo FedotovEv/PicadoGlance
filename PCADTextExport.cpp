@@ -12,6 +12,7 @@
 #include <wx/palette.h>
 #include "PCADTextExport.h"
 #include "PCADFile.h"
+#include "redefine_.h"
 
 using namespace std;
 

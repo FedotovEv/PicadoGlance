@@ -291,6 +291,25 @@
 					<handler function="OnMenuCloseSelected" entry="EVT_MENU" />
 				</object>
 				<object class="separator" />
+				<object class="wxMenu" name="ID_MENUITEM1" variable="MenuItem3" member="yes">
+					<label>Сверловка</label>
+					<object class="wxMenuItem" name="IdMenuDrillBitSetup" variable="MenuItem4" member="yes">
+						<label>Инструменты</label>
+						<help>Настройка характеристик инструментов сверления</help>
+						<handler function="OnMenuDrillBitSetup" entry="EVT_MENU" />
+					</object>
+					<object class="wxMenuItem" name="IdMenuDrillParams" variable="MenuItem5" member="yes">
+						<label>Параметры</label>
+						<help>Установка режимов и параметров генератора файлов сверловки</help>
+						<handler function="OnMenuDrillParams" entry="EVT_MENU" />
+					</object>
+					<object class="wxMenuItem" name="IdMenuCreateDrillFile" variable="MenuItem6" member="yes">
+						<label>Создать файл</label>
+						<help>Генерация файла сверловки с использованием установленный режимов и инструментов</help>
+						<handler function="OnMenuMakeDrillFile" entry="EVT_MENU" />
+					</object>
+				</object>
+				<object class="separator" />
 				<object class="wxMenu" name="ID_MENUITEM_EXPORT" variable="MenuItemExportHead" member="yes">
 					<label>Экспорт</label>
 					<object class="wxMenuItem" name="IdMenuExportCanvas" variable="MenuItemExportCanvas" member="yes">

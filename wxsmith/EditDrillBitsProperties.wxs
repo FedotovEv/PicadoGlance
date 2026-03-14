@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxDialog" name="EditDrillBitsProperties">
+		<title>Редактор инструментов сверления</title>
+		<centered>1</centered>
+		<size>700,370</size>
+		<id_arg>0</id_arg>
+		<style>wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER</style>
+		<object class="wxBoxSizer" variable="MainDrillBitPropSizer" member="no">
+			<orient>wxVERTICAL</orient>
+			<object class="sizeritem">
+				<object class="wxBoxSizer" variable="BoxSizer5" member="no">
+					<orient>wxVERTICAL</orient>
+					<object class="sizeritem">
+						<object class="wxBoxSizer" variable="BoxSizer4" member="no">
+							<object class="sizeritem">
+								<object class="wxStaticText" name="ID_STATIC_EXPLAIN_DATA_TABLE" variable="ExplainDrillBitStatic" member="yes">
+									<label>Пояснительный текст инструментальной таблицы</label>
+									<style>wxALIGN_CENTRE</style>
+								</object>
+								<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+								<border>5</border>
+								<option>1</option>
+							</object>
+						</object>
+						<flag>wxALL|wxEXPAND</flag>
+						<border>5</border>
+					</object>
+					<object class="sizeritem">
+						<object class="wxTextCtrl" name="ID_TEXT_EXPLAIN_TABLE_TEXT" variable="ExplainDrillBitText" member="yes">
+							<style>wxTE_MULTILINE</style>
+							<handler function="OnExplainDrillBitTextText" entry="EVT_TEXT" />
+							<handler function="OnExplainDrillBitTextTextEnter" entry="EVT_TEXT_ENTER" />
+						</object>
+						<flag>wxALL|wxEXPAND</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+				</object>
+				<flag>wxALL|wxEXPAND</flag>
+				<border>5</border>
+			</object>
+			<object class="sizeritem">
+				<object class="wxBoxSizer" variable="DrillBitTablesTitlesSizer" member="no">
+					<object class="sizeritem">
+						<object class="wxStaticText" name="ID_STATICTEXT1" variable="PinDrillBitHeaderText" member="yes">
+							<label>Назначение сверл выводам</label>
+							<style>wxALIGN_CENTRE</style>
+						</object>
+						<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>10</option>
+					</object>
+					<object class="spacer">
+						<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxStaticText" name="ID_STATICTEXT2" variable="DrillBitPropHeaderText" member="yes">
+							<label>Параметры сверл</label>
+							<style>wxALIGN_CENTRE</style>
+						</object>
+						<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>10</option>
+					</object>
+				</object>
+				<flag>wxALL|wxEXPAND</flag>
+				<border>5</border>
+			</object>
+			<object class="sizeritem">
+				<object class="wxBoxSizer" variable="DrillBitTablesSizer" member="no">
+					<object class="sizeritem">
+						<object class="wxGrid" name="ID_GRID_PIN_TO_DRILL_BIT" variable="PinToDrilBitlNumberGrid" member="yes">
+							<cols>1</cols>
+							<rows>10</rows>
+							<labelcolwidth>100</labelcolwidth>
+							<defaultcolsize>200</defaultcolsize>
+							<collabels>
+								<item>Номер сверла</item>
+							</collabels>
+							<handler function="OnPinToDrilBitlNumberGridCellChanged" entry="EVT_CMD_GRID_CELL_CHANGED" />
+							<handler function="OnPinToDrilBitlNumberGridCellChanging" entry="EVT_CMD_GRID_CELL_CHANGING" />
+							<handler function="OnPinToDrilBitlNumberGridCellSelect" entry="EVT_CMD_GRID_SELECT_CELL" />
+						</object>
+						<flag>wxLEFT|wxEXPAND</flag>
+						<border>5</border>
+						<option>10</option>
+					</object>
+					<object class="spacer">
+						<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxGrid" name="ID_GRID_DRILL_BIT_DIAMETER" variable="DrillBitDiameterGrid" member="yes">
+							<cols>2</cols>
+							<rows>10</rows>
+							<labelcolwidth>1</labelcolwidth>
+							<defaultcolsize>200</defaultcolsize>
+							<collabels>
+								<item>Номер сверла</item>
+								<item>Диаметр сверла</item>
+							</collabels>
+							<handler function="OnDrillBitDiameterGridLabelLeftClick" entry="EVT_CMD_GRID_LABEL_LEFT_CLICK" />
+							<handler function="OnDrillBitDiameterGridCellChanged" entry="EVT_CMD_GRID_CELL_CHANGED" />
+							<handler function="OnDrillBitDiameterGridCellChanging" entry="EVT_CMD_GRID_CELL_CHANGING" />
+							<handler function="OnDrillBitDiameterGridCellSelect" entry="EVT_CMD_GRID_SELECT_CELL" />
+						</object>
+						<flag>wxRIGHT|wxEXPAND</flag>
+						<border>5</border>
+						<option>10</option>
+					</object>
+				</object>
+				<flag>wxEXPAND</flag>
+				<border>5</border>
+				<option>1</option>
+			</object>
+			<object class="sizeritem">
+				<object class="wxBoxSizer" variable="BoxSizer1" member="no">
+					<object class="sizeritem">
+						<object class="wxBoxSizer" variable="BoxSizer3" member="no">
+							<object class="sizeritem">
+								<object class="wxStaticText" name="ID_STATICTEXT3" variable="StaticText1" member="yes">
+									<label>Количество типов выводов</label>
+								</object>
+								<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+								<border>5</border>
+							</object>
+							<object class="sizeritem">
+								<object class="wxSpinCtrl" name="ID_SPIN_PIN_COUNT" variable="PinCountSpin" member="yes">
+									<value>10</value>
+									<max>3000</max>
+									<handler function="OnPinCountSpinChange" entry="EVT_SPINCTRL" />
+								</object>
+								<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+								<border>5</border>
+								<option>1</option>
+							</object>
+						</object>
+						<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="spacer">
+						<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxBoxSizer" variable="BoxSizer2" member="no">
+							<object class="sizeritem">
+								<object class="wxButton" name="ID_BUTTON_ADD_NEW_DRILL_BIT" variable="AddNewDrillBit" member="yes">
+									<label>Добавить</label>
+									<handler function="OnAddNewDrillBitClick" entry="EVT_BUTTON" />
+								</object>
+								<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+								<border>5</border>
+								<option>1</option>
+							</object>
+							<object class="sizeritem">
+								<object class="wxButton" name="ID_BUTTON_DELETE_DRILL_BIT" variable="DeleteDrillBit" member="yes">
+									<label>Удалить</label>
+									<handler function="OnDeleteDrillBitClick" entry="EVT_BUTTON" />
+								</object>
+								<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+								<border>5</border>
+								<option>1</option>
+							</object>
+						</object>
+						<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+				</object>
+				<flag>wxALL|wxEXPAND</flag>
+				<border>5</border>
+			</object>
+			<object class="sizeritem">
+				<object class="wxBoxSizer" variable="DrillBitButtonFooterSizer" member="no">
+					<object class="sizeritem">
+						<object class="wxButton" name="ID_BUTTON_DRILL_BIT_PROP_SAVE_TBL" variable="DrillBitPropSaveTBL" member="yes">
+							<label>Сохранить как TBL</label>
+							<handler function="OnDrillBitPropSaveClick" entry="EVT_BUTTON" />
+						</object>
+						<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxButton" name="ID_BUTTON_DRILL_BIT_PROP_LOAD_TBL" variable="DrillBitPropLoadTBL" member="yes">
+							<label>Загрузить из TBL</label>
+							<handler function="OnDrillBitPropLoadClick" entry="EVT_BUTTON" />
+						</object>
+						<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxButton" name="ID_BUTTON_DRILL_BIT_PROP_SAVE_INI" variable="DrillBitPropSaveINI" member="yes">
+							<label>Сохранить как INI</label>
+							<handler function="OnDrillBitPropSaveINIClick" entry="EVT_BUTTON" />
+						</object>
+						<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxButton" name="ID_BUTTON_DRILL_BIT_PROP_LOAD_INI" variable="DrillBitPropLoadINI" member="yes">
+							<label>Загрузить из INI</label>
+							<handler function="OnDrillBitPropLoadINIClick" entry="EVT_BUTTON" />
+						</object>
+						<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxButton" name="ID_BUTTON_DRILL_BIT_PROP_EXIT" variable="DrillBitPropExit" member="yes">
+							<label>Выйти</label>
+							<handler function="OnDrillBitPropExitClick" entry="EVT_BUTTON" />
+						</object>
+						<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+				</object>
+				<flag>wxEXPAND</flag>
+				<border>5</border>
+			</object>
+		</object>
+	</object>
+</wxsmith>

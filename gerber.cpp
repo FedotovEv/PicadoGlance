@@ -5,6 +5,7 @@
 #include <any>
 #include <filesystem>
 #include <cctype>
+#include <unordered_map>
 
 #include "gerber.h"
 #include "PCADFile.h"

@@ -14,23 +14,15 @@
 #include "PCADViewerApp.h"
 #include "PCADViewDraw.h"
 #include "ProviderStamp.h"
+#include <wx/stdpaths.h>
 
 //(*AppHeaders
 #include "PCADViewerMain.h"
 #include <wx/image.h>
-#include <wx/cshelp.h>
-#include <wx/html/helpctrl.h>
-#include <wx/cmdline.h>
-#include <wx/print.h>
-#include <wx/filename.h>
-#include <wx/stdpaths.h>
-#include <wx/xrc/xmlres.h>
-
-#include "wx/filesys.h"
-#include "wx/fs_zip.h"
 //*)
 
 #include <wx/xrc/xh_bmp.h>
+#include "redefine_.h"
 
 extern const StdWXObjects std_wx_objects;
 
@@ -95,12 +87,12 @@ bool MyPrintout::OnPrintPage(int page_num)
 
 wxCmdLineEntryDesc const static cmd_line_desc[] =
 {
-    {wxCMD_LINE_SWITCH, wxT("h"), wxT("help"), wxT("вывод помощи по формату командной строки программы"),
+    {wxCMD_LINE_SWITCH, "h", "help", "вывод помощи по формату командной строки программы",
      wxCMD_LINE_VAL_NONE, wxCMD_LINE_OPTION_HELP},
-    {wxCMD_LINE_OPTION, wxT("a"), wxT("aperture-name"), wxT("имя файла апертур")},
-    {wxCMD_LINE_SWITCH, wxT("l"), wxT("aperture-laser"), wxT("использовать множество апертур GERBER LASER")},
-    {wxCMD_LINE_SWITCH, wxT("t"), wxT("text-engine"), wxT("использовать собственный движок рисования текста")},
-    {wxCMD_LINE_PARAM, NULL, NULL, wxT("входной файл"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL},
+    {wxCMD_LINE_OPTION, "a", "aperture-name", "имя файла апертур"},
+    {wxCMD_LINE_SWITCH, "l", "aperture-laser", "использовать множество апертур GERBER LASER"},
+    {wxCMD_LINE_SWITCH, "t", "text-engine", "использовать собственный движок рисования текста"},
+    {wxCMD_LINE_PARAM, NULL, NULL, "входной файл", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL},
     {wxCMD_LINE_NONE}
 };
 
@@ -184,7 +176,7 @@ void PCADViewerApp::RecreateGUI()
     Frame->Centre();
     Frame->Show();
     SetTopWindow(Frame);
-    setlocale(LC_NUMERIC, "C");
+    //setlocale(LC_NUMERIC, "C");
 }
 
 void PCADViewerApp::OnInitCmdLine(wxCmdLineParser& parser)
@@ -268,15 +260,17 @@ bool PCADViewerApp::OnInit()
     }
     if (!m_locale)
         m_locale = new wxLocale(wxLANGUAGE_RUSSIAN);
+    if (!m_tbl_server)
+        m_tbl_server = new TBLFileServer;
 
     //(*AppInitialize
     bool wxsOK = true;
     wxInitAllImageHandlers();
-    if (wxsOK)
+    if ( wxsOK )
     {
-    	PCADViewerFrame* Frame = new PCADViewerFrame(0);
-    	Frame->Show();
-    	SetTopWindow(Frame);
+        PCADViewerFrame* Frame = new PCADViewerFrame(0);
+        Frame->Show();
+        SetTopWindow(Frame);
     }
     //*)
 
@@ -284,7 +278,7 @@ bool PCADViewerApp::OnInit()
     wxHelpProvider::Set(provider);
     provider->SetHelpController(&HtmlHelp);
     HtmlHelp.AddBook(wxFileName(executable_path + wxT("\\PCADViewerHelp.zip")));
-    setlocale(LC_NUMERIC, "C");
+    //setlocale(LC_NUMERIC, "C");
 
     return wxsOK;
 }

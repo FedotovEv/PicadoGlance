@@ -2,6 +2,7 @@
 #include "chr_font.h"
 
 #include <wx/filesys.h>
+#include <wx/xml/xml.h>
 #include <iostream>
 #include <fstream>
 

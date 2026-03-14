@@ -9,6 +9,7 @@
 #include <wx/gdicmn.h>
 #include <wx/palette.h>
 #include <wx/dcmirror.h>
+#include <wx/fontdata.h>
 
 #include "macroses.h"
 #include "svg.h"

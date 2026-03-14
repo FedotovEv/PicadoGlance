@@ -15,6 +15,8 @@
 //(*InternalHeaders(FileInfoDialog)
 //*)
 
+#include "redefine_.h"
+
 using namespace std;
 using namespace aperture;
 
@@ -31,30 +33,30 @@ namespace
 }
 
 //(*IdInit(FileInfoDialog)
-const long FileInfoDialog::ID_BUTTON1 = wxNewId();
-const long FileInfoDialog::ID_STATICTEXT1 = wxNewId();
-const long FileInfoDialog::ID_TEXTCTRL1 = wxNewId();
-const long FileInfoDialog::ID_STATICTEXT3 = wxNewId();
-const long FileInfoDialog::ID_TEXTCTRL2 = wxNewId();
-const long FileInfoDialog::ID_STATICTEXT4 = wxNewId();
-const long FileInfoDialog::ID_TEXTCTRL3 = wxNewId();
-const long FileInfoDialog::ID_BUTTON2 = wxNewId();
-const long FileInfoDialog::ID_STATICTEXT5 = wxNewId();
-const long FileInfoDialog::ID_TEXTCTRL4 = wxNewId();
-const long FileInfoDialog::ID_STATICTEXT6 = wxNewId();
-const long FileInfoDialog::ID_TEXTCTRL5 = wxNewId();
-const long FileInfoDialog::ID_STATICTEXT7 = wxNewId();
-const long FileInfoDialog::ID_STATICTEXT8 = wxNewId();
-const long FileInfoDialog::ID_TEXTCTRL6 = wxNewId();
-const long FileInfoDialog::ID_STATICTEXT9 = wxNewId();
-const long FileInfoDialog::ID_TEXTCTRL7 = wxNewId();
-const long FileInfoDialog::ID_TEXTCTRL8 = wxNewId();
-const long FileInfoDialog::ID_LISTBOX1 = wxNewId();
-const long FileInfoDialog::ID_LISTBOX2 = wxNewId();
-const long FileInfoDialog::ID_STATICTEXT10 = wxNewId();
-const long FileInfoDialog::ID_STATICTEXT11 = wxNewId();
-const long FileInfoDialog::ID_STATICTEXT12 = wxNewId();
-const long FileInfoDialog::ID_TEXTCTRL9 = wxNewId();
+const wxWindowID FileInfoDialog::ID_BUTTON1 = wxNewId();
+const wxWindowID FileInfoDialog::ID_STATICTEXT1 = wxNewId();
+const wxWindowID FileInfoDialog::ID_TEXTCTRL1 = wxNewId();
+const wxWindowID FileInfoDialog::ID_STATICTEXT3 = wxNewId();
+const wxWindowID FileInfoDialog::ID_TEXTCTRL2 = wxNewId();
+const wxWindowID FileInfoDialog::ID_STATICTEXT4 = wxNewId();
+const wxWindowID FileInfoDialog::ID_TEXTCTRL3 = wxNewId();
+const wxWindowID FileInfoDialog::ID_BUTTON2 = wxNewId();
+const wxWindowID FileInfoDialog::ID_STATICTEXT5 = wxNewId();
+const wxWindowID FileInfoDialog::ID_TEXTCTRL4 = wxNewId();
+const wxWindowID FileInfoDialog::ID_STATICTEXT6 = wxNewId();
+const wxWindowID FileInfoDialog::ID_TEXTCTRL5 = wxNewId();
+const wxWindowID FileInfoDialog::ID_STATICTEXT7 = wxNewId();
+const wxWindowID FileInfoDialog::ID_STATICTEXT8 = wxNewId();
+const wxWindowID FileInfoDialog::ID_TEXTCTRL6 = wxNewId();
+const wxWindowID FileInfoDialog::ID_STATICTEXT9 = wxNewId();
+const wxWindowID FileInfoDialog::ID_TEXTCTRL7 = wxNewId();
+const wxWindowID FileInfoDialog::ID_TEXTCTRL8 = wxNewId();
+const wxWindowID FileInfoDialog::ID_LISTBOX1 = wxNewId();
+const wxWindowID FileInfoDialog::ID_LISTBOX2 = wxNewId();
+const wxWindowID FileInfoDialog::ID_STATICTEXT10 = wxNewId();
+const wxWindowID FileInfoDialog::ID_STATICTEXT11 = wxNewId();
+const wxWindowID FileInfoDialog::ID_STATICTEXT12 = wxNewId();
+const wxWindowID FileInfoDialog::ID_TEXTCTRL9 = wxNewId();
 //*)
 
 BEGIN_EVENT_TABLE(FileInfoDialog,wxDialog)
@@ -78,7 +80,7 @@ FileInfoDialog::FileInfoDialog(wxWindow* parent,wxWindowID id)
 	PictSizeStatic = new wxStaticText(this, ID_STATICTEXT5, _("Размер"), wxPoint(16,80), wxDefaultSize, 0, _T("ID_STATICTEXT5"));
 	PictSizeText = new wxTextCtrl(this, ID_TEXTCTRL4, wxEmptyString, wxPoint(80,72), wxDefaultSize, wxTE_READONLY, wxDefaultValidator, _T("ID_TEXTCTRL4"));
 	PictElemCountStatic = new wxStaticText(this, ID_STATICTEXT6, _("Количество\nэлементов"), wxPoint(208,72), wxDefaultSize, 0, _T("ID_STATICTEXT6"));
-	PictElemCountText = new wxTextCtrl(this, ID_TEXTCTRL5, _("0"), wxPoint(280,72), wxDefaultSize, wxTE_READONLY, wxDefaultValidator, _T("ID_TEXTCTRL5"));
+	PictElemCountText = new wxTextCtrl(this, ID_TEXTCTRL5, _T("0"), wxPoint(280,72), wxDefaultSize, wxTE_READONLY, wxDefaultValidator, _T("ID_TEXTCTRL5"));
 	FileEditorStatic = new wxStaticText(this, ID_STATICTEXT7, _("Редактор"), wxPoint(16,112), wxDefaultSize, 0, _T("ID_STATICTEXT7"));
 	FileMeasureUnitStatic = new wxStaticText(this, ID_STATICTEXT8, _("Единицы\nизмерения"), wxPoint(160,104), wxDefaultSize, 0, _T("ID_STATICTEXT8"));
 	FileEditorText = new wxTextCtrl(this, ID_TEXTCTRL6, wxEmptyString, wxPoint(80,104), wxSize(72,21), wxTE_READONLY, wxDefaultValidator, _T("ID_TEXTCTRL6"));
@@ -92,8 +94,8 @@ FileInfoDialog::FileInfoDialog(wxWindow* parent,wxWindowID id)
 	ApertureFileNameStatic = new wxStaticText(this, ID_STATICTEXT12, _("Имя файла\nапертур"), wxPoint(8,224), wxDefaultSize, 0, _T("ID_STATICTEXT12"));
 	ApertureFileNameText = new wxTextCtrl(this, ID_TEXTCTRL9, wxEmptyString, wxPoint(80,224), wxSize(312,21), wxTE_READONLY, wxDefaultValidator, _T("ID_TEXTCTRL9"));
 
-	Connect(ID_BUTTON1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&FileInfoDialog::OnFileInfoButtonExitClick);
-	Connect(ID_BUTTON2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&FileInfoDialog::OnFileInfoButtonSaveClick);
+	Connect(ID_BUTTON1, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&FileInfoDialog::OnFileInfoButtonExitClick);
+	Connect(ID_BUTTON2, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&FileInfoDialog::OnFileInfoButtonSaveClick);
 	//*)
 }
 

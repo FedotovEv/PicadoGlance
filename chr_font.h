@@ -4,6 +4,7 @@
 #include "wx/xrc/xmlres.h"
 #include <string>
 #include <filesystem>
+#include <unordered_map>
 
 #define MAX_COPYRIGHT_LEN 254     // Предельная длина информационной строкив CHR-заголовке
 

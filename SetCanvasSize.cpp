@@ -18,27 +18,29 @@ extern const StdWXObjects std_wx_objects;
 //(*InternalHeaders(SetCanvasSize)
 //*)
 
+#include "redefine_.h"
+
 //(*IdInit(SetCanvasSize)
-const long SetCanvasSize::ID_LISTBOX1 = wxNewId();
-const long SetCanvasSize::ID_BUTTON_CANVAS_VARY_ADD = wxNewId();
-const long SetCanvasSize::ID_BUTTON_CANVAS_VARY_DELETE = wxNewId();
-const long SetCanvasSize::ID_BUTTON_CANVAS_VARY_NAME = wxNewId();
-const long SetCanvasSize::ID_STATICTEXT1 = wxNewId();
-const long SetCanvasSize::ID_SPINCTRL_HOR_SIZE = wxNewId();
-const long SetCanvasSize::ID_STATICTEXT2 = wxNewId();
-const long SetCanvasSize::ID_SPINCTRL_VERT_SIZE = wxNewId();
-const long SetCanvasSize::ID_STATICTEXT4 = wxNewId();
-const long SetCanvasSize::ID_RADIOBUTTON_MM = wxNewId();
-const long SetCanvasSize::ID_RADIOBUTTON_INCH = wxNewId();
-const long SetCanvasSize::ID_STATICTEXT3 = wxNewId();
-const long SetCanvasSize::ID_TEXTCTRL_ASPECT_RATIO = wxNewId();
-const long SetCanvasSize::ID_CHECKBOX_FIXED_ASPECT_RATIO = wxNewId();
-const long SetCanvasSize::ID_BUTTON_SET = wxNewId();
-const long SetCanvasSize::ID_BUTTON_CANCEL = wxNewId();
-const long SetCanvasSize::ID_BUTTON_RESET = wxNewId();
-const long SetCanvasSize::ID_BUTTON_STD_CANVAS = wxNewId();
-const long SetCanvasSize::ID_BUTTON_SAVE_TO_FILE = wxNewId();
-const long SetCanvasSize::ID_BUTTON_LOAD_FROM_FILE = wxNewId();
+const wxWindowID SetCanvasSize::ID_LISTBOX1 = wxNewId();
+const wxWindowID SetCanvasSize::ID_BUTTON_CANVAS_VARY_ADD = wxNewId();
+const wxWindowID SetCanvasSize::ID_BUTTON_CANVAS_VARY_DELETE = wxNewId();
+const wxWindowID SetCanvasSize::ID_BUTTON_CANVAS_VARY_NAME = wxNewId();
+const wxWindowID SetCanvasSize::ID_STATICTEXT1 = wxNewId();
+const wxWindowID SetCanvasSize::ID_SPINCTRL_HOR_SIZE = wxNewId();
+const wxWindowID SetCanvasSize::ID_STATICTEXT2 = wxNewId();
+const wxWindowID SetCanvasSize::ID_SPINCTRL_VERT_SIZE = wxNewId();
+const wxWindowID SetCanvasSize::ID_STATICTEXT4 = wxNewId();
+const wxWindowID SetCanvasSize::ID_RADIOBUTTON_MM = wxNewId();
+const wxWindowID SetCanvasSize::ID_RADIOBUTTON_INCH = wxNewId();
+const wxWindowID SetCanvasSize::ID_STATICTEXT3 = wxNewId();
+const wxWindowID SetCanvasSize::ID_TEXTCTRL_ASPECT_RATIO = wxNewId();
+const wxWindowID SetCanvasSize::ID_CHECKBOX_FIXED_ASPECT_RATIO = wxNewId();
+const wxWindowID SetCanvasSize::ID_BUTTON_SET = wxNewId();
+const wxWindowID SetCanvasSize::ID_BUTTON_CANCEL = wxNewId();
+const wxWindowID SetCanvasSize::ID_BUTTON_RESET = wxNewId();
+const wxWindowID SetCanvasSize::ID_BUTTON_STD_CANVAS = wxNewId();
+const wxWindowID SetCanvasSize::ID_BUTTON_SAVE_TO_FILE = wxNewId();
+const wxWindowID SetCanvasSize::ID_BUTTON_LOAD_FROM_FILE = wxNewId();
 //*)
 
 const long SetCanvasSize::IdMenuCanvasA3 = wxNewId();
@@ -118,7 +120,7 @@ SetCanvasSize::SetCanvasSize(wxWindow* parent,wxWindowID id,const wxPoint& pos,c
 	BoxSizer6 = new wxBoxSizer(wxVERTICAL);
 	StaticText3 = new wxStaticText(this, ID_STATICTEXT3, _("Соотношение сторон"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT3"));
 	BoxSizer6->Add(StaticText3, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
-	AspectRatio = new wxTextCtrl(this, ID_TEXTCTRL_ASPECT_RATIO, _("1"), wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER, wxDefaultValidator, _T("ID_TEXTCTRL_ASPECT_RATIO"));
+	AspectRatio = new wxTextCtrl(this, ID_TEXTCTRL_ASPECT_RATIO, _T("1"), wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER, wxDefaultValidator, _T("ID_TEXTCTRL_ASPECT_RATIO"));
 	AspectRatio->SetMinSize(wxSize(50,-1));
 	BoxSizer6->Add(AspectRatio, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	FixedAspectRatio = new wxCheckBox(this, ID_CHECKBOX_FIXED_ASPECT_RATIO, _("Фикс"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_CHECKBOX_FIXED_ASPECT_RATIO"));
@@ -141,25 +143,24 @@ SetCanvasSize::SetCanvasSize(wxWindow* parent,wxWindowID id,const wxPoint& pos,c
 	BoxSizer2->Add(ButtonLoadFromFile, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	BoxSizer1->Add(BoxSizer2, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	SetSizer(BoxSizer1);
-	BoxSizer1->Fit(this);
 	BoxSizer1->SetSizeHints(this);
 
-	Connect(ID_LISTBOX1,wxEVT_COMMAND_LISTBOX_SELECTED,(wxObjectEventFunction)&SetCanvasSize::OnCanvasVaryListSelect);
-	Connect(ID_BUTTON_CANVAS_VARY_ADD,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&SetCanvasSize::OnCanvasVaryAddClick);
-	Connect(ID_BUTTON_CANVAS_VARY_DELETE,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&SetCanvasSize::OnCanvasVaryDeleteClick);
-	Connect(ID_BUTTON_CANVAS_VARY_NAME,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&SetCanvasSize::OnCanvasVaryNameClick);
-	Connect(ID_SPINCTRL_HOR_SIZE,wxEVT_COMMAND_SPINCTRL_UPDATED,(wxObjectEventFunction)&SetCanvasSize::OnHorSizeChange);
-	Connect(ID_SPINCTRL_VERT_SIZE,wxEVT_COMMAND_SPINCTRL_UPDATED,(wxObjectEventFunction)&SetCanvasSize::OnVertSizeChange);
-	Connect(ID_RADIOBUTTON_MM,wxEVT_COMMAND_RADIOBUTTON_SELECTED,(wxObjectEventFunction)&SetCanvasSize::OnMeasureUnitMMSelect);
-	Connect(ID_RADIOBUTTON_INCH,wxEVT_COMMAND_RADIOBUTTON_SELECTED,(wxObjectEventFunction)&SetCanvasSize::OnMeasureUnitInchSelect);
-	Connect(ID_TEXTCTRL_ASPECT_RATIO,wxEVT_COMMAND_TEXT_ENTER,(wxObjectEventFunction)&SetCanvasSize::OnAspectRatioTextEnter);
-	Connect(ID_CHECKBOX_FIXED_ASPECT_RATIO,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&SetCanvasSize::OnFixedAspectRatioClick);
-	Connect(ID_BUTTON_SET,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&SetCanvasSize::OnButtonSetClick);
-	Connect(ID_BUTTON_CANCEL,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&SetCanvasSize::OnButtonCancelClick);
-	Connect(ID_BUTTON_RESET,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&SetCanvasSize::OnButtonResetClick);
-	Connect(ID_BUTTON_STD_CANVAS,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&SetCanvasSize::OnButtonSetStandartClick);
-	Connect(ID_BUTTON_SAVE_TO_FILE,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&SetCanvasSize::OnButtonSaveToFileClick);
-	Connect(ID_BUTTON_LOAD_FROM_FILE,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&SetCanvasSize::OnButtonLoadFromFileClick);
+	Connect(ID_LISTBOX1, wxEVT_COMMAND_LISTBOX_SELECTED, (wxObjectEventFunction)&SetCanvasSize::OnCanvasVaryListSelect);
+	Connect(ID_BUTTON_CANVAS_VARY_ADD, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&SetCanvasSize::OnCanvasVaryAddClick);
+	Connect(ID_BUTTON_CANVAS_VARY_DELETE, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&SetCanvasSize::OnCanvasVaryDeleteClick);
+	Connect(ID_BUTTON_CANVAS_VARY_NAME, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&SetCanvasSize::OnCanvasVaryNameClick);
+	Connect(ID_SPINCTRL_HOR_SIZE, wxEVT_COMMAND_SPINCTRL_UPDATED, (wxObjectEventFunction)&SetCanvasSize::OnHorSizeChange);
+	Connect(ID_SPINCTRL_VERT_SIZE, wxEVT_COMMAND_SPINCTRL_UPDATED, (wxObjectEventFunction)&SetCanvasSize::OnVertSizeChange);
+	Connect(ID_RADIOBUTTON_MM, wxEVT_COMMAND_RADIOBUTTON_SELECTED, (wxObjectEventFunction)&SetCanvasSize::OnMeasureUnitMMSelect);
+	Connect(ID_RADIOBUTTON_INCH, wxEVT_COMMAND_RADIOBUTTON_SELECTED, (wxObjectEventFunction)&SetCanvasSize::OnMeasureUnitInchSelect);
+	Connect(ID_TEXTCTRL_ASPECT_RATIO, wxEVT_COMMAND_TEXT_ENTER, (wxObjectEventFunction)&SetCanvasSize::OnAspectRatioTextEnter);
+	Connect(ID_CHECKBOX_FIXED_ASPECT_RATIO, wxEVT_COMMAND_CHECKBOX_CLICKED, (wxObjectEventFunction)&SetCanvasSize::OnFixedAspectRatioClick);
+	Connect(ID_BUTTON_SET, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&SetCanvasSize::OnButtonSetClick);
+	Connect(ID_BUTTON_CANCEL, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&SetCanvasSize::OnButtonCancelClick);
+	Connect(ID_BUTTON_RESET, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&SetCanvasSize::OnButtonResetClick);
+	Connect(ID_BUTTON_STD_CANVAS, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&SetCanvasSize::OnButtonSetStandartClick);
+	Connect(ID_BUTTON_SAVE_TO_FILE, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&SetCanvasSize::OnButtonSaveToFileClick);
+	Connect(ID_BUTTON_LOAD_FROM_FILE, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&SetCanvasSize::OnButtonLoadFromFileClick);
 	//*)
 
 	AspectRatio->Connect(wxEVT_KILL_FOCUS,(wxObjectEventFunction)&SetCanvasSize::OnAspectRatioKillFocus, 0, this);

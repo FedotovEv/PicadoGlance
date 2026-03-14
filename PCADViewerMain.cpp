@@ -35,6 +35,8 @@
 #include "SetCanvasSize.h"
 #include "LayersSettings.h"
 #include "OptionsDialog.h"
+#include "EditDrillBitsProperties.h"
+#include "DrillDatabaseProperties.h"
 #include "svg.h"
 
 using namespace std;
@@ -52,6 +54,8 @@ extern const StdWXObjects std_wx_objects;
 #include <wx/string.h>
 //*)
 
+#include "redefine_.h"
+
 //helper functions
 enum wxbuildinfoformat {
     short_f, long_f };
@@ -59,103 +63,107 @@ enum wxbuildinfoformat {
 const long PCADViewerFrame::SELECT_TIMER_ID = wxNewId();
 
 //(*IdInit(PCADViewerFrame)
-const long PCADViewerFrame::ID_PANEL_VIEW_CANVAS = wxNewId();
-const long PCADViewerFrame::ID_SCROLLBAR_HOR_POS = wxNewId();
-const long PCADViewerFrame::ID_SCROLLBAR_HOR_CANVAS = wxNewId();
-const long PCADViewerFrame::ID_SCROLLBAR_VERT_POS = wxNewId();
-const long PCADViewerFrame::ID_SCROLLBAR_VERT_CANVAS = wxNewId();
-const long PCADViewerFrame::ID_STATUSBAR1 = wxNewId();
-const long PCADViewerFrame::ToolOpenFile = wxNewId();
-const long PCADViewerFrame::ToolCloseFile = wxNewId();
-const long PCADViewerFrame::ToolExit = wxNewId();
-const long PCADViewerFrame::ToolExport = wxNewId();
-const long PCADViewerFrame::ToolPrint = wxNewId();
-const long PCADViewerFrame::ToolFileInfo = wxNewId();
-const long PCADViewerFrame::ToolMark = wxNewId();
-const long PCADViewerFrame::ToolInvertMark = wxNewId();
-const long PCADViewerFrame::ToolUnmarkAll = wxNewId();
-const long PCADViewerFrame::ToolCopy = wxNewId();
-const long PCADViewerFrame::ToolScalDownX = wxNewId();
-const long PCADViewerFrame::ID_COMBOBOX_SCALE_X = wxNewId();
-const long PCADViewerFrame::ToolScaleUpX = wxNewId();
-const long PCADViewerFrame::ToolOneToOneX = wxNewId();
-const long PCADViewerFrame::ToolEqualScales = wxNewId();
-const long PCADViewerFrame::ToolScalDownY = wxNewId();
-const long PCADViewerFrame::ID_COMBOBOX_SCALE_Y = wxNewId();
-const long PCADViewerFrame::ToolScaleUpY = wxNewId();
-const long PCADViewerFrame::ToolOneToOneY = wxNewId();
-const long PCADViewerFrame::ID_SPINCTRL_CANVAS_HOR = wxNewId();
-const long PCADViewerFrame::ID_SPINCTRL_CANVAS_VERT = wxNewId();
-const long PCADViewerFrame::ToolCanvasYesNo = wxNewId();
-const long PCADViewerFrame::ToolCanvasLandscape = wxNewId();
-const long PCADViewerFrame::ToolHelp = wxNewId();
-const long PCADViewerFrame::ID_TOOLBAR_MAIN = wxNewId();
-const long PCADViewerFrame::IdMenuLoad = wxNewId();
-const long PCADViewerFrame::IdMenuLoadAs = wxNewId();
-const long PCADViewerFrame::IdMenuClose = wxNewId();
-const long PCADViewerFrame::IdMenuExportCanvas = wxNewId();
-const long PCADViewerFrame::IdMenuExportSelected = wxNewId();
-const long PCADViewerFrame::IdMenuExportContour = wxNewId();
-const long PCADViewerFrame::IdMenuExportText = wxNewId();
-const long PCADViewerFrame::IdMenuExportDXF = wxNewId();
-const long PCADViewerFrame::IdMenuExportSVG = wxNewId();
-const long PCADViewerFrame::IdMenuExportWMF = wxNewId();
-const long PCADViewerFrame::IdMenuExportBMP = wxNewId();
-const long PCADViewerFrame::IdMenuExportJPG = wxNewId();
-const long PCADViewerFrame::ID_MENUITEM_EXPORT = wxNewId();
-const long PCADViewerFrame::IdMenuFileInfo = wxNewId();
-const long PCADViewerFrame::IdMenuPrintCanvas = wxNewId();
-const long PCADViewerFrame::IdMenuPrintSelected = wxNewId();
-const long PCADViewerFrame::IdMenuPrintContour = wxNewId();
-const long PCADViewerFrame::IdMenuPrint = wxNewId();
-const long PCADViewerFrame::ID_MENUITEM_PRINT = wxNewId();
-const long PCADViewerFrame::IdMenuExitProgram = wxNewId();
-const long PCADViewerFrame::IdMenuDoCopyToClipboardAuto = wxNewId();
-const long PCADViewerFrame::IdMenuHandleCanvas = wxNewId();
-const long PCADViewerFrame::IdMenuHandleSelected = wxNewId();
-const long PCADViewerFrame::IdMenuHandleContour = wxNewId();
-const long PCADViewerFrame::IdMenuSelect = wxNewId();
-const long PCADViewerFrame::IdMenuInvertSelection = wxNewId();
-const long PCADViewerFrame::IdMenuUnselect = wxNewId();
-const long PCADViewerFrame::IdMenuDoCopyToClipboardSpec = wxNewId();
-const long PCADViewerFrame::IdMenuScaleMode = wxNewId();
-const long PCADViewerFrame::IdMenuItemEqualScales = wxNewId();
-const long PCADViewerFrame::IdMenuItemDiffScales = wxNewId();
-const long PCADViewerFrame::IdMenuScaleUpX = wxNewId();
-const long PCADViewerFrame::IdMenuScaleDownX = wxNewId();
-const long PCADViewerFrame::IdMenuScaleOneX = wxNewId();
-const long PCADViewerFrame::IdMenuNearestStdScaleX = wxNewId();
-const long PCADViewerFrame::IdMenuScaleUpY = wxNewId();
-const long PCADViewerFrame::IdMenuScaleDownY = wxNewId();
-const long PCADViewerFrame::IdMenuScaleOneY = wxNewId();
-const long PCADViewerFrame::IdMenuNearestStdScaleY = wxNewId();
-const long PCADViewerFrame::IdMenuScaleUpBoth = wxNewId();
-const long PCADViewerFrame::IdMenuScaleDownBoth = wxNewId();
-const long PCADViewerFrame::IdMenuScaleOneBoth = wxNewId();
-const long PCADViewerFrame::IdMenuNearestStdScaleXY = wxNewId();
-const long PCADViewerFrame::IdMenuScaleEqualX = wxNewId();
-const long PCADViewerFrame::IdMenuScaleEqualY = wxNewId();
-const long PCADViewerFrame::IdMenuScale = wxNewId();
-const long PCADViewerFrame::IdMenuLayers = wxNewId();
-const long PCADViewerFrame::IdMenuFonts = wxNewId();
-const long PCADViewerFrame::IdMenuLanguages = wxNewId();
-const long PCADViewerFrame::IdMenuCanvasA3 = wxNewId();
-const long PCADViewerFrame::IdMenuCanvasA4 = wxNewId();
-const long PCADViewerFrame::IdMenuCanvasA5 = wxNewId();
-const long PCADViewerFrame::IdMenuCanvasA6 = wxNewId();
-const long PCADViewerFrame::IdMenuCanvasA7 = wxNewId();
-const long PCADViewerFrame::IdMenuCanvasA8 = wxNewId();
-const long PCADViewerFrame::IdMenuCanvasVary = wxNewId();
-const long PCADViewerFrame::IdMenuStdSizes = wxNewId();
-const long PCADViewerFrame::IdMenuCanvasFixRatio = wxNewId();
-const long PCADViewerFrame::IdMenuCanvasMetric = wxNewId();
-const long PCADViewerFrame::IdMenuCanvasPortrait = wxNewId();
-const long PCADViewerFrame::IdMenuCanvasLandscape = wxNewId();
-const long PCADViewerFrame::IdMenuCanvasYesNo = wxNewId();
-const long PCADViewerFrame::IdMenuSetCanvasSize = wxNewId();
-const long PCADViewerFrame::IdMenuOptions = wxNewId();
-const long PCADViewerFrame::IdMenuHelpIndex = wxNewId();
-const long PCADViewerFrame::IdMenuAbout = wxNewId();
+const wxWindowID PCADViewerFrame::ID_PANEL_VIEW_CANVAS = wxNewId();
+const wxWindowID PCADViewerFrame::ID_SCROLLBAR_HOR_POS = wxNewId();
+const wxWindowID PCADViewerFrame::ID_SCROLLBAR_HOR_CANVAS = wxNewId();
+const wxWindowID PCADViewerFrame::ID_SCROLLBAR_VERT_POS = wxNewId();
+const wxWindowID PCADViewerFrame::ID_SCROLLBAR_VERT_CANVAS = wxNewId();
+const wxWindowID PCADViewerFrame::ID_STATUSBAR1 = wxNewId();
+const wxWindowID PCADViewerFrame::ToolOpenFile = wxNewId();
+const wxWindowID PCADViewerFrame::ToolCloseFile = wxNewId();
+const wxWindowID PCADViewerFrame::ToolExit = wxNewId();
+const wxWindowID PCADViewerFrame::ToolExport = wxNewId();
+const wxWindowID PCADViewerFrame::ToolPrint = wxNewId();
+const wxWindowID PCADViewerFrame::ToolFileInfo = wxNewId();
+const wxWindowID PCADViewerFrame::ToolMark = wxNewId();
+const wxWindowID PCADViewerFrame::ToolInvertMark = wxNewId();
+const wxWindowID PCADViewerFrame::ToolUnmarkAll = wxNewId();
+const wxWindowID PCADViewerFrame::ToolCopy = wxNewId();
+const wxWindowID PCADViewerFrame::ToolScalDownX = wxNewId();
+const wxWindowID PCADViewerFrame::ID_COMBOBOX_SCALE_X = wxNewId();
+const wxWindowID PCADViewerFrame::ToolScaleUpX = wxNewId();
+const wxWindowID PCADViewerFrame::ToolOneToOneX = wxNewId();
+const wxWindowID PCADViewerFrame::ToolEqualScales = wxNewId();
+const wxWindowID PCADViewerFrame::ToolScalDownY = wxNewId();
+const wxWindowID PCADViewerFrame::ID_COMBOBOX_SCALE_Y = wxNewId();
+const wxWindowID PCADViewerFrame::ToolScaleUpY = wxNewId();
+const wxWindowID PCADViewerFrame::ToolOneToOneY = wxNewId();
+const wxWindowID PCADViewerFrame::ID_SPINCTRL_CANVAS_HOR = wxNewId();
+const wxWindowID PCADViewerFrame::ID_SPINCTRL_CANVAS_VERT = wxNewId();
+const wxWindowID PCADViewerFrame::ToolCanvasYesNo = wxNewId();
+const wxWindowID PCADViewerFrame::ToolCanvasLandscape = wxNewId();
+const wxWindowID PCADViewerFrame::ToolHelp = wxNewId();
+const wxWindowID PCADViewerFrame::ID_TOOLBAR_MAIN = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuLoad = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuLoadAs = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuClose = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuDrillBitSetup = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuDrillParams = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuCreateDrillFile = wxNewId();
+const wxWindowID PCADViewerFrame::ID_MENUITEM1 = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuExportCanvas = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuExportSelected = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuExportContour = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuExportText = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuExportDXF = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuExportSVG = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuExportWMF = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuExportBMP = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuExportJPG = wxNewId();
+const wxWindowID PCADViewerFrame::ID_MENUITEM_EXPORT = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuFileInfo = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuPrintCanvas = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuPrintSelected = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuPrintContour = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuPrint = wxNewId();
+const wxWindowID PCADViewerFrame::ID_MENUITEM_PRINT = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuExitProgram = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuDoCopyToClipboardAuto = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuHandleCanvas = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuHandleSelected = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuHandleContour = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuSelect = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuInvertSelection = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuUnselect = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuDoCopyToClipboardSpec = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuScaleMode = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuItemEqualScales = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuItemDiffScales = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuScaleUpX = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuScaleDownX = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuScaleOneX = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuNearestStdScaleX = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuScaleUpY = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuScaleDownY = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuScaleOneY = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuNearestStdScaleY = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuScaleUpBoth = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuScaleDownBoth = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuScaleOneBoth = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuNearestStdScaleXY = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuScaleEqualX = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuScaleEqualY = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuScale = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuLayers = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuFonts = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuLanguages = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuCanvasA3 = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuCanvasA4 = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuCanvasA5 = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuCanvasA6 = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuCanvasA7 = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuCanvasA8 = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuCanvasVary = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuStdSizes = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuCanvasFixRatio = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuCanvasMetric = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuCanvasPortrait = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuCanvasLandscape = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuCanvasYesNo = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuSetCanvasSize = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuOptions = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuHelpIndex = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuAbout = wxNewId();
 //*)
 
 BEGIN_EVENT_TABLE(PCADViewerFrame,wxFrame)
@@ -266,6 +274,15 @@ PCADViewerFrame::PCADViewerFrame(wxWindow* parent, wxWindowID id) : select_timer
     MenuFile->Append(IdMenuLoadAs, _("Открыть как"), MenuItemLoadAs, _("Открыть файл конкретным загрузчиком"));
     MenuItemClose = new wxMenuItem(MenuFile, IdMenuClose, _("Закрыть\tCtrl-W"), _("Закрыть текущий файл"), wxITEM_NORMAL);
     MenuFile->Append(MenuItemClose);
+    MenuFile->AppendSeparator();
+    MenuItem3 = new wxMenu();
+    MenuItem4 = new wxMenuItem(MenuItem3, IdMenuDrillBitSetup, _("Инструменты"), _("Настройка характеристик инструментов сверления"), wxITEM_NORMAL);
+    MenuItem3->Append(MenuItem4);
+    MenuItem5 = new wxMenuItem(MenuItem3, IdMenuDrillParams, _("Параметры"), _("Установка режимов и параметров генератора файлов сверловки"), wxITEM_NORMAL);
+    MenuItem3->Append(MenuItem5);
+    MenuItem6 = new wxMenuItem(MenuItem3, IdMenuCreateDrillFile, _("Создать файл"), _("Генерация файла сверловки с использованием установленный режимов и инструментов"), wxITEM_NORMAL);
+    MenuItem3->Append(MenuItem6);
+    MenuFile->Append(ID_MENUITEM1, _("Сверловка"), MenuItem3, wxEmptyString);
     MenuFile->AppendSeparator();
     MenuItemExportHead = new wxMenu();
     MenuItemExportCanvas = new wxMenuItem(MenuItemExportHead, IdMenuExportCanvas, _("С холста"), _("Экспорт только содержимого холста"), wxITEM_CHECK);
@@ -422,97 +439,99 @@ PCADViewerFrame::PCADViewerFrame(wxWindow* parent, wxWindowID id) : select_timer
     MenuHelp->Append(MenuItem21);
     MenuBar1->Append(MenuHelp, _("Помощь"));
     SetMenuBar(MenuBar1);
-    SetSizer(BoxSizer1);
     Layout();
 
-    ScrolledCanvas->Connect(wxEVT_PAINT,(wxObjectEventFunction)&PCADViewerFrame::OnScrolledCanvasPaint,0,this);
-    ScrolledCanvas->Connect(wxEVT_KEY_DOWN,(wxObjectEventFunction)&PCADViewerFrame::OnScrolledCanvasKeyDown,0,this);
-    ScrolledCanvas->Connect(wxEVT_LEFT_DOWN,(wxObjectEventFunction)&PCADViewerFrame::OnScrolledCanvasLeftDown,0,this);
-    ScrolledCanvas->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&PCADViewerFrame::OnScrolledCanvasLeftUp,0,this);
-    ScrolledCanvas->Connect(wxEVT_MIDDLE_DOWN,(wxObjectEventFunction)&PCADViewerFrame::OnScrolledCanvasMiddleDown,0,this);
-    ScrolledCanvas->Connect(wxEVT_RIGHT_DOWN,(wxObjectEventFunction)&PCADViewerFrame::OnScrolledCanvasRightDown,0,this);
-    ScrolledCanvas->Connect(wxEVT_MOTION,(wxObjectEventFunction)&PCADViewerFrame::OnScrolledCanvasMouseMove,0,this);
-    ScrolledCanvas->Connect(wxEVT_MOUSEWHEEL,(wxObjectEventFunction)&PCADViewerFrame::OnScrolledCanvasMouseWheel,0,this);
-    ScrolledCanvas->Connect(wxEVT_SIZE,(wxObjectEventFunction)&PCADViewerFrame::OnScrolledCanvasResize,0,this);
-    Connect(ID_SCROLLBAR_HOR_POS,wxEVT_SCROLL_CHANGED,(wxObjectEventFunction)&PCADViewerFrame::OnScrollBarHorPosScrollChanged);
-    Connect(ID_SCROLLBAR_HOR_CANVAS,wxEVT_SCROLL_CHANGED,(wxObjectEventFunction)&PCADViewerFrame::OnScrollBarHorCanvasPosScrollChanged);
-    Connect(ID_SCROLLBAR_VERT_POS,wxEVT_SCROLL_CHANGED,(wxObjectEventFunction)&PCADViewerFrame::OnScrollBarVertPosScrollChanged);
-    Connect(ID_SCROLLBAR_VERT_CANVAS,wxEVT_SCROLL_CHANGED,(wxObjectEventFunction)&PCADViewerFrame::OnScrollBarVertCanvasPosScrollChanged);
-    Connect(ToolOpenFile,wxEVT_COMMAND_TOOL_CLICKED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuOpenSelected);
-    Connect(ToolCloseFile,wxEVT_COMMAND_TOOL_CLICKED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuCloseSelected);
-    Connect(ToolExit,wxEVT_COMMAND_TOOL_CLICKED,(wxObjectEventFunction)&PCADViewerFrame::OnQuit);
-    Connect(ToolExport,wxEVT_COMMAND_TOOL_CLICKED,(wxObjectEventFunction)&PCADViewerFrame::OnToolBarItemExportClicked);
-    Connect(ToolPrint,wxEVT_COMMAND_TOOL_CLICKED,(wxObjectEventFunction)&PCADViewerFrame::OnToolBarItemPrintClicked);
-    Connect(ToolFileInfo,wxEVT_COMMAND_TOOL_CLICKED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuFileInfoSelected);
-    Connect(ToolMark,wxEVT_COMMAND_TOOL_CLICKED,(wxObjectEventFunction)&PCADViewerFrame::OnToolBarItemMarkClicked);
-    Connect(ToolInvertMark,wxEVT_COMMAND_TOOL_CLICKED,(wxObjectEventFunction)&PCADViewerFrame::OnToolBarItemInvertMarkClicked);
-    Connect(ToolUnmarkAll,wxEVT_COMMAND_TOOL_CLICKED,(wxObjectEventFunction)&PCADViewerFrame::OnToolBarItemUnmarkClicked);
-    Connect(ToolCopy,wxEVT_COMMAND_TOOL_CLICKED,(wxObjectEventFunction)&PCADViewerFrame::OnToolBarItemCopyClicked);
-    Connect(ToolScalDownX,wxEVT_COMMAND_TOOL_CLICKED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuScaleDownXSelected);
-    Connect(ID_COMBOBOX_SCALE_X,wxEVT_COMMAND_COMBOBOX_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnComboBoxScaleXTextEnter);
-    Connect(ID_COMBOBOX_SCALE_X,wxEVT_COMMAND_TEXT_ENTER,(wxObjectEventFunction)&PCADViewerFrame::OnComboBoxScaleXTextEnter);
-    Connect(ToolScaleUpX,wxEVT_COMMAND_TOOL_CLICKED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuScaleUpXSelected);
-    Connect(ToolOneToOneX,wxEVT_COMMAND_TOOL_CLICKED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuScale1to1XSelected);
-    Connect(ToolEqualScales,wxEVT_COMMAND_TOOL_CLICKED,(wxObjectEventFunction)&PCADViewerFrame::OnToolBarItemEqualScalesClicked);
-    Connect(ToolScalDownY,wxEVT_COMMAND_TOOL_CLICKED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuScaleDownYSelected);
-    Connect(ID_COMBOBOX_SCALE_Y,wxEVT_COMMAND_COMBOBOX_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnComboBoxScaleYTextEnter);
-    Connect(ID_COMBOBOX_SCALE_Y,wxEVT_COMMAND_TEXT_ENTER,(wxObjectEventFunction)&PCADViewerFrame::OnComboBoxScaleYTextEnter);
-    Connect(ToolScaleUpY,wxEVT_COMMAND_TOOL_CLICKED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuScaleUpYSelected);
-    Connect(ToolOneToOneY,wxEVT_COMMAND_TOOL_CLICKED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuScale1to1YSelected);
-    Connect(ID_SPINCTRL_CANVAS_HOR,wxEVT_COMMAND_SPINCTRL_UPDATED,(wxObjectEventFunction)&PCADViewerFrame::OnSpinCanvasSizeHorChange);
-    Connect(ID_SPINCTRL_CANVAS_VERT,wxEVT_COMMAND_SPINCTRL_UPDATED,(wxObjectEventFunction)&PCADViewerFrame::OnSpinCanvasSizeVertChange);
-    Connect(ToolCanvasYesNo,wxEVT_COMMAND_TOOL_CLICKED,(wxObjectEventFunction)&PCADViewerFrame::OnToolBarCanvasYesNoClicked);
-    Connect(ToolCanvasLandscape,wxEVT_COMMAND_TOOL_CLICKED,(wxObjectEventFunction)&PCADViewerFrame::OnToolBarItemCanvasLandscapeClicked);
-    Connect(ToolHelp,wxEVT_COMMAND_TOOL_CLICKED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemHelpIndexSelected);
-    Connect(IdMenuLoad,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuOpenSelected);
-    Connect(IdMenuClose,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuCloseSelected);
-    Connect(IdMenuExportText,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuExportToTextSelected);
-    Connect(IdMenuExportDXF,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemExportDXFSelected);
-    Connect(IdMenuExportSVG,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemExportSVGSelected);
-    Connect(IdMenuExportWMF,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemExportWMFSelected);
-    Connect(IdMenuExportBMP,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemExportBMPSelected);
-    Connect(IdMenuExportJPG,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemExportJPEGSelected);
-    Connect(IdMenuFileInfo,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuFileInfoSelected);
-    Connect(IdMenuPrint,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemPrintSelected);
-    Connect(IdMenuExitProgram,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnQuit);
-    Connect(IdMenuDoCopyToClipboardAuto,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnToolBarItemCopyClicked);
-    Connect(IdMenuSelect,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemSelectSelected);
-    Connect(IdMenuInvertSelection,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemInvertSelectionSelected);
-    Connect(IdMenuUnselect,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemUnselectSelected);
-    Connect(IdMenuDoCopyToClipboardSpec,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemDoCopyToClipboardSelected);
-    Connect(IdMenuItemEqualScales,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemEqualScalesSelected);
-    Connect(IdMenuItemDiffScales,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemDiffScalesSelected);
-    Connect(IdMenuScaleUpX,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuScaleUpXSelected);
-    Connect(IdMenuScaleDownX,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuScaleDownXSelected);
-    Connect(IdMenuScaleOneX,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuScale1to1XSelected);
-    Connect(IdMenuNearestStdScaleX,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemNearestStdScaleXSelected);
-    Connect(IdMenuScaleUpY,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuScaleUpYSelected);
-    Connect(IdMenuScaleDownY,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuScaleDownYSelected);
-    Connect(IdMenuScaleOneY,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuScale1to1YSelected);
-    Connect(IdMenuNearestStdScaleY,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemNearestStdScaleYSelected);
-    Connect(IdMenuScaleUpBoth,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemScaleUpBothSelected);
-    Connect(IdMenuScaleDownBoth,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemScaleDownBothSelected);
-    Connect(IdMenuScaleOneBoth,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuScale1to1Selected);
-    Connect(IdMenuNearestStdScaleXY,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemNearestStdScaleBothSelected);
-    Connect(IdMenuScaleEqualX,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuEqualScaleXSelected);
-    Connect(IdMenuScaleEqualY,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuEqualScaleYSelected);
-    Connect(IdMenuLayers,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemLayersSelected);
-    Connect(IdMenuFonts,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemFontsSelected);
-    Connect(IdMenuCanvasA3,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemCanvasA3Selected);
-    Connect(IdMenuCanvasA4,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemCanvasA4Selected);
-    Connect(IdMenuCanvasA5,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemCanvasA5Selected);
-    Connect(IdMenuCanvasA6,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemCanvasA6Selected);
-    Connect(IdMenuCanvasA7,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemCanvasA7Selected);
-    Connect(IdMenuCanvasA8,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemCanvasA8Selected);
-    Connect(IdMenuCanvasFixRatio,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemCanvasFixRatioSelected);
-    Connect(IdMenuCanvasMetric,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemCanvasMetricSelected);
-    Connect(IdMenuCanvasPortrait,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemCanvasPortraitSelected);
-    Connect(IdMenuCanvasLandscape,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemCanvasLandscapeSelected);
-    Connect(IdMenuCanvasYesNo,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemCanvasYesNoSelected);
-    Connect(IdMenuSetCanvasSize,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemSetCanvasSizeSelected);
-    Connect(IdMenuOptions,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemOptionsSelected);
-    Connect(IdMenuHelpIndex,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnMenuItemHelpIndexSelected);
-    Connect(IdMenuAbout,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&PCADViewerFrame::OnAbout);
+    ScrolledCanvas->Connect(wxEVT_PAINT, (wxObjectEventFunction)&PCADViewerFrame::OnScrolledCanvasPaint, NULL, this);
+    ScrolledCanvas->Connect(wxEVT_KEY_DOWN, (wxObjectEventFunction)&PCADViewerFrame::OnScrolledCanvasKeyDown, NULL, this);
+    ScrolledCanvas->Connect(wxEVT_LEFT_DOWN, (wxObjectEventFunction)&PCADViewerFrame::OnScrolledCanvasLeftDown, NULL, this);
+    ScrolledCanvas->Connect(wxEVT_LEFT_UP, (wxObjectEventFunction)&PCADViewerFrame::OnScrolledCanvasLeftUp, NULL, this);
+    ScrolledCanvas->Connect(wxEVT_MIDDLE_DOWN, (wxObjectEventFunction)&PCADViewerFrame::OnScrolledCanvasMiddleDown, NULL, this);
+    ScrolledCanvas->Connect(wxEVT_RIGHT_DOWN, (wxObjectEventFunction)&PCADViewerFrame::OnScrolledCanvasRightDown, NULL, this);
+    ScrolledCanvas->Connect(wxEVT_MOTION, (wxObjectEventFunction)&PCADViewerFrame::OnScrolledCanvasMouseMove, NULL, this);
+    ScrolledCanvas->Connect(wxEVT_MOUSEWHEEL, (wxObjectEventFunction)&PCADViewerFrame::OnScrolledCanvasMouseWheel, NULL, this);
+    ScrolledCanvas->Connect(wxEVT_SIZE, (wxObjectEventFunction)&PCADViewerFrame::OnScrolledCanvasResize, NULL, this);
+    Connect(ID_SCROLLBAR_HOR_POS, wxEVT_SCROLL_CHANGED, (wxObjectEventFunction)&PCADViewerFrame::OnScrollBarHorPosScrollChanged);
+    Connect(ID_SCROLLBAR_HOR_CANVAS, wxEVT_SCROLL_CHANGED, (wxObjectEventFunction)&PCADViewerFrame::OnScrollBarHorCanvasPosScrollChanged);
+    Connect(ID_SCROLLBAR_VERT_POS, wxEVT_SCROLL_CHANGED, (wxObjectEventFunction)&PCADViewerFrame::OnScrollBarVertPosScrollChanged);
+    Connect(ID_SCROLLBAR_VERT_CANVAS, wxEVT_SCROLL_CHANGED, (wxObjectEventFunction)&PCADViewerFrame::OnScrollBarVertCanvasPosScrollChanged);
+    Connect(ToolOpenFile, wxEVT_COMMAND_TOOL_CLICKED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuOpenSelected);
+    Connect(ToolCloseFile, wxEVT_COMMAND_TOOL_CLICKED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuCloseSelected);
+    Connect(ToolExit, wxEVT_COMMAND_TOOL_CLICKED, (wxObjectEventFunction)&PCADViewerFrame::OnQuit);
+    Connect(ToolExport, wxEVT_COMMAND_TOOL_CLICKED, (wxObjectEventFunction)&PCADViewerFrame::OnToolBarItemExportClicked);
+    Connect(ToolPrint, wxEVT_COMMAND_TOOL_CLICKED, (wxObjectEventFunction)&PCADViewerFrame::OnToolBarItemPrintClicked);
+    Connect(ToolFileInfo, wxEVT_COMMAND_TOOL_CLICKED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuFileInfoSelected);
+    Connect(ToolMark, wxEVT_COMMAND_TOOL_CLICKED, (wxObjectEventFunction)&PCADViewerFrame::OnToolBarItemMarkClicked);
+    Connect(ToolInvertMark, wxEVT_COMMAND_TOOL_CLICKED, (wxObjectEventFunction)&PCADViewerFrame::OnToolBarItemInvertMarkClicked);
+    Connect(ToolUnmarkAll, wxEVT_COMMAND_TOOL_CLICKED, (wxObjectEventFunction)&PCADViewerFrame::OnToolBarItemUnmarkClicked);
+    Connect(ToolCopy, wxEVT_COMMAND_TOOL_CLICKED, (wxObjectEventFunction)&PCADViewerFrame::OnToolBarItemCopyClicked);
+    Connect(ToolScalDownX, wxEVT_COMMAND_TOOL_CLICKED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuScaleDownXSelected);
+    Connect(ID_COMBOBOX_SCALE_X, wxEVT_COMMAND_COMBOBOX_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnComboBoxScaleXTextEnter);
+    Connect(ID_COMBOBOX_SCALE_X, wxEVT_COMMAND_TEXT_ENTER, (wxObjectEventFunction)&PCADViewerFrame::OnComboBoxScaleXTextEnter);
+    Connect(ToolScaleUpX, wxEVT_COMMAND_TOOL_CLICKED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuScaleUpXSelected);
+    Connect(ToolOneToOneX, wxEVT_COMMAND_TOOL_CLICKED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuScale1to1XSelected);
+    Connect(ToolEqualScales, wxEVT_COMMAND_TOOL_CLICKED, (wxObjectEventFunction)&PCADViewerFrame::OnToolBarItemEqualScalesClicked);
+    Connect(ToolScalDownY, wxEVT_COMMAND_TOOL_CLICKED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuScaleDownYSelected);
+    Connect(ID_COMBOBOX_SCALE_Y, wxEVT_COMMAND_COMBOBOX_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnComboBoxScaleYTextEnter);
+    Connect(ID_COMBOBOX_SCALE_Y, wxEVT_COMMAND_TEXT_ENTER, (wxObjectEventFunction)&PCADViewerFrame::OnComboBoxScaleYTextEnter);
+    Connect(ToolScaleUpY, wxEVT_COMMAND_TOOL_CLICKED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuScaleUpYSelected);
+    Connect(ToolOneToOneY, wxEVT_COMMAND_TOOL_CLICKED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuScale1to1YSelected);
+    Connect(ID_SPINCTRL_CANVAS_HOR, wxEVT_COMMAND_SPINCTRL_UPDATED, (wxObjectEventFunction)&PCADViewerFrame::OnSpinCanvasSizeHorChange);
+    Connect(ID_SPINCTRL_CANVAS_VERT, wxEVT_COMMAND_SPINCTRL_UPDATED, (wxObjectEventFunction)&PCADViewerFrame::OnSpinCanvasSizeVertChange);
+    Connect(ToolCanvasYesNo, wxEVT_COMMAND_TOOL_CLICKED, (wxObjectEventFunction)&PCADViewerFrame::OnToolBarCanvasYesNoClicked);
+    Connect(ToolCanvasLandscape, wxEVT_COMMAND_TOOL_CLICKED, (wxObjectEventFunction)&PCADViewerFrame::OnToolBarItemCanvasLandscapeClicked);
+    Connect(ToolHelp, wxEVT_COMMAND_TOOL_CLICKED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemHelpIndexSelected);
+    Connect(IdMenuLoad, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuOpenSelected);
+    Connect(IdMenuClose, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuCloseSelected);
+    Connect(IdMenuDrillBitSetup, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuDrillBitSetup);
+    Connect(IdMenuDrillParams, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuDrillParams);
+    Connect(IdMenuCreateDrillFile, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuMakeDrillFile);
+    Connect(IdMenuExportText, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuExportToTextSelected);
+    Connect(IdMenuExportDXF, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemExportDXFSelected);
+    Connect(IdMenuExportSVG, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemExportSVGSelected);
+    Connect(IdMenuExportWMF, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemExportWMFSelected);
+    Connect(IdMenuExportBMP, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemExportBMPSelected);
+    Connect(IdMenuExportJPG, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemExportJPEGSelected);
+    Connect(IdMenuFileInfo, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuFileInfoSelected);
+    Connect(IdMenuPrint, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemPrintSelected);
+    Connect(IdMenuExitProgram, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnQuit);
+    Connect(IdMenuDoCopyToClipboardAuto, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnToolBarItemCopyClicked);
+    Connect(IdMenuSelect, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemSelectSelected);
+    Connect(IdMenuInvertSelection, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemInvertSelectionSelected);
+    Connect(IdMenuUnselect, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemUnselectSelected);
+    Connect(IdMenuDoCopyToClipboardSpec, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemDoCopyToClipboardSelected);
+    Connect(IdMenuItemEqualScales, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemEqualScalesSelected);
+    Connect(IdMenuItemDiffScales, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemDiffScalesSelected);
+    Connect(IdMenuScaleUpX, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuScaleUpXSelected);
+    Connect(IdMenuScaleDownX, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuScaleDownXSelected);
+    Connect(IdMenuScaleOneX, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuScale1to1XSelected);
+    Connect(IdMenuNearestStdScaleX, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemNearestStdScaleXSelected);
+    Connect(IdMenuScaleUpY, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuScaleUpYSelected);
+    Connect(IdMenuScaleDownY, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuScaleDownYSelected);
+    Connect(IdMenuScaleOneY, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuScale1to1YSelected);
+    Connect(IdMenuNearestStdScaleY, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemNearestStdScaleYSelected);
+    Connect(IdMenuScaleUpBoth, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemScaleUpBothSelected);
+    Connect(IdMenuScaleDownBoth, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemScaleDownBothSelected);
+    Connect(IdMenuScaleOneBoth, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuScale1to1Selected);
+    Connect(IdMenuNearestStdScaleXY, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemNearestStdScaleBothSelected);
+    Connect(IdMenuScaleEqualX, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuEqualScaleXSelected);
+    Connect(IdMenuScaleEqualY, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuEqualScaleYSelected);
+    Connect(IdMenuLayers, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemLayersSelected);
+    Connect(IdMenuFonts, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemFontsSelected);
+    Connect(IdMenuCanvasA3, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemCanvasA3Selected);
+    Connect(IdMenuCanvasA4, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemCanvasA4Selected);
+    Connect(IdMenuCanvasA5, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemCanvasA5Selected);
+    Connect(IdMenuCanvasA6, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemCanvasA6Selected);
+    Connect(IdMenuCanvasA7, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemCanvasA7Selected);
+    Connect(IdMenuCanvasA8, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemCanvasA8Selected);
+    Connect(IdMenuCanvasFixRatio, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemCanvasFixRatioSelected);
+    Connect(IdMenuCanvasMetric, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemCanvasMetricSelected);
+    Connect(IdMenuCanvasPortrait, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemCanvasPortraitSelected);
+    Connect(IdMenuCanvasLandscape, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemCanvasLandscapeSelected);
+    Connect(IdMenuCanvasYesNo, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemCanvasYesNoSelected);
+    Connect(IdMenuSetCanvasSize, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemSetCanvasSizeSelected);
+    Connect(IdMenuOptions, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemOptionsSelected);
+    Connect(IdMenuHelpIndex, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemHelpIndexSelected);
+    Connect(IdMenuAbout, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnAbout);
     //*)
 
     ComboBoxScaleX->Connect(wxEVT_KILL_FOCUS, (wxObjectEventFunction)&PCADViewerFrame::OnKillFocusComboBoxScaleX, 0, this);
@@ -546,11 +565,8 @@ PCADViewerFrame::PCADViewerFrame(wxWindow* parent, wxWindowID id) : select_timer
 
     for (double scan_scale : scale_value_array)
     { // Составляем перечни стандартных масштабов для выпадающих списков их установки
-        ostringstream ostr;
-        ostr << fixed << setprecision(3) << scan_scale;
-        wxString wxstr_scale = wxString(ostr.str().c_str(), wxConvUTF8);
-        ComboBoxScaleX->Append(wxstr_scale);
-        ComboBoxScaleY->Append(wxstr_scale);
+        ComboBoxScaleX->Append(wxFSC(scan_scale));
+        ComboBoxScaleY->Append(wxFSC(scan_scale));
     }
 
     // Перечисляем все найденные в дереве каталогов доступные языки (переводы) для программы,
@@ -560,7 +576,7 @@ PCADViewerFrame::PCADViewerFrame(wxWindow* parent, wxWindowID id) : select_timer
     {
         lang_desc.menu_item_id = wxNewId();
 
-        wxString wxmenu_item_name(lang_desc.language_name.c_str(), wxConvUTF8);
+        wxString wxmenu_item_name(lang_desc.language_name);
         wxString wxmenu_comment = _("Выбор языка") + wxmenu_item_name;
         lang_desc.menu_item_ptr =
             new wxMenuItem(MenuLanguages, lang_desc.menu_item_id, wxmenu_item_name,
@@ -676,12 +692,9 @@ void PCADViewerFrame::SetBothScales(double new_scale_x, double new_scale_y)
 
     this_app->current_x_scale = new_scale_x;
     this_app->current_y_scale = new_scale_y;
-    ostringstream ostr;
-    ostr << fixed << setprecision(3) << new_scale_x;
-    ComboBoxScaleX->SetValue(wxString(ostr.str().c_str(), wxConvUTF8));
-    ostr.str(string());
-    ostr << fixed << setprecision(3) << new_scale_y;
-    ComboBoxScaleY->SetValue(wxString(ostr.str().c_str(), wxConvUTF8));
+
+    ComboBoxScaleX->SetValue(wxFSC(new_scale_x));
+    ComboBoxScaleY->SetValue(wxFSC(new_scale_y));
     SetThumbsSizes(old_pd);
     SetStatusText(WhatStatusType::SET_STATUS_WORKSCALE_INFO);
 }
@@ -692,9 +705,7 @@ void PCADViewerFrame::SetScaleX(double new_scale_x)
     SizePositionData old_pd = CountSizePosition();
 
     this_app->current_x_scale = new_scale_x;
-    ostringstream ostr;
-    ostr << fixed << setprecision(3) << new_scale_x;
-    ComboBoxScaleX->SetValue(wxString(ostr.str().c_str(), wxConvUTF8));
+    ComboBoxScaleX->SetValue(wxFSC(new_scale_x));
     SetThumbsSizes(old_pd);
     SetStatusText(WhatStatusType::SET_STATUS_WORKSCALE_INFO);
 }
@@ -705,9 +716,7 @@ void PCADViewerFrame::SetScaleY(double new_scale_y)
     SizePositionData old_pd = CountSizePosition();
 
     this_app->current_y_scale = new_scale_y;
-    ostringstream ostr;
-    ostr << fixed << setprecision(3) << new_scale_y;
-    ComboBoxScaleY->SetValue(wxString(ostr.str().c_str(), wxConvUTF8));
+    ComboBoxScaleY->SetValue(wxFSC(new_scale_y));
     SetThumbsSizes(old_pd);
     SetStatusText(WhatStatusType::SET_STATUS_WORKSCALE_INFO);
 }
@@ -789,7 +798,7 @@ void PCADViewerFrame::InitOpenedFile()
 
     for (size_t i = 0; i < this_app->pcad_file.layers_size(); ++i)
         this_app->pcad_file.SetLayerAttributes(i, LayerAttributes{LAYER_ON_AVL_ACT_ON});
-    SetLabel(main_windows_name + wxT(" - ") + this_app->pcad_file.GetPictureFileName());
+    SetLabel(wxTR(main_windows_name) + " - " + this_app->pcad_file.GetPictureFileName());
     // Перевычисляем подмасштабы для вывода на экран
     wxSizeEvent wxsz;
     OnScrolledCanvasResize(wxsz);
@@ -968,7 +977,7 @@ void PCADViewerFrame::OnMenuCloseSelected(wxCommandEvent& event)
 
     InitOpenedFile();
 
-    SetLabel(main_windows_name);
+    SetLabel(wxTR(main_windows_name));
     // Перевычисляем подмасштабы для вывода на экран
     wxSizeEvent wxsz;
     OnScrolledCanvasResize(wxsz);
@@ -1280,7 +1289,7 @@ void PCADViewerFrame::OnMenuFileInfoSelected(wxCommandEvent& event)
 
     FileInfoDialog file_info_dialog(this);
     file_info_dialog.FileNameText->SetValue(this_app->pcad_file.GetPictureFileName());
-    file_info_dialog.FileTypeText->SetValue(wxString(fdv.file_signature.c_str(), wxConvUTF8));
+    file_info_dialog.FileTypeText->SetValue(fdv.file_signature);
     file_info_dialog.FileWorkshopText->SetValue(wxString(fdv.file_workshop->GetFileWorkshopDescription().c_str(), wxConvUTF8));
 
     file_info_dialog.DBUInMeasureUnitText->SetValue(wxString(to_string(fdv.DBU_in_measure_unit).c_str(), wxConvUTF8));
@@ -1868,7 +1877,7 @@ bool PCADViewerFrame::DoGraphExporting(GraphExportContext& export_context)
         }
         break;
     case GraphExportType::GRAPH_EXPORT_SVG:
-        out_file.open(export_context.filename);
+        out_file.open(export_context.filename.utf8_str());
         if (!(result = static_cast<bool>(out_file)))
         {
             ExportErrorMessageBox(ExportErrorType::EXPORT_CREATE_FILE_ERROR);
@@ -2227,15 +2236,8 @@ void PCADViewerFrame::OnComboBoxScaleXTextEnter(wxCommandEvent& event)
 {
     PCADViewerApp* this_app = static_cast<PCADViewerApp*>(wxTheApp);
     double new_x_scale;
-
-    try
-    {
-        new_x_scale = stod(string(ComboBoxScaleX->GetValue().mb_str()));
-    }
-    catch(...)
-    {
+    if (!ComboBoxScaleX->GetValue().ToDouble(&new_x_scale))
         new_x_scale = this_app->current_x_scale;
-    }
 
     SetScaleX(new_x_scale);
     if (this_app->is_equal_scales)
@@ -2248,15 +2250,8 @@ void PCADViewerFrame::OnComboBoxScaleYTextEnter(wxCommandEvent& event)
 {
     PCADViewerApp* this_app = static_cast<PCADViewerApp*>(wxTheApp);
     double new_y_scale;
-
-    try
-    {
-        new_y_scale = stod(string(ComboBoxScaleY->GetValue().mb_str()));
-    }
-    catch(...)
-    {
+    if (!ComboBoxScaleY->GetValue().ToDouble(&new_y_scale))
         new_y_scale = this_app->current_y_scale;
-    }
 
     SetScaleY(new_y_scale);
     if (this_app->is_equal_scales)
@@ -2711,41 +2706,37 @@ void PCADViewerFrame::SetStatusText(WhatStatusType what_status, const SizePositi
     PCADViewerApp* this_app = static_cast<PCADViewerApp*>(wxTheApp);
     FileDefValues fdv = this_app->pcad_file.GetFileDefValues();
     DrawContext& use_context = this_app->last_draw_context;
-    string status_text;
+    wxString status_text;
 
     use_context.text_export_style = TextExportStyleType::TEXT_EXPORT_CONDENSED_STYLE;
     if (what_status & WhatStatusType::SET_STATUS_CURSOR_INFO)
     {
-        status_text = ConvertPointToString(*src_point_ptr, use_context);
+        status_text = wxFS8(ConvertPointToString(*src_point_ptr, use_context));
         if (graph_obj_ptr)
-            status_text += ':' + graph_obj_ptr->GetObjectShortText(use_context) +
-                           ':' + to_string(graph_obj_ptr->GetGraphObjectOrdinal());
-        StatusBar1->SetStatusText(wxString(status_text.c_str(), wxConvUTF8));
+            status_text += wxFS8(':' + graph_obj_ptr->GetObjectShortText(use_context) + ':') +
+                           wxFI(graph_obj_ptr->GetGraphObjectOrdinal());
+        StatusBar1->SetStatusText(status_text);
     }
 
     if (what_status & WhatStatusType::SET_STATUS_PICTURE_INFO)
     {
-        wxString wx_status_text = fdv.file_signature +
-            wxString(ConvertRectToStringShortEx(fdv.frame_rect, use_context).c_str(), wxConvUTF8);
-        StatusBar1->SetStatusText(wx_status_text, 1);
+        status_text = wxFS8(fdv.file_signature + ConvertRectToStringShortEx(fdv.frame_rect, use_context));
+        StatusBar1->SetStatusText(status_text, 1);
     }
 
     if (what_status & WhatStatusType::SET_STATUS_VIEW_AREA_INFO)
     {
-        status_text = ConvertRectToStringShortEx(pd_ptr->source_draw_part, use_context);
-        StatusBar1->SetStatusText(wxString(status_text.c_str(), wxConvUTF8), 2);
+        status_text = wxFS8(ConvertRectToStringShortEx(pd_ptr->source_draw_part, use_context));
+        StatusBar1->SetStatusText(status_text, 2);
     }
 
     if (what_status & WhatStatusType::SET_STATUS_WORKSCALE_INFO)
     {
-        ostringstream ostr_x, ostr_y;
-        ostr_x << fixed << setprecision(3) << this_app->current_x_scale;
-        ostr_y << fixed << setprecision(3) << this_app->current_y_scale;
         if (this_app->is_equal_scales)
-            status_text = ostr_x.str() + " ="s;
+            status_text = wxFSC(this_app->current_x_scale) + " ="s;
         else
-            status_text = ostr_x.str() + " : "s + ostr_y.str();
-        StatusBar1->SetStatusText(wxString(status_text.c_str(), wxConvUTF8), 3);
+            status_text = wxFSC(this_app->current_x_scale) + " : "s + wxFSC(this_app->current_y_scale);
+        StatusBar1->SetStatusText(status_text, 3);
     }
 }
 
@@ -2876,4 +2867,30 @@ void PCADViewerFrame::OnScrolledCanvasMouseWheel(wxMouseEvent& event)
     key_event.m_altDown = false;
     key_event.m_metaDown = false;
     OnScrolledCanvasKeyDown(key_event);
+}
+
+void PCADViewerFrame::OnMenuDrillBitSetup(wxCommandEvent& event)
+{
+    PCADViewerApp* this_app = static_cast<PCADViewerApp*>(wxTheApp);
+    EditDrillBitsProperties edit_drill_prop_dialog(this);
+    edit_drill_prop_dialog.SetTBLDataServer(this_app->m_tbl_server);
+
+
+    edit_drill_prop_dialog.ShowModal();
+}
+
+void PCADViewerFrame::OnMenuDrillParams(wxCommandEvent& event)
+{
+    PCADViewerApp* this_app = static_cast<PCADViewerApp*>(wxTheApp);
+    DrillDatabaseProperties drill_params_dialog(this);
+
+    if (drill_params_dialog.ShowModal() == wxID_OK)
+    {
+
+
+    }
+}
+
+void PCADViewerFrame::OnMenuMakeDrillFile(wxCommandEvent& event)
+{
 }

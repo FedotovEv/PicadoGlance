@@ -56,26 +56,26 @@ class SetCanvasSize: public wxDialog
 	protected:
 
 		//(*Identifiers(SetCanvasSize)
-		static const long ID_LISTBOX1;
-		static const long ID_BUTTON_CANVAS_VARY_ADD;
-		static const long ID_BUTTON_CANVAS_VARY_DELETE;
-		static const long ID_BUTTON_CANVAS_VARY_NAME;
-		static const long ID_STATICTEXT1;
-		static const long ID_SPINCTRL_HOR_SIZE;
-		static const long ID_STATICTEXT2;
-		static const long ID_SPINCTRL_VERT_SIZE;
-		static const long ID_STATICTEXT4;
-		static const long ID_RADIOBUTTON_MM;
-		static const long ID_RADIOBUTTON_INCH;
-		static const long ID_STATICTEXT3;
-		static const long ID_TEXTCTRL_ASPECT_RATIO;
-		static const long ID_CHECKBOX_FIXED_ASPECT_RATIO;
-		static const long ID_BUTTON_SET;
-		static const long ID_BUTTON_CANCEL;
-		static const long ID_BUTTON_RESET;
-		static const long ID_BUTTON_STD_CANVAS;
-		static const long ID_BUTTON_SAVE_TO_FILE;
-		static const long ID_BUTTON_LOAD_FROM_FILE;
+		static const wxWindowID ID_LISTBOX1;
+		static const wxWindowID ID_BUTTON_CANVAS_VARY_ADD;
+		static const wxWindowID ID_BUTTON_CANVAS_VARY_DELETE;
+		static const wxWindowID ID_BUTTON_CANVAS_VARY_NAME;
+		static const wxWindowID ID_STATICTEXT1;
+		static const wxWindowID ID_SPINCTRL_HOR_SIZE;
+		static const wxWindowID ID_STATICTEXT2;
+		static const wxWindowID ID_SPINCTRL_VERT_SIZE;
+		static const wxWindowID ID_STATICTEXT4;
+		static const wxWindowID ID_RADIOBUTTON_MM;
+		static const wxWindowID ID_RADIOBUTTON_INCH;
+		static const wxWindowID ID_STATICTEXT3;
+		static const wxWindowID ID_TEXTCTRL_ASPECT_RATIO;
+		static const wxWindowID ID_CHECKBOX_FIXED_ASPECT_RATIO;
+		static const wxWindowID ID_BUTTON_SET;
+		static const wxWindowID ID_BUTTON_CANCEL;
+		static const wxWindowID ID_BUTTON_RESET;
+		static const wxWindowID ID_BUTTON_STD_CANVAS;
+		static const wxWindowID ID_BUTTON_SAVE_TO_FILE;
+		static const wxWindowID ID_BUTTON_LOAD_FROM_FILE;
 		//*)
 
 	private:

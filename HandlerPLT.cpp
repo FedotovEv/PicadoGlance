@@ -29,7 +29,7 @@ namespace HandlerPLT
     wxRect PLT4FileWorkshop::ConvRectToLog(int pict_ldx, int pict_ldy, int pict_rux, int pict_ruy) const
     {
         if (pict_ldx > pict_rux)
-            swap (pict_ldx, pict_rux);
+            swap(pict_ldx, pict_rux);
         if (pict_ldy > pict_ruy)
             swap(pict_ldy, pict_ruy);
         return {pict_ldx, fix_plt_head_.ruy - pict_ruy + fix_plt_head_.ldy,
@@ -256,7 +256,7 @@ namespace HandlerPLT
             layer_desc.layer_number = layer_orig.layer_num;
             layer_desc.layer_color = layer_orig.layer_color;
             layer_desc.layer_wx_color = *wxWHITE;
-            layer_desc.layer_attributes = LayerAttributes{0};
+            layer_desc.layer_attributes = LayerAttributes{LAYER_ON_AVL_ACT_ON, LAYER_NOT_TRACEABLE};
 
             string name_lay(layer_orig.layer_name, 6);
             size_t j = name_lay.find('\0');

@@ -12,31 +12,33 @@
 //(*InternalHeaders(OptionsDialog)
 //*)
 
+#include "redefine_.h"
+
 using namespace std;
 using namespace aperture;
 
 //(*IdInit(OptionsDialog)
-const long OptionsDialog::ID_STATICTEXT2 = wxNewId();
-const long OptionsDialog::ID_TEXTCTRL_APERTURE_FILENAME = wxNewId();
-const long OptionsDialog::ID_BUTTON_LOAD_APERTURE = wxNewId();
-const long OptionsDialog::ID_BUTTONAPERTURE_DEFAULT = wxNewId();
-const long OptionsDialog::ID_STATICTEXT3 = wxNewId();
-const long OptionsDialog::ID_COMBOBOX_APERTURE_SECTION = wxNewId();
-const long OptionsDialog::ID_LISTBOXAPERTURES_LIST = wxNewId();
-const long OptionsDialog::ID_RADIOBUTTON_USE_DBU = wxNewId();
-const long OptionsDialog::ID_RADIOBUTTON_USE_MILLIMETER = wxNewId();
-const long OptionsDialog::ID_RADIOBUTTON_USE_INCH = wxNewId();
-const long OptionsDialog::ID_RADIOBUTTON_ADDIT_SCALE_OFF = wxNewId();
-const long OptionsDialog::ID_RADIOBUTTON_ADDIT_SCALE_RUSSIAN_INCH = wxNewId();
-const long OptionsDialog::ID_RADIOBUTTON_ADDIT_SCALE_ANY = wxNewId();
-const long OptionsDialog::ID_STATICTEXT4 = wxNewId();
-const long OptionsDialog::ID_TEXTCTRL_UNIT_SCALE_VALUE_X = wxNewId();
-const long OptionsDialog::ID_STATICTEXT5 = wxNewId();
-const long OptionsDialog::ID_TEXTCTRL_UNIT_SCALE_VALUE_Y = wxNewId();
-const long OptionsDialog::ID_CHECKBOX_SCREEN_SUBSCALE = wxNewId();
-const long OptionsDialog::ID_CHECKBOX_OWN_TEXT_ENGINE = wxNewId();
-const long OptionsDialog::ID_BUTTON_OPTION_OK = wxNewId();
-const long OptionsDialog::ID_BUTTON_OPTION_CANCEL = wxNewId();
+const wxWindowID OptionsDialog::ID_STATICTEXT2 = wxNewId();
+const wxWindowID OptionsDialog::ID_TEXTCTRL_APERTURE_FILENAME = wxNewId();
+const wxWindowID OptionsDialog::ID_BUTTON_LOAD_APERTURE = wxNewId();
+const wxWindowID OptionsDialog::ID_BUTTONAPERTURE_DEFAULT = wxNewId();
+const wxWindowID OptionsDialog::ID_STATICTEXT3 = wxNewId();
+const wxWindowID OptionsDialog::ID_COMBOBOX_APERTURE_SECTION = wxNewId();
+const wxWindowID OptionsDialog::ID_LISTBOXAPERTURES_LIST = wxNewId();
+const wxWindowID OptionsDialog::ID_RADIOBUTTON_USE_DBU = wxNewId();
+const wxWindowID OptionsDialog::ID_RADIOBUTTON_USE_MILLIMETER = wxNewId();
+const wxWindowID OptionsDialog::ID_RADIOBUTTON_USE_INCH = wxNewId();
+const wxWindowID OptionsDialog::ID_RADIOBUTTON_ADDIT_SCALE_OFF = wxNewId();
+const wxWindowID OptionsDialog::ID_RADIOBUTTON_ADDIT_SCALE_RUSSIAN_INCH = wxNewId();
+const wxWindowID OptionsDialog::ID_RADIOBUTTON_ADDIT_SCALE_ANY = wxNewId();
+const wxWindowID OptionsDialog::ID_STATICTEXT4 = wxNewId();
+const wxWindowID OptionsDialog::ID_TEXTCTRL_UNIT_SCALE_VALUE_X = wxNewId();
+const wxWindowID OptionsDialog::ID_STATICTEXT5 = wxNewId();
+const wxWindowID OptionsDialog::ID_TEXTCTRL_UNIT_SCALE_VALUE_Y = wxNewId();
+const wxWindowID OptionsDialog::ID_CHECKBOX_SCREEN_SUBSCALE = wxNewId();
+const wxWindowID OptionsDialog::ID_CHECKBOX_OWN_TEXT_ENGINE = wxNewId();
+const wxWindowID OptionsDialog::ID_BUTTON_OPTION_OK = wxNewId();
+const wxWindowID OptionsDialog::ID_BUTTON_OPTION_CANCEL = wxNewId();
 //*)
 
 BEGIN_EVENT_TABLE(OptionsDialog,wxDialog)
@@ -142,18 +144,17 @@ OptionsDialog::OptionsDialog(wxWindow* parent,wxWindowID id)
 	BoxSizer3->Add(ButtonOptionCancel, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	BoxSizer1->Add(BoxSizer3, 0, wxALL|wxEXPAND, 5);
 	SetSizer(BoxSizer1);
-	BoxSizer1->Fit(this);
 	BoxSizer1->SetSizeHints(this);
 
-	Connect(ID_BUTTON_LOAD_APERTURE,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&OptionsDialog::OnButtonLoadApertureClick);
-	Connect(ID_BUTTONAPERTURE_DEFAULT,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&OptionsDialog::OnButtonApertureDefaultClick);
-	Connect(ID_COMBOBOX_APERTURE_SECTION,wxEVT_COMMAND_COMBOBOX_SELECTED,(wxObjectEventFunction)&OptionsDialog::OnComboBoxApertureSectionSelected);
-	Connect(ID_RADIOBUTTON_ADDIT_SCALE_OFF,wxEVT_COMMAND_RADIOBUTTON_SELECTED,(wxObjectEventFunction)&OptionsDialog::OnRadioAdditionalUnitScaleOffSelect);
-	Connect(ID_RADIOBUTTON_ADDIT_SCALE_RUSSIAN_INCH,wxEVT_COMMAND_RADIOBUTTON_SELECTED,(wxObjectEventFunction)&OptionsDialog::OnRadioAdditionalUnitScaleRussianInchSelect);
-	Connect(ID_RADIOBUTTON_ADDIT_SCALE_ANY,wxEVT_COMMAND_RADIOBUTTON_SELECTED,(wxObjectEventFunction)&OptionsDialog::OnRadioAdditionalUnitScaleAnySelect);
-	Connect(ID_BUTTON_OPTION_OK,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&OptionsDialog::OnButtonOptionOkClick);
-	Connect(ID_BUTTON_OPTION_CANCEL,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&OptionsDialog::OnButtonOptionCancelClick);
-	Connect(wxID_ANY,wxEVT_INIT_DIALOG,(wxObjectEventFunction)&OptionsDialog::OnInit);
+	Connect(ID_BUTTON_LOAD_APERTURE, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&OptionsDialog::OnButtonLoadApertureClick);
+	Connect(ID_BUTTONAPERTURE_DEFAULT, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&OptionsDialog::OnButtonApertureDefaultClick);
+	Connect(ID_COMBOBOX_APERTURE_SECTION, wxEVT_COMMAND_COMBOBOX_SELECTED, (wxObjectEventFunction)&OptionsDialog::OnComboBoxApertureSectionSelected);
+	Connect(ID_RADIOBUTTON_ADDIT_SCALE_OFF, wxEVT_COMMAND_RADIOBUTTON_SELECTED, (wxObjectEventFunction)&OptionsDialog::OnRadioAdditionalUnitScaleOffSelect);
+	Connect(ID_RADIOBUTTON_ADDIT_SCALE_RUSSIAN_INCH, wxEVT_COMMAND_RADIOBUTTON_SELECTED, (wxObjectEventFunction)&OptionsDialog::OnRadioAdditionalUnitScaleRussianInchSelect);
+	Connect(ID_RADIOBUTTON_ADDIT_SCALE_ANY, wxEVT_COMMAND_RADIOBUTTON_SELECTED, (wxObjectEventFunction)&OptionsDialog::OnRadioAdditionalUnitScaleAnySelect);
+	Connect(ID_BUTTON_OPTION_OK, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&OptionsDialog::OnButtonOptionOkClick);
+	Connect(ID_BUTTON_OPTION_CANCEL, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&OptionsDialog::OnButtonOptionCancelClick);
+	Connect(wxID_ANY, wxEVT_INIT_DIALOG, (wxObjectEventFunction)&OptionsDialog::OnInit);
 	//*)
 }
 
