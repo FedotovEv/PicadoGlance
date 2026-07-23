@@ -14,8 +14,11 @@
 #include <filesystem>
 #include <clocale>
 #include <chrono>
-#include <fnmatch.h>
-
+#if defined(_WIN32) || defined(_WIN64)
+    #include "fnmatch.h"
+#else
+    #include <fnmatch.h>
+#endif // defined
 #include "wx_pch.h"
 #include "ApertureFile.h"
 #include "PCADViewDraw.h"

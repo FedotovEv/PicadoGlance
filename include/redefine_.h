@@ -3,6 +3,8 @@
     #undef _
 #endif // _
 
+// ћакросы дл€ образовани€ "широких" wx-строк(wxString, состо€щих из wchar_t) из их "узких" ёникодных
+// UTF8-вариантов (состо€щих из обычных char).
 #define _(x) (wxGetTranslation(wxString::FromUTF8(x)))
 #define wxTR(x) (wxGetTranslation(wxString::FromUTF8(x)))
 #define wxF8(x) (wxString::FromUTF8(x))

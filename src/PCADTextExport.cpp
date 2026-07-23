@@ -133,6 +133,19 @@ string ObjSelColor::GetObjectShortText(DrawContext& draw_context) const
     return "Цвет:"s + ConvertColorToStringShort(set_color_);
 }
 
+string ObjPoint::GetObjectLongText(DrawContext& draw_context) const
+{
+    return "Point : "s + ConvertPointToString(point_center_, draw_context) + zpt +
+           "radius("s + ConvertSizeToString(point_radius_, draw_context) + ')' + zpt +
+           "fill("s + to_string(static_cast<int>(is_fill_)) + ')';
+}
+
+string ObjPoint::GetObjectShortText(DrawContext& draw_context) const
+{
+    return "Точка:"s + ConvertPointToString(point_center_, draw_context) + ":R"s +
+           ConvertSizeToString(point_radius_, draw_context);
+}
+
 string ObjLine::GetObjectLongText(DrawContext& draw_context) const
 {
     return "Line : "s + ConvertPointToString(point1_, draw_context) + zpt +

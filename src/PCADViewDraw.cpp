@@ -1562,6 +1562,54 @@ void GraphObj::SetPenBrushExt(DrawContext& draw_context, int pen_width) const
     }
 }
 
+void GraphObj::SetPenBrushInt(DrawContext& draw_context, int pen_width) const
+{   // Функция устанавливает перо толщиной pen_width (по умолчанию = 1) и прозрачную
+    // кисть для рисования контурных объектов.
+    bool is_direct_color = !(graph_obj_attributes_.is_selected && draw_context.is_use_selected);
+
+    if (pen_width <= 1)
+    {
+        if (is_direct_color)
+            draw_context.target_dc_ptr->SetPen(draw_context.pen_1);
+        else
+            draw_context.target_dc_ptr->SetPen(draw_context.inv_pen_1);
+    }
+    else
+    {
+        draw_context.target_dc_ptr->SetPen(wxNullPen);
+        if (is_direct_color)
+        {
+            draw_context.pen_width = wxPen(draw_context.color, pen_width);
+            draw_context.target_dc_ptr->SetPen(draw_context.pen_width);
+        }
+        else
+        {
+            draw_context.inv_pen_width = wxPen(draw_context.inv_color, pen_width);
+            draw_context.target_dc_ptr->SetPen(draw_context.inv_pen_width);
+        }
+    }
+    draw_context.target_dc_ptr->SetBrush(*wxTRANSPARENT_BRUSH);
+
+    if (is_direct_color)
+        draw_context.target_dc_ptr->SetTextForeground(draw_context.color);
+    else
+        draw_context.target_dc_ptr->SetTextForeground(draw_context.inv_color);
+
+    draw_context.target_dc_ptr->SetTextBackground(draw_context.background_color);
+
+
+    if (draw_context.recognize_dc.IsOk())
+    {
+        draw_context.recognize_dc.SetPen(wxNullPen);
+        wxColor indic_color = StdWXObjects::FromLong(graph_object_ordinal_);
+        draw_context.pen_recognize = wxPen{indic_color, pen_width};
+        draw_context.recognize_dc.SetPen(draw_context.pen_recognize);
+        draw_context.recognize_dc.SetBrush(*wxTRANSPARENT_BRUSH);
+        draw_context.recognize_dc.SetTextForeground(indic_color);
+        draw_context.recognize_dc.SetTextBackground(wxColor(0, 0, 0));
+    }
+}
+
 void GraphObj::ClearPenBrush(DrawContext& draw_context) const
 {   // Функция сбрасывает все установленные перья и кисти, делая возможным их дальнейшее уничтожение
     draw_context.target_dc_ptr->SetPen(wxNullPen);
@@ -1621,54 +1669,6 @@ void  ContourGraphObj::CountHorVertWidth(DrawContext& draw_context, int* line_wi
         *line_width_vert_ptr = max(static_cast<int>(round(line_width * draw_context.scale_y)), 1);
 }
 
-void ContourGraphObj::SetPenBrushInt(DrawContext& draw_context, int pen_width) const
-{   // Функция устанавливает перо толщиной pen_width (по умолчанию = 1) и прозрачную
-    // кисть для рисования контурных объектов.
-    bool is_direct_color = !(graph_obj_attributes_.is_selected && draw_context.is_use_selected);
-
-    if (pen_width <= 1)
-    {
-        if (is_direct_color)
-            draw_context.target_dc_ptr->SetPen(draw_context.pen_1);
-        else
-            draw_context.target_dc_ptr->SetPen(draw_context.inv_pen_1);
-    }
-    else
-    {
-        draw_context.target_dc_ptr->SetPen(wxNullPen);
-        if (is_direct_color)
-        {
-            draw_context.pen_width = wxPen(draw_context.color, pen_width);
-            draw_context.target_dc_ptr->SetPen(draw_context.pen_width);
-        }
-        else
-        {
-            draw_context.inv_pen_width = wxPen(draw_context.inv_color, pen_width);
-            draw_context.target_dc_ptr->SetPen(draw_context.inv_pen_width);
-        }
-    }
-    draw_context.target_dc_ptr->SetBrush(*wxTRANSPARENT_BRUSH);
-
-    if (is_direct_color)
-        draw_context.target_dc_ptr->SetTextForeground(draw_context.color);
-    else
-        draw_context.target_dc_ptr->SetTextForeground(draw_context.inv_color);
-
-    draw_context.target_dc_ptr->SetTextBackground(draw_context.background_color);
-
-
-    if (draw_context.recognize_dc.IsOk())
-    {
-        draw_context.recognize_dc.SetPen(wxNullPen);
-        wxColor indic_color = StdWXObjects::FromLong(graph_object_ordinal_);
-        draw_context.pen_recognize = wxPen{indic_color, pen_width};
-        draw_context.recognize_dc.SetPen(draw_context.pen_recognize);
-        draw_context.recognize_dc.SetBrush(*wxTRANSPARENT_BRUSH);
-        draw_context.recognize_dc.SetTextForeground(indic_color);
-        draw_context.recognize_dc.SetTextBackground(wxColor(0, 0, 0));
-    }
-}
-
 wxRect ObjSelColor::DrawObject(DrawContext& draw_context) const
 {
     draw_context.InitDrawContextByColor(set_color_);
@@ -1678,6 +1678,75 @@ wxRect ObjSelColor::DrawObject(DrawContext& draw_context) const
 void ObjSelColor::DrawObjectSVG(svg::Document& svg_doc, DrawContext& draw_context) const
 {
     DrawObject(draw_context);
+}
+
+ObjPoint::ObjPoint(int layer_number, wxPoint point_center, int point_radius, bool is_fill,
+                   PointCategory point_cat, int point_type) :
+    GraphObj(layer_number), point_center_(point_center), point_radius_(point_radius), is_fill_(is_fill),
+    point_cat_(point_cat), point_type_(point_type)
+{
+    wxPoint top_left_point(point_center_.x - point_radius_, point_center_.y - point_radius_);
+    frame_rect_.SetTopLeft(top_left_point);
+    frame_rect_.SetWidth(2 * point_radius_);
+    frame_rect_.SetHeight(2 * point_radius_);
+}
+
+wxRect ObjPoint::DrawObject(DrawContext& draw_context) const
+{
+    InitDrawContextByLayerNum(draw_context);
+    if (is_fill_)
+        SetPenBrushExt(draw_context);   // Установка сплошной кисти и единичного радиуса контурного штриха.
+    else
+        SetPenBrushInt(draw_context);   // Установка прозрачной кисти и единичного радиуса контурного штриха.
+
+    wxPoint conv_center = draw_context.ConvertPointToDevice(point_center_);
+    int radius_x = max(static_cast<int>(point_radius_ * draw_context.scale_x), 1);
+    int radius_y = max(static_cast<int>(point_radius_ * draw_context.scale_y), 1);
+    int use_radius = max((radius_x + radius_y) / 2, 1);
+
+    draw_context.target_dc_ptr->DrawCircle(conv_center, use_radius);
+    if (draw_context.recognize_dc.IsOk())
+        draw_context.recognize_dc.DrawCircle(conv_center, use_radius);
+
+    ClearPenBrush(draw_context);
+    // Рассчитаем положение прямоугольника, описанного вокруг "точки".
+    wxPoint conv_top_left_point(conv_center.x - use_radius, conv_center.y - use_radius);
+    wxRect result_conv_rect;
+    result_conv_rect.SetTopLeft(conv_top_left_point);
+    result_conv_rect.SetWidth(2 * use_radius);
+    result_conv_rect.SetHeight(2 * use_radius);
+    return result_conv_rect;
+}
+
+void ObjPoint::DrawObjectSVG(svg::Document& svg_doc, DrawContext& draw_context) const
+{
+    InitDrawContextByLayerNum(draw_context);
+    wxPoint conv_center = draw_context.ConvertPointToDevice(point_center_);
+    svg::Point svg_center = ToSVGPoint(conv_center);
+    int radius_x = max(static_cast<int>(point_radius_ * draw_context.scale_x), 1);
+    int radius_y = max(static_cast<int>(point_radius_ * draw_context.scale_y), 1);
+    int use_radius = max((radius_x + radius_y) / 2, 1);
+
+    svg::Circle circle;
+    circle.SetCenter(svg_center).SetRadius(use_radius)
+          .SetStrokeColor(ToSVGColor(draw_context.color))
+          .SetStrokeWidth(1);
+    if (is_fill_)
+        circle.SetFillColor(ToSVGColor(draw_context.color));
+    else
+        circle.SetFillColor("none"s);
+
+    svg_doc.Add(circle);
+    UnionRectInSVGViewport(svg_doc, svg_center, use_radius, 1, use_radius, 1);
+}
+
+void ObjPoint::ShiftObject(int shift_direction_x, int shift_direction_y)
+{
+    point_center_.x += shift_direction_x;
+    point_center_.y += shift_direction_y;
+
+    frame_rect_.SetX(frame_rect_.GetX() + shift_direction_x);
+    frame_rect_.SetY(frame_rect_.GetY() + shift_direction_y);
 }
 
 wxRect ObjLine::DrawObject(DrawContext& draw_context) const

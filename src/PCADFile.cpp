@@ -8,6 +8,194 @@ using namespace aperture;
 using namespace DrawEntities;
 using namespace std;
 
+static const GraphObj* ScanForGraphObject(uint32_t graph_object_ordinal, const std::vector<GraphObj*>& graph_objects)
+{
+    for (GraphObj* graph_obj_ptr : graph_objects)
+        if (graph_obj_ptr->GetGraphObjectOrdinal() == graph_object_ordinal)
+            return graph_obj_ptr;
+    return nullptr;
+}
+
+static const GraphObj* ScanForGraphObject(wxColor graph_obj_ord_as_color, const std::vector<GraphObj*>& graph_objects)
+{
+    for (GraphObj* graph_obj_ptr : graph_objects)
+        if (StdWXObjects::CompareColorLong(graph_obj_ord_as_color, graph_obj_ptr->GetGraphObjectOrdinal()))
+            return graph_obj_ptr;
+    return nullptr;
+}
+
+void RadioComponentDesc::RadioComponentDescClear() noexcept
+{
+    for (GraphObj* graph_obj_ptr : graph_objects_)
+        delete graph_obj_ptr;
+    graph_objects_.clear();
+    pins_.clear();
+    comp_name_.clear();
+    ty_id_ = 0;
+    ExAttrsCollection::clear();
+}
+
+RadioComponentDesc::RadioComponentDesc(SourceData&& radio_component_data) :
+    ExAttrsCollection(move(radio_component_data.ex_attr_collection)),
+    comp_name_(move(radio_component_data.comp_name)),
+    ty_id_(radio_component_data.ty_id),
+    graph_objects_(move(radio_component_data.graph_objects)),
+    pins_(move(radio_component_data.pins))
+{}
+
+RadioComponentDesc::RadioComponentDesc(RadioComponentDesc&& other) noexcept :
+    ExAttrsCollection(move(other)),
+    comp_name_(move(other.comp_name_)),
+    ty_id_(other.ty_id_),
+    graph_objects_(move(other.graph_objects_)),
+    pins_(move(other.pins_))
+{
+    other.ty_id_ = 0;
+}
+
+RadioComponentDesc::~RadioComponentDesc() noexcept
+{
+    RadioComponentDescClear();
+}
+
+RadioComponentDesc& RadioComponentDesc::operator=(RadioComponentDesc&& other) noexcept
+{
+    if (this != &other)
+    {
+        RadioComponentDescClear();
+        *static_cast<ExAttrsCollection*>(this) = move(other);
+        comp_name_ = move(other.comp_name_);
+        ty_id_ = other.ty_id_;
+        other.ty_id_ = 0;
+        graph_objects_ = move(other.graph_objects_);
+        pins_ = move(other.pins_);
+    }
+    return *this;
+}
+
+const GraphObj* RadioComponentDesc::ScanForGraphObject(uint32_t graph_object_ordinal) const
+{
+    return ScanForGraphObject(graph_object_ordinal, graph_objects_);
+}
+
+const GraphObj* RadioComponentDesc::ScanForGraphObject(wxColor graph_obj_ord_as_color) const
+{
+    return ScanForGraphObject(graph_obj_ord_as_color, graph_objects_);
+}
+
+// Функция-член общей очистки данных структуры RadioComponentInsertion.
+void RadioComponentInsertion::RadioComponentInsertionClear() noexcept
+{
+    delete refdes_obj_;
+    refdes_obj_ = nullptr;
+    for (GraphObj* graph_obj_ptr : pin_labels_)
+        delete graph_obj_ptr;
+    pin_labels_.clear();
+    connect_info_.clear();
+    comp_name_.clear();
+    comp_number_ = -1;
+    ExAttrsCollection::clear();
+}
+
+RadioComponentInsertion::RadioComponentInsertion(SourceData&& component_insert_data) :
+    ExAttrsCollection(move(component_insert_data.ex_attr_collection)),
+    comp_name_(move(component_insert_data.comp_name)),
+    insertion_name_(move(component_insert_data.insertion_name)),
+    refdes_obj_(move(component_insert_data.refdes_obj)),
+    pin_labels_(move(component_insert_data.pin_labels))
+{
+    for (const std::pair<std::string, std::string>& conn_info_pair : component_insert_data.connect_info)
+    {
+        PinNetConnectInfo new_pin_net_conn{.pin_name = conn_info_pair.first, .net_name = conn_info_pair.second};
+        connect_info_.push_back(move(new_pin_net_conn));
+    }
+    component_insert_data.connect_info.clear();
+}
+
+RadioComponentInsertion::RadioComponentInsertion(RadioComponentInsertion&& other) noexcept :
+    ExAttrsCollection(move(other)),
+    comp_name_(move(other.comp_name_)),
+    insertion_name_(move(other.insertion_name_)),
+    comp_number_(other.comp_number_),
+    refdes_obj_(other.refdes_obj_),
+    pin_labels_(move(other.pin_labels_)),
+    connect_info_(move(other.connect_info_))
+{
+    other.comp_number_ = -1;
+    other.refdes_obj_ = nullptr;
+}
+
+RadioComponentInsertion::~RadioComponentInsertion() noexcept
+{
+    RadioComponentInsertionClear();
+}
+
+RadioComponentInsertion& RadioComponentInsertion::operator=(RadioComponentInsertion&& other) noexcept
+{
+    if (this != &other)
+    {
+        RadioComponentInsertionClear();
+        *static_cast<ExAttrsCollection*>(this) = move(other);
+        comp_name_ = move(other.comp_name_);
+        comp_number_ = other.comp_number_;
+        other.comp_number_ = -1;
+        refdes_obj_ = other.refdes_obj_;
+        other.refdes_obj_ = nullptr;
+        pin_labels_ = move(other.pin_labels_);
+        connect_info_ = move(other.connect_info_);
+    }
+    return *this;
+}
+
+// Функция-член полной очистки объекта класса NetDefDesc.
+void NetDefDesc::NetDefDescClear() noexcept
+{
+    for (GraphObj* graph_obj_ptr : net_parts_)
+        delete graph_obj_ptr;
+    net_parts_.clear();
+    net_name_.clear();
+    ExAttrsCollection::clear();
+}
+
+NetDefDesc::NetDefDesc(SourceData&& net_def_data) :
+    ExAttrsCollection(move(net_def_data.ex_attr_collection)),
+    net_name_(move(net_def_data.net_name)),
+    net_parts_(move(net_def_data.net_parts)),
+{}
+
+NetDefDesc::NetDefDesc(NetDefDesc&& other) noexcept :
+    ExAttrsCollection(move(other)),
+    net_name_(move(other.net_name_)),
+    net_parts_(move(other.net_parts_))
+{}
+
+NetDefDesc::~NetDefDesc() noexcept
+{
+    NetDefDescClear();
+}
+
+NetDefDesc& NetDefDesc::operator=(NetDefDesc&& other) noexcept
+{
+    if (this != &other)
+    {
+        NetDefDescClear();
+        *static_cast<ExAttrsCollection*>(this) = move(other);
+        net_name_ = move(other.net_name_);
+        net_parts_ = move(other.net_parts_);
+    }
+    return *this;
+}
+
+const GraphObj* NetDefDesc::ScanForGraphObject(uint32_t graph_object_ordinal) const
+{
+    return ScanForGraphObject(graph_object_ordinal, net_parts_);
+}
+
+const GraphObj* NetDefDesc::ScanForGraphObject(wxColor graph_obj_ord_as_color) const
+{
+    return ScanForGraphObject(graph_obj_ord_as_color, net_parts_);
+}
+
 void PCADFile::DrawFile(DrawContext& draw_context, const CanvasContext& canvas_context, SelectContourData& select_contour)
 {
     draw_context.pcad_doc_ptr = this;
@@ -106,10 +294,38 @@ PCADFile::PCADFile(ApertureProvider& aperture_provider) :
     file_values_.frame_rect = wxRect(0, 0, 10000, 10000);
 }
 
+// Упрощённый конструктор PCAD-документа, принимающий только прямую графическую информацию.
 PCADFile::PCADFile(vector<GraphObj*> graph_objects, vector<LayerDesc> layers,
                    ApertureProvider& aperture_provider, FileDefValues file_values) :
     graph_objects_(move(graph_objects)), layers_(move(layers)),
     aperture_provider_(aperture_provider), file_values_(file_values)
+{
+    InitLayersColor();
+}
+
+void PCADFile::PCADFileClear()
+{
+    for (GraphObj* graph_obj_ptr : graph_objects_)
+        delete graph_obj_ptr;
+    graph_objects_.clear();
+    layers_.clear();
+    radio_elements_ .clear();
+    radio_element_insertions_.clear();
+    nets_.clear();
+}
+
+PCADFile::PCADFile(PCADFile&& other) : aperture_provider_(other.aperture_provider_)
+{
+    graph_objects_ = move(other.graph_objects_);
+    layers_ = move(other.layers_);
+    radio_elements_ = move(other.radio_elements_);
+    radio_element_insertions_ = move(other.radio_element_insertions_);
+    nets_ = move(other.nets_);
+    file_values_ = move(other.file_values_);
+    other.PCADFileClear();
+}
+
+PCADFile::InitLayersColor()
 {
     StdWXObjects std_wx_objects;
 
@@ -121,20 +337,16 @@ PCADFile::PCADFile(vector<GraphObj*> graph_objects, vector<LayerDesc> layers,
     }
 }
 
-void PCADFile::PCADFileClear()
+// Полноценный конструктор, принимающий всю совокупность существующих данных из структуры PCADFileSource.
+PCADFile::PCADFile(PCADFileSource&& data_source, aperture::ApertureProvider& aperture_provider) :
+    graph_objects_(move(data_source.graph_objects)), layers_(move(data_source.layers)),
+    cross_layers_pinholes_(move(data_source.cross_layers_pinholes)),
+    radio_components_(move(data_source.radio_components)),
+    radio_comp_inserts_(move(data_source.radio_comp_inserts)),
+    nets_(move(data_source.nets)),
+    file_values_(data_source.file_values), aperture_provider_(aperture_provider)
 {
-    for (GraphObj* graph_obj_ptr : graph_objects_)
-        delete graph_obj_ptr;
-    graph_objects_.clear();
-    layers_.clear();
-}
-
-PCADFile::PCADFile(PCADFile&& other) : aperture_provider_(other.aperture_provider_)
-{
-    graph_objects_ = move(other.graph_objects_);
-    layers_ = move(other.layers_);
-    file_values_ = move(other.file_values_);
-    other.PCADFileClear();
+    InitLayersColor();
 }
 
 PCADFile::~PCADFile()
@@ -149,6 +361,9 @@ PCADFile& PCADFile::operator=(PCADFile&& other)
         PCADFileClear();
         graph_objects_ = move(other.graph_objects_);
         layers_ = move(other.layers_);
+        radio_elements_ = move(other.radio_elements_);
+        radio_element_insertions_ = move(other.radio_element_insertions_);
+        nets_ = move(other.nets_);
         file_values_ = move(other.file_values_);
         other.PCADFileClear();
     }

@@ -14,19 +14,19 @@
 				<Compiler>
 					<Add option="-g" />
 					<Add option="-Wno-narrowing" />
-					<Add directory="C:/wxWidgets_3_0_5/lib/gcc_lib64/mswud" />
+					<Add directory="C:/wxWidgets_3_2_10/lib/gcc_lib/mswud" />
 				</Compiler>
 				<ResourceCompiler>
-					<Add directory="C:/wxWidgets_3_0_5/lib/gcc_lib64/mswud" />
+					<Add directory="C:/wxWidgets_3_2_10/lib/gcc_lib/mswud" />
 				</ResourceCompiler>
 				<Linker>
-					<Add library="libwxmsw30ud.a" />
+					<Add library="libwxmsw32ud.a" />
 					<Add library="libwxpngd.a" />
 					<Add library="libwxjpegd.a" />
 					<Add library="libwxtiffd.a" />
 					<Add library="libwxzlibd.a" />
 					<Add library="libwxexpatd.a" />
-					<Add directory="C:/wxWidgets_3_0_5/lib/gcc_lib64" />
+					<Add directory="C:/wxWidgets_3_2_10/lib/gcc_lib" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -37,26 +37,26 @@
 				<Option projectLinkerOptionsRelation="2" />
 				<Compiler>
 					<Add option="-O2" />
-					<Add directory="C:/wxWidgets_3_0_5/lib/gcc_lib64/mswu" />
+					<Add directory="C:/wxWidgets_3_2_10/lib/gcc_lib/mswu" />
 				</Compiler>
 				<ResourceCompiler>
-					<Add directory="C:/wxWidgets_3_0_5/lib/gcc_lib64/mswu" />
+					<Add directory="C:/wxWidgets_3_2_10/lib/gcc_lib/mswu" />
 				</ResourceCompiler>
 				<Linker>
 					<Add option="-s" />
-					<Add library="libwxmsw30u.a" />
+					<Add library="libwxmsw32u.a" />
 					<Add library="libwxpng.a" />
 					<Add library="libwxjpeg.a" />
 					<Add library="libwxtiff.a" />
 					<Add library="libwxzlib.a" />
 					<Add library="libwxexpat.a" />
-					<Add directory="C:/wxWidgets_3_0_5/lib/gcc_lib64" />
+					<Add directory="C:/wxWidgets_3_2_10/lib/gcc_lib" />
 				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
-			<Add option="-std=gnu++20" />
+			<Add option="-std=c++20" />
 			<Add option="-pipe" />
 			<Add option="-mthreads" />
 			<Add option='[[if (GetCompilerFactory().GetCompilerVersionString(_T(&quot;gcc&quot;)) &gt;= _T(&quot;4.8.0&quot;)) print(_T(&quot;-Wno-unused-local-typedefs&quot;));]]' />
@@ -69,11 +69,11 @@
 			<Add option="-D__WXMSW__" />
 			<Add option="-DwxUSE_UNICODE" />
 			<Add option="-DWX_PRECOMP" />
-			<Add directory="C:/wxWidgets_3_0_5/include" />
+			<Add directory="C:/wxWidgets_3_2_10/include" />
 			<Add directory="C:/MinGW/include" />
 		</Compiler>
 		<ResourceCompiler>
-			<Add directory="C:/wxWidgets_3_0_5/include" />
+			<Add directory="C:/wxWidgets_3_2_10/include" />
 		</ResourceCompiler>
 		<Linker>
 			<Add option="-mthreads" />
@@ -91,61 +91,65 @@
 			<Add library="libwsock32.a" />
 			<Add library="libodbc32.a" />
 			<Add library="libiberty.a" />
+			<Add library="libuxtheme.a" />
+			<Add library="libshlwapi.a" />
+			<Add library="libversion.a" />
+			<Add library="liboleacc.a" />
 		</Linker>
-		<Unit filename="ApertureFile.cpp" />
-		<Unit filename="ApertureFile.h" />
-		<Unit filename="ApertureProvider.cpp" />
-		<Unit filename="ApertureProvider.h" />
-		<Unit filename="DrawGraphicalEntities.cpp" />
-		<Unit filename="DrawGraphicalEntities.h" />
-		<Unit filename="DrillDatabaseProperties.cpp" />
-		<Unit filename="DrillDatabaseProperties.h" />
-		<Unit filename="EditDrillBitsProperties.cpp" />
-		<Unit filename="EditDrillBitsProperties.h" />
-		<Unit filename="FileInfoDialog.cpp" />
-		<Unit filename="FileInfoDialog.h" />
-		<Unit filename="HandlerPDIF.cpp" />
-		<Unit filename="HandlerPDIF.h" />
-		<Unit filename="HandlerPLT.cpp" />
-		<Unit filename="HandlerPLT.h" />
-		<Unit filename="HandlerPLT8.cpp" />
-		<Unit filename="HandlerPLT8.h" />
-		<Unit filename="LayersSettings.cpp" />
-		<Unit filename="LayersSettings.h" />
-		<Unit filename="OptionsDialog.cpp" />
-		<Unit filename="OptionsDialog.h" />
-		<Unit filename="PCADFile.cpp" />
-		<Unit filename="PCADFile.h" />
-		<Unit filename="PCADTextExport.cpp" />
-		<Unit filename="PCADTextExport.h" />
-		<Unit filename="PCADViewDraw.cpp" />
-		<Unit filename="PCADViewDraw.h" />
-		<Unit filename="PCADViewerApp.cpp" />
-		<Unit filename="PCADViewerApp.h" />
-		<Unit filename="PCADViewerMain.cpp" />
-		<Unit filename="PCADViewerMain.h" />
-		<Unit filename="ProviderStamp.cpp" />
-		<Unit filename="ProviderStamp.h" />
-		<Unit filename="SetCanvasSize.cpp" />
-		<Unit filename="SetCanvasSize.h" />
-		<Unit filename="TBLFileServer.cpp" />
-		<Unit filename="TBLFileServer.h" />
-		<Unit filename="chr_font.cpp" />
-		<Unit filename="chr_font.h" />
-		<Unit filename="gerber.cpp" />
-		<Unit filename="gerber.h" />
-		<Unit filename="macroses.cpp" />
-		<Unit filename="macroses.h" />
-		<Unit filename="redefine_.h" />
-		<Unit filename="resource.rc">
+		<Unit filename="src/ApertureFile.cpp" />
+		<Unit filename="include/ApertureFile.h" />
+		<Unit filename="src/ApertureProvider.cpp" />
+		<Unit filename="include/ApertureProvider.h" />
+		<Unit filename="src/DrawGraphicalEntities.cpp" />
+		<Unit filename="include/DrawGraphicalEntities.h" />
+		<Unit filename="src/DrillDatabaseProperties.cpp" />
+		<Unit filename="include/DrillDatabaseProperties.h" />
+		<Unit filename="src/EditDrillBitsProperties.cpp" />
+		<Unit filename="include/EditDrillBitsProperties.h" />
+		<Unit filename="src/FileInfoDialog.cpp" />
+		<Unit filename="include/FileInfoDialog.h" />
+		<Unit filename="src/HandlerPDIF.cpp" />
+		<Unit filename="include/HandlerPDIF.h" />
+		<Unit filename="src/HandlerPLT.cpp" />
+		<Unit filename="include/HandlerPLT.h" />
+		<Unit filename="src/HandlerPLT8.cpp" />
+		<Unit filename="include/HandlerPLT8.h" />
+		<Unit filename="src/LayersSettings.cpp" />
+		<Unit filename="include/LayersSettings.h" />
+		<Unit filename="src/OptionsDialog.cpp" />
+		<Unit filename="include/OptionsDialog.h" />
+		<Unit filename="src/PCADFile.cpp" />
+		<Unit filename="include/PCADFile.h" />
+		<Unit filename="src/PCADTextExport.cpp" />
+		<Unit filename="include/PCADTextExport.h" />
+		<Unit filename="src/PCADViewDraw.cpp" />
+		<Unit filename="include/PCADViewDraw.h" />
+		<Unit filename="src/PCADViewerApp.cpp" />
+		<Unit filename="include/PCADViewerApp.h" />
+		<Unit filename="src/PCADViewerMain.cpp" />
+		<Unit filename="include/PCADViewerMain.h" />
+		<Unit filename="src/ProviderStamp.cpp" />
+		<Unit filename="include/ProviderStamp.h" />
+		<Unit filename="src/SetCanvasSize.cpp" />
+		<Unit filename="include/SetCanvasSize.h" />
+		<Unit filename="src/TBLFileServer.cpp" />
+		<Unit filename="include/TBLFileServer.h" />
+		<Unit filename="src/chr_font.cpp" />
+		<Unit filename="include/chr_font.h" />
+		<Unit filename="src/gerber.cpp" />
+		<Unit filename="include/gerber.h" />
+		<Unit filename="src/macroses.cpp" />
+		<Unit filename="include/macroses.h" />
+		<Unit filename="include/redefine_.h" />
+		<Unit filename="resource/resource.rc">
 			<Option compilerVar="WINDRES" />
 		</Unit>
-		<Unit filename="scrollingdialog.cpp" />
-		<Unit filename="scrollingdialog.h" />
-		<Unit filename="svg.cpp" />
-		<Unit filename="svg.h" />
-		<Unit filename="version.h" />
-		<Unit filename="wx_pch.h">
+		<Unit filename="src/scrollingdialog.cpp" />
+		<Unit filename="include/scrollingdialog.h" />
+		<Unit filename="src/svg.cpp" />
+		<Unit filename="include/svg.h" />
+		<Unit filename="include/version.h" />
+		<Unit filename="include/wx_pch.h">
 			<Option compile="1" />
 			<Option weight="0" />
 		</Unit>
@@ -158,12 +162,12 @@
 		<Extensions>
 			<AutoVersioning>
 				<Scheme minor_max="10" build_max="0" rev_max="0" rev_rand_max="10" build_times_to_increment_minor="100" />
-				<Settings autoincrement="1" date_declarations="1" use_define="0" update_manifest="0" do_auto_increment="0" ask_to_increment="0" language="C++" svn="0" svn_directory="" header_path="version.h" />
+				<Settings autoincrement="1" date_declarations="1" use_define="0" update_manifest="0" do_auto_increment="0" ask_to_increment="0" language="C++" svn="0" svn_directory="" header_path="include/version.h" />
 				<Changes_Log show_changes_editor="1" app_title="released version %M.%m.%b of %p" changeslog_path="ChangesLog.txt" />
 				<Code header_guard="VERSION_H" namespace="AutoVersion" prefix="" />
 			</AutoVersioning>
 			<wxsmith version="1">
-				<gui name="wxWidgets" src="PCADViewerApp.cpp" main="PCADViewerFrame" init_handlers="necessary" language="CPP" />
+				<gui name="wxWidgets" src="src/PCADViewerApp.cpp" main="PCADViewerFrame" init_handlers="necessary" language="CPP" />
 				<resources>
 					<wxFrame wxs="wxsmith/PCADViewerframe.wxs" src="PCADViewerMain.cpp" hdr="PCADViewerMain.h" fwddecl="0" i18n="1" name="PCADViewerFrame" language="CPP" />
 					<wxDialog wxs="wxsmith/FileInfoDialog.wxs" src="FileInfoDialog.cpp" hdr="FileInfoDialog.h" fwddecl="0" i18n="1" name="FileInfoDialog" language="CPP" />

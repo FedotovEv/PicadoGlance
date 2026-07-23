@@ -1,3 +1,6 @@
+#ifndef HEADER_A121A6D4E03D4C79
+#define HEADER_A121A6D4E03D4C79
+
 #pragma once
 
 #include <string>
@@ -221,24 +224,24 @@ struct DrawContext
     wxDC* target_dc_ptr = nullptr;
     wxSize target_dc_size;
     chr::CHRProcessor* chr_processor_ptr = nullptr;
-    bool is_use_chr_font = false; // Флажок применения chr-текторисователя.
-    wxFont context_font; // Текущий шрифт, атрибуты которого (вся информация о шрифте, кроме высоты)
-                         // будут использоваться для вывода текстовых элементов на изображение.
+    bool is_use_chr_font = false;       // Флажок применения chr-тексторисователя.
+    wxFont context_font;                // Текущий шрифт, атрибуты которого (вся информация о шрифте, кроме высоты)
+                                        // будут использоваться для вывода текстовых элементов на изображение.
     // Блок полей определения инструментов рисования - перьев и кистей.
     // Текущие цвет, перо и кисть устанавливаются, как правило, при "рисовании" примитива выбора цвета
-    wxColor color;  // Текущий цвет рисуемых объектов. Такой цвет приобретают также перо и кисть
-                    // (за одним исключением - примитив "закрашенный прямоугольник").
-    wxColor inv_color; // Обращённый цвет для вывода отмеченных объектов.
-    wxColor background_color; // Фоновый цвет изображения
-    wxPen pen_1;    // Перо текущего цвета толщины 1 единица
-    wxPen inv_pen_1;    // Перо инверсного цвета толщины 1 единица
-    wxPen pen_width;    // Перо текущего цвета толщины line_width_
-    wxPen inv_pen_width;  // Перо обращённого цвета толщины line_width_
-    wxBrush brush_solid;  // Сплошная кисть текущего цвета
-    wxBrush inv_brush_solid;  // Сплошная кисть инверсного цвета
-    wxBrush brush_hatch;  // Штриховая кисть текущего цвета
-    wxBrush inv_brush_hatch;  // Штриховая кисть обращённого цвета
-    wxBrush brush_temp;   // Временная кисть, которая используется для примитива "закрашенный прямоугольник".
+    wxColor color;                      // Текущий цвет рисуемых объектов. Такой цвет приобретают также перо и кисть
+                                        // (за одним исключением - примитив "закрашенный прямоугольник").
+    wxColor inv_color;                  // Обращённый цвет для вывода отмеченных объектов.
+    wxColor background_color;           // Фоновый цвет изображения
+    wxPen pen_1;                        // Перо текущего цвета толщины 1 единица
+    wxPen inv_pen_1;                    // Перо инверсного цвета толщины 1 единица
+    wxPen pen_width;                    // Перо текущего цвета толщины line_width_
+    wxPen inv_pen_width;                // Перо обращённого цвета толщины line_width_
+    wxBrush brush_solid;                // Сплошная кисть текущего цвета
+    wxBrush inv_brush_solid;            // Сплошная кисть инверсного цвета
+    wxBrush brush_hatch;                // Штриховая кисть текущего цвета
+    wxBrush inv_brush_hatch;            // Штриховая кисть обращённого цвета
+    wxBrush brush_temp;                 // Временная кисть, которая используется для примитива "закрашенный прямоугольник".
     wxPen pen_recognize;
     wxBrush brush_recognize;
     wxBrush background_brush_recognize;
@@ -347,6 +350,7 @@ public:
 
 protected:
     void SetPenBrushExt(DrawContext& draw_context, int pen_width = 1) const;
+    void SetPenBrushInt(DrawContext& draw_context, int pen_width = 1) const;
     void ClearPenBrush(DrawContext& draw_context) const;
     static svg::Point ToSVGPoint(wxPoint wxp)
     {
@@ -407,7 +411,7 @@ protected:
         }
     }
 
-    wxRect frame_rect_; // Ограничительный прямоугольник, описанный вокруг фигуры
+    wxRect frame_rect_;             // Ограничительный прямоугольник, описанный вокруг фигуры.
     uint32_t graph_object_ordinal_; // Уникальный номер графического объекта
     int layer_number_ = -1; // Номер слоя, к которому относится примитив.
                             // Значение -1 указывает, что объект внеслоевой.
@@ -436,7 +440,6 @@ protected:
     uint32_t GetLinePattern() const;
     void CountHorVertWidthDbl(DrawContext& draw_context, double* line_width_hor_ptr, double* line_width_vert_ptr) const;
     void CountHorVertWidth(DrawContext& draw_context, int* line_width_hor_ptr, int* line_width_vert_ptr) const;
-    void SetPenBrushInt(DrawContext& draw_context, int pen_width = 1) const;
 
     LineType line_type_;     // тип линии
     int line_width_;         // ширина линии
@@ -459,6 +462,39 @@ public:
 private:
     // Цвет устанавливается либо прямо, либо с использованием индекса палитры
     SelColorType set_color_;
+};
+
+class ObjPoint : public GraphObj // Пpимитив "точка" (изображается как закрашенный круг или полая окружность)
+{
+public:
+    enum class PointCategory
+    {
+        POINT_CAT_COMMON = 0,   // Общая точка неопределённого типа.
+        POINT_CAT_VIA           // Точка переходного отверстия (via).
+    };
+
+    ObjPoint(int layer_number, wxPoint point_center, int point_radius, bool is_fill = true,
+             PointCategory point_cat = PointCategory::POINT_CAT_COMMON, int point_type = 0);
+    virtual ~ObjPoint= default;
+    virtual wxRect DrawObject(DrawContext& draw_context) const override;
+    virtual std::string GetObjectLongText(DrawContext& draw_context) const override;
+    virtual std::string GetObjectShortText(DrawContext& draw_context) const override;
+    virtual void DrawObjectSVG(svg::Document& svg_doc, DrawContext& draw_context) const override;
+    virtual void ShiftObject(int shift_direction_x, int shift_direction_y) override;
+
+    int GetPointType() const
+    {
+        return point_type_;
+    }
+
+private:
+    wxPoint point_center_;  // Местоположение.
+    int point_radius_;      // Радиус рисуемой точки.
+    bool is_fill_;          // Флаг необходимости заливки внутренней области.
+
+    // Расширенные реквизиты точечного объекта.
+    PointCategory point_cat_;       // "Категория" точки - характеристика её природы.
+    int point_type_;                // "Тип" точки - дополнительный её атрибут.
 };
 
 class ObjLine : public ContourGraphObj //Объект "линия"
@@ -492,7 +528,7 @@ private:
     wxRect rect_; // координаты прямоугольника
 };
 
-class ObjFillRect : public GraphObj // Пpимитив "закрашенный пpямоугольник":
+class ObjFillRect : public GraphObj // Пpимитив "закрашенный пpямоугольник"
 {
 public:
     ObjFillRect(int layer_number, unsigned char rect_color, wxRect rect) :
@@ -565,11 +601,21 @@ public:
     virtual void DrawObjectSVG(svg::Document& svg_doc, DrawContext& draw_context) const override;
     virtual void ShiftObject(int shift_direction_x, int shift_direction_y) override;
 
+    const std::string& GetText() const
+    {
+        return text_;
+    }
+
+    wxPoint GetTextPoint() const
+    {
+        return text_point_;
+    }
+
 private:
-    wxPoint text_point_;     // точка привязки текста
-    TextOrientation text_orientation_; // ориентация текста
-    int text_height_; // высота текста
-    TextAlign text_align_; // расположение (выравнивание) текста
+    wxPoint text_point_;                // точка привязки текста
+    TextOrientation text_orientation_;  // ориентация текста
+    int text_height_;                   // высота текста
+    TextAlign text_align_;              // расположение (выравнивание) текста
     std::string text_;
 };
 
@@ -661,3 +707,5 @@ inline double ToRadians(double degrees)
 { // Преобразует градусы в радианы
     return (degrees / 180.0) * M_PI;
 }
+#endif // header guard
+
