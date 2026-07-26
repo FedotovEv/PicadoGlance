@@ -1,3 +1,6 @@
+#ifndef HEADER_4B1953D7769E0D1C
+#define HEADER_4B1953D7769E0D1C
+
 #pragma once
 
 //Имя нашей программы (должен совпадать с именем ее исполняемого файла)
@@ -73,6 +76,7 @@ enum class PCADLoadError
     VALUE_NOT_FOUND,
     VALUE_ALREADY_EXISTS,
     VALUE_DUPLICATES,
+    INDEX_OUT_LIMIT
 };
 
 enum class AdditionalScaleModeType
@@ -105,3 +109,5 @@ struct OptionsData
 
 std::string UpcaseString(const std::string& arg_string);
 std::string TrimString(const std::string& arg_string);
+#endif // header guard 
+

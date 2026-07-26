@@ -120,7 +120,7 @@ namespace HandlerPDIF
         // Ключевые слова узлов, описывающих упаковку компонента в корпусе (соответствие выводов радиокомпонента ножкам корпуса).
         // Ключи узлов команды SPKG (корпусировка конструктива).
         {"Sna"sv, PDIFKeywords::PDIF_KEY_SNA},      // Sna - имя секции (только для PC-CARDS).
-        {"Sp"sv, PDIFKeywords::PDIF_KEY_SP},        // Sp - парность ножек (только цифровая).
+        {"Sp"sv, PDIFKeywords::PDIF_KEY_SP},        // Sp - Карта ножек символа. Показывает соответствие выводов логического вентиля ножкам физического прибора.
         {"Apn"sv, PDIFKeywords::PDIF_KEY_APN},      // Apn - алфавитно-цифровой номер ножки.
         // Ключи узлов команды PKG (корпусировка УГО).
         {"Rdl"sv, PDIFKeywords::PDIF_KEY_RDL},      // Rdl - место показа позиционного обозначения.
@@ -1207,6 +1207,106 @@ namespace HandlerPDIF
                 PDIFOps::PDIFOP_ATR_EX_AT                // Текстовый "внешний" атрибут компонента (радиодетали).
             }
         },
+        // Обработчики узлов, описывающих упаковку компонента в корпусе (соответствие выводов радиокомпонента ножкам корпуса).
+        // Правила обработки узлов команды SPKG (корпусировка конструктива).
+        {PDIFKeywords::PDIF_KEY_SNA,                     // Sna - перечисление имен секций (только для PC-CARDS).
+            {
+                PDIFKeywords::PDIF_KEY_SNA,              // Ключ "Sna".
+                true,                                    // Терминал.
+                false,                                   // Не является установочной операцией.
+                // Находится в разделе ".../SPKG".
+                {PDIFKeywords::PDIF_KEY_ANY, PDIFKeywords::PDIF_KEY_SPKG},
+                { // Список строковых аргументов - имена существующих секций конструктива.
+                    {{ValueType::ARG_VALUE_STRING}, true}
+                },
+                PDIFOps::PDIFOP_PKG_SNA                  // Считывание списка доступных секций конструктива радиокомпонента.
+            }
+        },
+        {PDIFKeywords::PDIF_KEY_SP,                      // Sp - Карта ножек символа.
+            {
+                PDIFKeywords::PDIF_KEY_SP,               // Ключ "Sp".
+                true,                                    // Терминал.
+                false,                                   // Не является установочной операцией.
+                // Находится в разделе ".../SPKG".
+                {PDIFKeywords::PDIF_KEY_ANY, PDIFKeywords::PDIF_KEY_SPKG},
+                { // Список строковых аргументов - карта ножек символа.
+                    {{ValueType::ARG_VALUE_STRING}, false},   // Имя логического вывода, к которому относится список ножек.
+                    {{ValueType::ARG_VALUE_INT}, true}        // Список порядковых номеров ножек, соответствующих данному логическому
+                                                              // выводу, по одному номеру для каждой секции физического прибора.
+                },
+                PDIFOps::PDIFOP_PKG_SP                   // Установка соответствия выводов логического вентиля ножкам физического прибора.
+            }
+        },
+        {PDIFKeywords::PDIF_KEY_APN,                     // Apn - перечень "алфавитно-цифровых номеров" ножек конструктива.
+            {
+                PDIFKeywords::PDIF_KEY_APN,              // Ключ "Apn".
+                true,                                    // Терминал.
+                false,                                   // Не является установочной операцией.
+                // Находится в разделе ".../SPKG".
+                {PDIFKeywords::PDIF_KEY_ANY, PDIFKeywords::PDIF_KEY_SPKG},
+                { // Список строковых аргументов - "алфавитно-цифровые номера" ножек.
+                    {{ValueType::ARG_VALUE_STRING}, true}
+                },
+                PDIFOps::PDIFOP_PKG_APN                  // Переопределение "алфавитно-цифровых номеров" ножек.
+            }
+        },
+        // Правила обработки  узлов команды PKG (корпусировка УГО).
+        {PDIFKeywords::PDIF_KEY_RDL,                     // Rdl - место показа позиционного обозначения.
+            {
+                PDIFKeywords::PDIF_KEY_RDL,              // Ключ "Rdl".
+                true,                                    // Терминал.
+                false,                                   // Не является установочной операцией.
+                // Находится в разделе ".../PKG".
+                {PDIFKeywords::PDIF_KEY_ANY, PDIFKeywords::PDIF_KEY_PKG},
+                { // Список аргументов - координатная пара условного положения конструкторского обозначения на УГО.
+                    {{ValueType::ARG_VALUE_INT, ValueType::ARG_VALUE_INT}, false}
+                },
+                PDIFOps::PDIFOP_PKG_RDL                  // Указание "справочного" положения позиционного обозначения логического вентиля.
+            }
+        },
+        {PDIFKeywords::PDIF_KEY_PNL,                     // Pnl - место для показа номера ножки в составе УГО радиокомпонента.
+            {
+                PDIFKeywords::PDIF_KEY_PNL,              // Ключ "Pnl".
+                true,                                    // Терминал.
+                false,                                   // Не является установочной операцией.
+                // Находится в разделе ".../PKG".
+                {PDIFKeywords::PDIF_KEY_ANY, PDIFKeywords::PDIF_KEY_PKG},
+                { // Список аргументов - координатная пара условного положения "номерной" подписи очередного вывода секции радиокомпонента.
+                    {{ValueType::ARG_VALUE_INT, ValueType::ARG_VALUE_INT}, false}
+                },
+                PDIFOps::PDIFOP_PKG_PNL                  // Указание "справочного" положения "номерной" подписи очередного вывода.
+            }
+        },
+        {PDIFKeywords::PDIF_KEY_SD,                      // Sd - установка соответствия между выводами логической секции компонента и именами
+                                                         // его физических выводов (ножек физического устройства).
+            {
+                PDIFKeywords::PDIF_KEY_SP,               // Ключ "Sd".
+                true,                                    // Терминал.
+                false,                                   // Не является установочной операцией.
+                // Находится в разделе ".../PKG".
+                {PDIFKeywords::PDIF_KEY_ANY, PDIFKeywords::PDIF_KEY_PKG},
+                { // Список строковых аргументов - карта ножек символа.
+                    {{ValueType::ARG_VALUE_STRING}, false},   // Имя секции (как правило, односимвольное A-Z), к которой относится список ножек.
+                    {{ValueType::ARG_VALUE_STRING}, true}     // Список "алфавитно-цифровых" физических номеров, соответствующих логическим
+                                                              // выводам данной секции физического прибора.
+                },
+                PDIFOps::PDIFOP_PKG_SD                   // Установка соответствия выводов логического вентиля ножкам физического прибора.
+            }
+        },
+        {PDIFKeywords::PDIF_KEY_PID,                     // Pid - упаковочный ID (только для PC-CAPS).
+            {
+                PDIFKeywords::PDIF_KEY_PID,              // Ключ "Pid".
+                true,                                    // Терминал.
+                false,                                   // Не является установочной операцией.
+                // Находится в разделе ".../PKG".
+                {PDIFKeywords::PDIF_KEY_ANY, PDIFKeywords::PDIF_KEY_PKG},
+                { // Единственный строковый аргумент - упаковочный идентификатор УГО компонента.
+                  // Это имя файла, содержащего соответствующий ему конструктив.
+                    {{ValueType::ARG_VALUE_STRING}, false}
+                },
+                PDIFOps::PDIFOP_PKG_PID                  // Назначение упаковочного идентификатора для УГО компонента.
+            }
+        },
         // Настроечные команды.
         {PDIFKeywords::PDIF_KEY_LY,
             {
@@ -1305,7 +1405,6 @@ namespace HandlerPDIF
         // Экземпляры для обслуживания контейнерных узлов.
         node_component_handler(this),      // COMPONENT - корневой узел всей древовидной структуры PDIF-документа.
         node_comp_def_handler(this),       // COMP_DEF - контейнер описания вложенного радиокомпонента.
-        node_pin_def_handler(this),        // PIN_DEF - контейнер описания вывода радиокомпонента.
         node_n_handler(this),              // N - контейнерное описание проводящей цепи схемы или платы.
         node_i_handler(this),              // I - контейнерное описание вставки радиокомпонента (его конкретной единичной копии).
         node_p_handler(this),              // P - контейнерное описание некоторого вывода радиокомпонента.
@@ -1328,7 +1427,6 @@ namespace HandlerPDIF
         node_lq_handler(this),             // Lq - код эквивалентности выводов.
         node_ploc_handler(this),           // Ploc - координаты точки местоположения вывода.
         // Базовые элементы проводящих цепей.
-        node_w_handler(this),              // W - проводящая ломаная линия, включаемая в состав общей проводящей цепи.
         node_v_handler(this),              // V - переходное отверстие на печатной плате.
         node_nn_handler(this),             // Nn - Положение видимого имени цепи.
         // Конструкторы примитивных (простейших) графических объектов. Один и тот же обработчик обслуживает все команды создания соответствующего примитива в
@@ -1378,7 +1476,7 @@ namespace HandlerPDIF
         // Экземпляры объектов обработки данных упаковки или корпусировки конструктива (команды SPKG или PKG соответственно).
         // Вложенные узлы команды SPKG (корпусировка конструктива).
         node_sna_handler(this),            // Sna - имя секции (только для PC-CARDS).
-        node_sp_handler(this),             // Sp - парность ножек (только цифровая).
+        node_sp_handler(this),             // Sp - Карта ножек символа. Связывает вывод логического вентиля с ножками конструктива.
         node_apn_handler(this),            // Apn - алфавитно-цифровой номер ножки.
         // Экземпляры объектов обработки данных корпусировки УГО (команды PKG).
         node_rdl_handler(this),            // Rdl - место показа позиционного обозначения.
@@ -1761,11 +1859,13 @@ namespace HandlerPDIF
     }
 
     // Метод выполняет проверку того факта, что предверхний (предпоследний) элемент стека узлов является подразделом (контейнером).
-    bool PDIFFileWorkshop::IsPrevNodeContainer([[maybe_unused]] TreeNodeData* node_data) const
+    bool PDIFFileWorkshop::IsPrevNodeContainer([[maybe_unused]] TreeNodeData* node_data, PDIFKeywords key) const
     {
         int prev_stack_index = static_cast<int>(node_stack.size()) - 2; // Индекс предпоследнего  узла, который нас вмещает.
         const TreeNodeData* prev_node_data = prev_stack_index >= 0 ? &(node_stack[prev_stack_index]) : nullptr;
-        return (prev_node_data && prev_node_data->node_desc && !prev_node_data->node_desc->is_terminal);
+        if (!prev_node_data || !prev_node_data->node_desc || prev_node_data->node_desc->is_terminal)
+            return false;   // Предпоследнего узла не существует вовсе или это не контейнер.
+        return key == PDIFKeywords::PDIF_KEY_ANY || key == prev_node_data->key;
     }
 
     // Проверка, можно ли предверхнему (то есть предпоследнему) элементу стека узлов назначать "внешние" атрибуты.
@@ -1780,11 +1880,11 @@ namespace HandlerPDIF
         switch (prev_node_data->spec_info.type)
         {
             case NodeSpecType::NODE_TYPE_RADIO_COMPONENT:
-                [[fallthrought]];
+                [[fallthrough]];
             case NodeSpecType::NODE_TYPE_NET_DESC:
-                [[fallthrought]];
+                [[fallthrough]];
             case NodeSpecType::NODE_TYPE_COMP_INSERTION:
-                [[fallthrought]];
+                [[fallthrough]];
             case NodeSpecType::NODE_TYPE_PIN_DEF:
                 return true;
             default:
@@ -1826,7 +1926,7 @@ namespace HandlerPDIF
                 // Предыдущий значащий элемент трафарета находится по индексу prev_meaning_pattern_pos. Пробуем найти
                 // положение головы (начальной части) трафарета в ещё непроверенной голове маршрута concrete_path
                 // (заканчивается на звене с индексом test_pos).
-                TreePathType new_pattern_tail{pattern_tail_path.begin(), pattern_path.begin() + prev_meaning_pattern_pos};
+                TreePathType new_pattern_tail{pattern_tail_path.begin(), pattern_tail_path.begin() + prev_meaning_pattern_pos};
                 for (size_t concrete_end_try_pos = test_pos; concrete_end_try_pos >= 0; --concrete_end_try_pos)
                 {
                     TreePathType concrete_head{concrete_path.begin(), concrete_path.begin() + concrete_end_try_pos};
@@ -2182,12 +2282,12 @@ namespace HandlerPDIF
 
     // Сначала следует группа обработчиков контейнерных подразделов общего дерева PDIF-файла.
     // COMPONENT - корневой узел документа, содержит его основное имя.
-    optional<ErrorInfo> NodeCOMPONENTHandler::HandleOpenNode(TreeNodeData* node_data)
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeCOMPONENTHandler::HandleOpenNode(TreeNodeData* node_data)
     {
         return {};
     }
 
-    optional<ErrorInfo> NodeCOMPONENTHandler::HandleCloseNode(TreeNodeData* node_data)
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeCOMPONENTHandler::HandleCloseNode(TreeNodeData* node_data)
     {
         if (node_data->args.size() != 1)
             return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAMS_QUANTITY, {}}}; // Должен быть строго один строковый параметр.
@@ -2195,25 +2295,40 @@ namespace HandlerPDIF
             return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_TYPE, {}}};   // Параметр оказался не строковым.
 
         const string& database_name = get<string>(node_data->args[0]);  // Внутреннее имя документа (базы данных).
-        load_file_data.database_name = wxString(database_name.c_str(), wxConvUTF8);
+        GetWorkshop()->load_file_data.file_values.database_name = wxString(database_name.c_str(), wxConvUTF8);
 
         return {};
     }
 
-    // COMP_DEF - определение очередного встроенного в базу данных радиокомпонента.
+    // SYMBOL или COMP_DEF - определение единственного базового или очередного встроенного в базу данных радиокомпонента.
     optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeCOMPDEFHandler::HandleOpenNode(TreeNodeData* node_data)
     { // Создаём в node_data->spec_info.handler_spec_data описатель очередного внутреннего радиокомпонента загружаемого файла. Его описание
       // будет постепенно формироваться при дальнейшем разборе файла.
-        if (node_data->args.size() != 1)
-            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAMS_QUANTITY, {}}}; // Должен существовать только один параметр - имя создаваемого радиокомпонента.
-        if (!holds_alternative<string>(node_data->args[0]))
-            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_TYPE, {}}};      // Это имя должно быть строкой.
+        string component_name;
+        if (node_data->key == PDIFKeywords::PDIF_KEY_COMPDEF)
+        { // COMP_DEF - начало описания очередного встроенного компонента, используемого в радиосхеме или печатной плате, содержащейся в загружаемой базе данных.
+            if (node_data->args.size() != 1)
+                return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAMS_QUANTITY, {}}}; // Должен существовать только один параметр - имя создаваемого радиокомпонента.
+            if (!holds_alternative<string>(node_data->args[0]))
+                return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_TYPE, {}}};      // Это имя должно быть строкой.
+
+            component_name = get<string>(node_data->args[0]);
+        }
+        else if (node_data->key == PDIFKeywords::PDIF_KEY_SYMBOL)
+        { // SYMBOL - определение единственного радиокомпонента, описанию которого и посвящена загружаемая база данных, если она является
+          // символьной и описывает УГО или конструктив некоторого единственного радиокомпонента.
+            component_name = GetWorkshop()->load_file_data.file_values.database_name.ToStdString();
+        }
+        else
+        {
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "COMPDEF"}};
+        }
 
         RadioComponentDesc::SourceData* component_data = new (nothrow) RadioComponentDesc::SourceData;
         if (!component_data)
             return {{PCADLoadError::LOAD_FILE_MEMORY_ERROR, {}}};
         // Память под блок специфической информации, накопительно описывающей новую создаваемую радиодеталь, успешно выделена.
-        component_data->comp_name = get<string>(node_data->args[0]);
+        component_data->comp_name = component_name;
         node_data->spec_info.handler_spec_data.reset(component_data);
         node_data->spec_info.type = NodeSpecType::NODE_TYPE_RADIO_COMPONENT;
         return {};
@@ -2297,6 +2412,7 @@ namespace HandlerPDIF
         if (!pin_def_data)
             return {{PCADLoadError::LOAD_FILE_MEMORY_ERROR, {}}};
         // Память под описатель вывода радиокомпонента успешно выделена.
+        pin_def_data->pin_al_number = get<string>(node_data->args[0]);
         pin_def_data->pin_name = get<string>(node_data->args[0]);
         pin_def_data->layer_number = node_data->node_settings.layer_number;
         node_data->spec_info.handler_spec_data.reset(pin_def_data);
@@ -2314,7 +2430,7 @@ namespace HandlerPDIF
         RadioComponentDesc::SourceData* component_data =
             (RadioComponentDesc::SourceData*)(current_component_node->spec_info.handler_spec_data.get());
         // Добавляем вновь сформированный вывод в список имеющихся выводов текущего анализируемого радиокомпонента.
-        component_data->pins.push_back(move(*pin_def_data);
+        component_data->pins.push_back(move(*pin_def_data));
         return {};
     }
 
@@ -2322,7 +2438,7 @@ namespace HandlerPDIF
     optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodePKGHandler::HandleOpenNode(TreeNodeData* node_data)
     {
         // Создаём блок хранения упаковочной информации конструируемого в данный момент радиокомпонента.
-        ComponentPKGSectDef* pkg_sect_data = new (nothrow) ComponentPKGSectDef;
+        NodePKGHandler::PKGHelper* pkg_sect_data = new (nothrow) NodePKGHandler::PKGHelper;
         if (!pkg_sect_data)
             return {{PCADLoadError::LOAD_FILE_MEMORY_ERROR, {}}};
 
@@ -2334,14 +2450,14 @@ namespace HandlerPDIF
     optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodePKGHandler::HandleCloseNode(TreeNodeData* node_data)
     {
         assert(node_data->spec_info.type == NodeSpecType::NODE_TYPE_PKG);
-        ComponentPKGSectDef* pkg_sect_data = (ComponentPKGSectDef*)(node_data->spec_info.handler_spec_data.get());
+        NodePKGHandler::PKGHelper* pkg_sect_data = (NodePKGHandler::PKGHelper*)(node_data->spec_info.handler_spec_data.get());
         // Выделяем определитель радиокомпонента, с которым связана эта упаковка.
         PDIFFileWorkshop::TreeNodeData* current_component_node = GetWorkshop()->FindNodeByType(NodeSpecType::NODE_TYPE_RADIO_COMPONENT);
         assert(current_component_node);
         RadioComponentDesc::SourceData* component_data =
             (RadioComponentDesc::SourceData*)(current_component_node->spec_info.handler_spec_data.get());
         // Добавляем вновь сформированный вывод в список имеющихся выводов текущего анализируемого радиокомпонента.
-        component_data->sections_def = move(*pkg_sect_data);
+        component_data->sections_def = move(*static_cast<ComponentPKGSectDef*>(pkg_sect_data));
         return {};
     }
 
@@ -2349,7 +2465,7 @@ namespace HandlerPDIF
     optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeSPKGHandler::HandleOpenNode(TreeNodeData* node_data)
     {
         // Создаём блок хранения упаковочной информации конструируемого в данный момент радиокомпонента.
-        ComponentSPKGSectDef* spkg_sect_data = new (nothrow) ComponentSPKGSectDef;
+        NodeSPKGHandler::SPKGHelper* spkg_sect_data = new (nothrow) NodeSPKGHandler::SPKGHelper;
         if (!spkg_sect_data)
             return {{PCADLoadError::LOAD_FILE_MEMORY_ERROR, {}}};
 
@@ -2361,14 +2477,14 @@ namespace HandlerPDIF
     optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeSPKGHandler::HandleCloseNode(TreeNodeData* node_data)
     {
         assert(node_data->spec_info.type == NodeSpecType::NODE_TYPE_SPKG);
-        ComponentSPKGSectDef* spkg_sect_data = (ComponentSPKGSectDef*)(node_data->spec_info.handler_spec_data.get());
+        NodeSPKGHandler::SPKGHelper* spkg_sect_data = (NodeSPKGHandler::SPKGHelper*)(node_data->spec_info.handler_spec_data.get());
         // Выделяем определитель радиокомпонента, с которым связана эта упаковка.
         PDIFFileWorkshop::TreeNodeData* current_component_node = GetWorkshop()->FindNodeByType(NodeSpecType::NODE_TYPE_RADIO_COMPONENT);
         assert(current_component_node);
         RadioComponentDesc::SourceData* component_data =
             (RadioComponentDesc::SourceData*)(current_component_node->spec_info.handler_spec_data.get());
-        // Добавляем вновь сформированный вывод в список имеющихся выводов текущего анализируемого радиокомпонента.
-        component_data->sections_def = move(*spkg_sect_data);
+        // Добавляем очередную полученную порцию упаковочной информации в структуру описания текущего анализируемого радиокомпонента.
+        component_data->sections_def = move(*static_cast<ComponentSPKGSectDef*>(spkg_sect_data));
         return {};
     }
 
@@ -2658,8 +2774,8 @@ namespace HandlerPDIF
             if (!current_polygone_node)
                 return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "Polyap"}};
 
-            NodePicPolyHandler::PolyNodeSpecInfo* poly_spec_info =
-                (NodePicPolyHandler::PolyNodeSpecInfo*)(current_polygone_node->spec_info.handler_spec_data.get());
+            NodePolyHandler::PolyNodeSpecInfo* poly_spec_info =
+                (NodePolyHandler::PolyNodeSpecInfo*)(current_polygone_node->spec_info.handler_spec_data.get());
             poly_spec_info->polyap = use_poly_aperture.value();
         }
         else
@@ -2717,8 +2833,8 @@ namespace HandlerPDIF
     {
         // Извлекаем указатель на блок информации с данными нашего полигона, анализ которого завершается. Этот блок
         // к текущему моменту времени должен быть уже полностью заполнен.
-        NodePicPolyHandler::PolyNodeSpecInfo* poly_spec_info =
-            (NodePicPolyHandler::PolyNodeSpecInfo*)(node_data->spec_info.handler_spec_data.get());
+        NodePolyHandler::PolyNodeSpecInfo* poly_spec_info =
+            (NodePolyHandler::PolyNodeSpecInfo*)(node_data->spec_info.handler_spec_data.get());
         FillType poly_fill_type = poly_spec_info->contour.is_hatched ? FillType::POLY_FILL_HATCH : FillType::POLY_FILL_SOLID;
         // Конструируем графический объект полигона на основе полученной ранее информации.
         GraphObj* graph_obj_ptr = new ObjPoly
@@ -2772,8 +2888,8 @@ namespace HandlerPDIF
 
         if (node_data->spec_info.handler_spec_data)
         {
-            NodePicPolyHandler::PolyNodeSpecInfo* poly_spec_info =
-                (NodePicPolyHandler::PolyNodeSpecInfo*)(node_data->spec_info.handler_spec_data.get());
+            NodePolyHandler::PolyNodeSpecInfo* poly_spec_info =
+                (NodePolyHandler::PolyNodeSpecInfo*)(node_data->spec_info.handler_spec_data.get());
             switch (get<int64_t>(node_data->args[0]))
             { // Тип заполнения многоугольника.
             case 1:
@@ -2820,8 +2936,8 @@ namespace HandlerPDIF
 
         if (node_data->spec_info.handler_spec_data)
         {
-            NodePicPolyHandler::PolyNodeSpecInfo* poly_spec_info =
-                (NodePicPolyHandler::PolyNodeSpecInfo*)(node_data->spec_info.handler_spec_data.get());
+            NodePolyHandler::PolyNodeSpecInfo* poly_spec_info =
+                (NodePolyHandler::PolyNodeSpecInfo*)(node_data->spec_info.handler_spec_data.get());
             // Создаем новую полигональную пустоту и сохранем её в описатель многоугольника.
             std::vector<wxPoint> void_points;
             // Перенос вершин из массива аргументов в вектор вершин создаваемой пустоты.
@@ -2861,8 +2977,8 @@ namespace HandlerPDIF
 
         if (node_data->spec_info.handler_spec_data)
         {
-            NodePicPolyHandler::PolyNodeSpecInfo* poly_spec_info =
-                (NodePicPolyHandler::PolyNodeSpecInfo*)(node_data->spec_info.handler_spec_data.get());
+            NodePolyHandler::PolyNodeSpecInfo* poly_spec_info =
+                (NodePolyHandler::PolyNodeSpecInfo*)(node_data->spec_info.handler_spec_data.get());
             // Создаем новую круговую пустоту и сохранем её в описатель многоугольника.
             wxPoint log_void_center =
                 GetWorkshop()->ConvPntToLog(get<int64_t>(node_data->args[0]), get<int64_t>(node_data->args[1]));
@@ -2971,6 +3087,7 @@ namespace HandlerPDIF
         { // Свободная (иллюстративная) дуга прямо добавляется к массиву графических примитивов документа.
             GetWorkshop()->load_file_data.graph_objects.push_back(graph_obj_ptr);
         }
+        return {};
     }
 
     // C - Создание графического примитива окружности.
@@ -3241,16 +3358,20 @@ namespace HandlerPDIF
         int via_radius = GetWorkshop()->load_file_data.file_values.file_flags & FileFlags::FILE_FLAG_DETL ?
             PDIFFileWorkshop::VIA_POINT_RADIUS_PCB : PDIFFileWorkshop::VIA_POINT_RADIUS_SCH;
 
-        current_component_node = GetWorkshop()->FindNodeByType(NodeSpecType::NODE_TYPE_NET_DESC);
-        assert(current_component_node);
+        PDIFFileWorkshop::TreeNodeData* current_net_desc_node = GetWorkshop()->FindNodeByType(NodeSpecType::NODE_TYPE_NET_DESC);
+        assert(current_net_desc_node);
+        if (!current_net_desc_node)
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "V"}};
+
         NetDefDesc::SourceData* net_desc_data =
-            (NetDefDesc::SourceData*)(current_component_node->spec_info.handler_spec_data.get());
+            (NetDefDesc::SourceData*)(current_net_desc_node->spec_info.handler_spec_data.get());
         // Конструируем точечный объект с указанными в аргументах свойствами.
         GraphObj* graph_obj_ptr = new ObjPoint
             (node_data->node_settings.layer_number, point_center_log, via_radius, true,
              ObjPoint::PointCategory::POINT_CAT_VIA, point_type);
         // Сохраняем его в место назначения - в состав той цепи, которой она принадлежит.
         net_desc_data->net_parts.push_back(graph_obj_ptr);
+        return {};
     }
 
     // Nn - видимые текстовые этикетки с именем цепи.
@@ -3272,10 +3393,12 @@ namespace HandlerPDIF
         }
 
         size_t label_count = node_data->args.size() / 2;
-        current_component_node = GetWorkshop()->FindNodeByType(NodeSpecType::NODE_TYPE_NET_DESC);
-        assert(current_component_node);
+        PDIFFileWorkshop::TreeNodeData* current_net_desc_node = GetWorkshop()->FindNodeByType(NodeSpecType::NODE_TYPE_NET_DESC);
+        assert(current_net_desc_node);
+        if (!current_net_desc_node)
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "Nn"}};
         NetDefDesc::SourceData* net_desc_data =
-            (NetDefDesc::SourceData*)(current_component_node->spec_info.handler_spec_data.get());
+            (NetDefDesc::SourceData*)(current_net_desc_node->spec_info.handler_spec_data.get());
 
         for (size_t label_index = 0; label_index < label_count; ++label_index)
         {
@@ -3325,8 +3448,8 @@ namespace HandlerPDIF
         }
         else
         { // База данных описывает конструктив радиоэлемента или плату - тип узла числовой.
-            char *conv_str_arg = str_pin_type.c_str(),
-                 *conv_text_end;
+            const char *conv_str_arg = str_pin_type.c_str();
+            char *conv_text_end;
             int dig_pin_type = strtol(conv_str_arg, &conv_text_end, 10);
             if (conv_text_end - conv_str_arg == static_cast<int>(str_pin_type.size()))
                 pin_def_info->pin_type = dig_pin_type;
@@ -3406,7 +3529,7 @@ namespace HandlerPDIF
             return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAMS_QUANTITY, {}}};  // Спецификатор внешнего атрибута имеет ровно 4 параметра.
         // Первые два - строки ключа и значения создаваемого атрибута. Вторые два - координатная пара (X, Y) точки видимого отображения
         // атрибута на чертеже.
-        if (!holds_alternative<string>(node_data->args[0]) || !holds_alternative<string>(node_data->args[1])
+        if (!holds_alternative<string>(node_data->args[0]) || !holds_alternative<string>(node_data->args[1]) ||
             !holds_alternative<int64_t>(node_data->args[2]) || !holds_alternative<int64_t>(node_data->args[3]))
             return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_TYPE, {}}};
 
@@ -3427,13 +3550,13 @@ namespace HandlerPDIF
         switch (prev_node_data->spec_info.type)
         {
             case NodeSpecType::NODE_TYPE_RADIO_COMPONENT:
-                attr_collection = &((RadioComponentDesc::SourceData*)(node_data->spec_info.handler_spec_data.get())->ex_attr_collection);
+                attr_collection = &(reinterpret_cast<RadioComponentDesc::SourceData*>(node_data->spec_info.handler_spec_data.get())->ex_attr_collection);
                 break;
             case NodeSpecType::NODE_TYPE_NET_DESC:
-                attr_collection = &((NetDefDesc::SourceData*)(node_data->spec_info.handler_spec_data.get())->ex_attr_collection);
+                attr_collection = &(reinterpret_cast<NetDefDesc::SourceData*>(node_data->spec_info.handler_spec_data.get())->ex_attr_collection);
                 break;
             case NodeSpecType::NODE_TYPE_COMP_INSERTION:
-                attr_collection = &((RadioComponentInsertion::SourceData*)(node_data->spec_info.handler_spec_data.get())->ex_attr_collection);
+                attr_collection = &(reinterpret_cast<RadioComponentInsertion::SourceData*>(node_data->spec_info.handler_spec_data.get())->ex_attr_collection);
                 break;
             case NodeSpecType::NODE_TYPE_PIN_DEF:
                 attr_collection = static_cast<ExAttrsCollection*>((ComponentPinDef*)(node_data->spec_info.handler_spec_data.get()));
@@ -3673,9 +3796,262 @@ namespace HandlerPDIF
     }
 
     // Терминальные узлы - подсекции раздела PKG - упаковочная информация УГО радиокомпонента.
+    // Rdl - место показа позиционного обозначения.
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeRdlHandler::HandleOpenNode(TreeNodeData* node_data)
+    {
+        if (GetWorkshop()->IsPrevNodeContainer(node_data, PDIFKeywords::PDIF_KEY_PKG))
+            return {};
+        else
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "Rdl"}};
+    }
 
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeRdlHandler::HandleCloseNode(TreeNodeData* node_data)
+    {
+        if (node_data->args.size() != 2)
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAMS_QUANTITY, {}}};  // Параметр этого узла - двузначная координатная пара.
+        // Эти параметры - координаты местоположения позиционного (конструкторского) обозначения компонента - должны быть числовыми.
+        if (!holds_alternative<int64_t>(node_data->args[0]) || !holds_alternative<int64_t>(node_data->args[1]))
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_TYPE, {}}};
+
+        // Получаем вышележащий элемент стека объектов, описывающий загружаемый в данный момент радиокомпонент (основной или встроенный).
+        PDIFFileWorkshop::TreeNodeData* current_component_node = GetWorkshop()->FindNodeByType(NodeSpecType::NODE_TYPE_RADIO_COMPONENT);
+        if (!current_component_node)
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "Rdl"}};
+        RadioComponentDesc::SourceData* component_data =
+            (RadioComponentDesc::SourceData*)(current_component_node->spec_info.handler_spec_data.get());
+
+        // Устанавливаем "справочное" опорное положение конструкторского обозначения радиоэлемента.
+        int refdes_anchor_x = get<int64_t>(node_data->args[0]),
+            refdes_anchor_y = get<int64_t>(node_data->args[1]);
+        component_data->refdes.pos = GetWorkshop()->ConvPntToLog(refdes_anchor_x, refdes_anchor_y);
+        return {};
+    }
+
+    // Pnl - места для показа номера (текстовой подписи) ножки.
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodePnlHandler::HandleOpenNode(TreeNodeData* node_data)
+    {
+        if (GetWorkshop()->IsPrevNodeContainer(node_data, PDIFKeywords::PDIF_KEY_PKG))
+            return {};
+        else
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "Pnl"}};
+    }
+
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodePnlHandler::HandleCloseNode(TreeNodeData* node_data)
+    {
+        if (node_data->args.size() != 2)
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAMS_QUANTITY, {}}};  // Параметр этого узла - двузначная координатная пара.
+        // Эти параметры - координаты якорной точки текстовой этикетки очередного вывода - должны быть числовыми.
+        if (!holds_alternative<int64_t>(node_data->args[0]) || !holds_alternative<int64_t>(node_data->args[1]))
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_TYPE, {}}};
+
+        // Получаем вышележащий элемент стека объектов, описывающий загружаемый в данный момент радиокомпонент (основной или встроенный).
+        PDIFFileWorkshop::TreeNodeData* current_component_node = GetWorkshop()->FindNodeByType(NodeSpecType::NODE_TYPE_RADIO_COMPONENT);
+        if (!current_component_node)
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "Pnl"}};
+        RadioComponentDesc::SourceData* component_data =
+            (RadioComponentDesc::SourceData*)(current_component_node->spec_info.handler_spec_data.get());
+        // Далее извлекаем указатель на служебную структуру, поддерживаемую внутри подраздела PKG.
+        NodePKGHandler::PKGHelper* pkg_spec_info = (NodePKGHandler::PKGHelper*)(node_data->spec_info.handler_spec_data.get());
+        size_t use_pnl_index = pkg_spec_info->current_pnl_index++;
+        if (use_pnl_index >= component_data->pins.size())
+            // Очередного вывода, которому нужно назначить положение подписи, не существует.
+            return {{PCADLoadError::INDEX_OUT_LIMIT, {}}};
+        // Вывод со следующим по порядку индексом существует. Выберем его для настройки.
+        PinLabelDef& use_pin_label = component_data->pins[use_pnl_index].pin_label;
+        int pinname_anchor_x = get<int64_t>(node_data->args[0]),
+            pinname_anchor_y = get<int64_t>(node_data->args[1]);
+        use_pin_label.pin_name_coords = GetWorkshop()->ConvPntToLog(pinname_anchor_x, pinname_anchor_y);
+        use_pin_label.layer_number = node_data->node_settings.layer_number;
+        use_pin_label.text_height = node_data->node_settings.text_height;
+        use_pin_label.text_orient = node_data->node_settings.text_orient;
+        use_pin_label.text_align = node_data->node_settings.text_align;
+        return {};
+    }
+
+    // Sd - секция упаковки (физического прибора и номера выводов.
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeSdHandler::HandleOpenNode(TreeNodeData* node_data)
+    {
+        if (GetWorkshop()->IsPrevNodeContainer(node_data, PDIFKeywords::PDIF_KEY_PKG))
+            return {};
+        else
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "Sd"}};
+    }
+
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeSdHandler::HandleCloseNode(TreeNodeData* node_data)
+    {
+        // Получаем вышележащий элемент стека объектов, описывающий загружаемый в данный момент радиокомпонент (основной или встроенный).
+        PDIFFileWorkshop::TreeNodeData* current_component_node = GetWorkshop()->FindNodeByType(NodeSpecType::NODE_TYPE_RADIO_COMPONENT);
+        if (!current_component_node)
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "Pnl"}};
+        RadioComponentDesc::SourceData* component_data =
+            (RadioComponentDesc::SourceData*)(current_component_node->spec_info.handler_spec_data.get());
+        // Набор параметров узла должен содержать имя секции и столько прочих параметров, сколько выводов определено
+        // в данном радиокомпоненте.
+        if (node_data->args.size() != component_data->pins.size() + 1)
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAMS_QUANTITY, {}}};
+        // Все параметры - строки.
+        for (size_t param_index = 0; param_index < node_data->args.size(); ++param_index)
+            if (!holds_alternative<string>(node_data->args[param_index]))
+                return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_TYPE, {}}};
+        // Далее извлекаем указатель на служебную структуру, поддерживаемую внутри подраздела PKG.
+        NodePKGHandler::PKGHelper* pkg_spec_info = (NodePKGHandler::PKGHelper*)(node_data->spec_info.handler_spec_data.get());
+        // Получаем из параметров узла и заполняем список "алфавитно-цифровых" номеров ножек физического устройства
+        // для секции, идентифицируемой первым аргументом (то есть с индексом 0) нашего узла.
+        PinNameToALNumber load_pin_to_al_number;
+        for (size_t param_index = 1; param_index < node_data->args.size(); ++param_index)
+            // Для вывода с индексом param_index выбираем из component_data->pins его логическое имя, а затем устанавливаем для него
+            // упаковочное соответствие "алфавитно-цифровому" номеру некоторой ножки прибора, заданному очередным параметром узла.
+            load_pin_to_al_number[component_data->pins[param_index].pin_name] = get<string>(node_data->args[param_index]);
+        // Ассоциативный массив упаковочной связи для секции с именем node_data->args[0] полностью сформирован.
+        pkg_spec_info->pin_pkg_data[get<string>(node_data->args[0])] = move(load_pin_to_al_number);
+        return {};
+    }
+
+    // Pid - упаковочный ID (только для PC-CAPS).
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodePidHandler::HandleOpenNode(TreeNodeData* node_data)
+    {
+        if (GetWorkshop()->IsPrevNodeContainer(node_data, PDIFKeywords::PDIF_KEY_PKG))
+            return {};
+        else
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "Pid"}};
+    }
+
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodePidHandler::HandleCloseNode(TreeNodeData* node_data)
+    {
+        if (node_data->args.size() != 1)
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAMS_QUANTITY, {}}};  // Параметр этого узла единствен.
+        // Он есть строка и указывает упаковочный идентификатор - имя файла, содержащего конструктив для данного символа
+        // (в том случае, если в PDIF-базе описан его УГО).
+        if (!holds_alternative<string>(node_data->args[0]))
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_TYPE, {}}};
+
+        // Получаем указатель на загружаемый в данный момент радиокомпонент.
+        PDIFFileWorkshop::TreeNodeData* current_component_node = GetWorkshop()->FindNodeByType(NodeSpecType::NODE_TYPE_RADIO_COMPONENT);
+        if (!current_component_node)
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "Pid"}};
+        RadioComponentDesc::SourceData* component_data =
+            (RadioComponentDesc::SourceData*)(current_component_node->spec_info.handler_spec_data.get());
+        // Назначаем ему упаковочный ID.
+        component_data->package_id = get<string>(node_data->args[0]);
+        return {};
+    }
 
     // Терминальные узлы - подсекции раздела SPKG - упаковочная информация физического конструктива радиокомпонента.
+    // Sna - перечисление имён имеющихся секций в составе конструктива (только для PC-CARDS).
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeSnaHandler::HandleOpenNode(TreeNodeData* node_data)
+    {
+        if (GetWorkshop()->IsPrevNodeContainer(node_data, PDIFKeywords::PDIF_KEY_SPKG))
+            return {};
+        else
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "Sna"}};
+    }
 
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeSnaHandler::HandleCloseNode(TreeNodeData* node_data)
+    {
+        // Извлекаем указатель на упаковочные данные в формате SPKG, которые в настоящий момент заполняются.
+        NodeSPKGHandler::SPKGHelper* spkg_spec_info = (NodeSPKGHandler::SPKGHelper*)(node_data->spec_info.handler_spec_data.get());
+        spkg_spec_info->sect_names.clear();
+        // Создаем и заполняем словарь статьями, соответствующими секциям прибора, перечисленным в операндах данного узла.
+        SectNameToPackInfo new_sects_pack_group;
+        for (size_t section_index = 0; section_index < node_data->args.size(); ++section_index)
+        {
+            if (!holds_alternative<string>(node_data->args[section_index]))
+                return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_TYPE, {}}};   // Все аргументы должны быть строковыми.
+            // Создаём словарную статью для секции с именем node_data->args[section_index].
+            const string& next_section_name = get<string>(node_data->args[section_index]);
+            new_sects_pack_group[next_section_name];
+            // Также внесём весь полученный список имён секций в spkg_spec_info->sect_names, чтобы сохранить порядок их
+            // следования в команде Sna на будущее.
+            spkg_spec_info->sect_names.push_back(next_section_name);
+        }
+        // Переносим заготовку упаковочного словаря очередной группы секций в новый элемент массива-накопителя sect_spkg_data.
+        // С данного момента именно эта группа секций становится активной и далее будет заполняться именно она.
+        spkg_spec_info->sect_spkg_data.push_back(move(new_sects_pack_group));
+        return {};
+    }
 
+    // Sp - карта ножек символа. Показывает соответствие выводов логического вентиля ножкам физического прибора.
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeSpHandler::HandleOpenNode(TreeNodeData* node_data)
+    {
+        if (GetWorkshop()->IsPrevNodeContainer(node_data, PDIFKeywords::PDIF_KEY_SPKG))
+            return {};
+        else
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "Sp"}};
+    }
+
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeSpHandler::HandleCloseNode(TreeNodeData* node_data)
+    {
+        // Сначала получим указатель на текущий создаваемый радиокомпонент.
+        PDIFFileWorkshop::TreeNodeData* current_component_node = GetWorkshop()->FindNodeByType(NodeSpecType::NODE_TYPE_RADIO_COMPONENT);
+        if (!current_component_node)
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "Sp"}};
+        RadioComponentDesc::SourceData* component_data =
+            (RadioComponentDesc::SourceData*)(current_component_node->spec_info.handler_spec_data.get());
+        // Далее извлекаем указатель на упаковочные данные в формате SPKG, которые в настоящий момент заполняются.
+        NodeSPKGHandler::SPKGHelper* spkg_spec_info = (NodeSPKGHandler::SPKGHelper*)(node_data->spec_info.handler_spec_data.get());
+        // Выбираем для работы последнюю существующую группу однородных секций, которая сейчас как раз и заполняется.
+        if (spkg_spec_info->sect_spkg_data.empty())
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "Sp"}};
+        SectNameToPackInfo& sect_name_to_pack = spkg_spec_info->sect_spkg_data.back();
+        size_t section_count = sect_name_to_pack.size();   // Количество секций радиокомпонента, заданное ранее узлом "Sna".
+        // Аргументы узла включают логическое имя вывода, карта которого заключена в параметрах данного узла, а также список порядковых
+        // номеров (базированных к единице) в количестве, равным числу секций section_count в последней их гомогенной группе.
+        if (node_data->args.size() != section_count + 1)
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAMS_QUANTITY, {}}};  // Количество параметров узла неверное.
+
+        if (!holds_alternative<string>(node_data->args[0]))    // Логическое имя вывода должно быть строкой.
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_TYPE, {}}};
+        const string& pin_logical_name = get<string>(node_data->args[0]);
+        // max_pin_ordinal - максимальный ординал ножки (базированный к единице её порядковый номер).
+        int max_pin_ordinal = static_cast<int>(component_data->pins.size());
+        for (size_t pin_ordinal_index = 1; pin_ordinal_index < node_data->args.size(); ++pin_ordinal_index)
+        {
+            if (!holds_alternative<int64_t>(node_data->args[pin_ordinal_index]))
+                // Все прочие параметры (порядковые номера ножек) должны быть целочисленными.
+                return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_TYPE, {}}};
+
+            optional<int> checked_pin_ordinal = CheckIntValue(get<int64_t>(node_data->args[pin_ordinal_index]), max_pin_ordinal);
+            if (!checked_pin_ordinal || checked_pin_ordinal.value() == 0)
+                return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_VALUE, {}}};  // Ножки с таким ординалом не существует.
+            // Выделим информацию о физическом выводе ("ножке") с ординалом checked_pin_ordinal.
+            ComponentPinDef& component_pin_data = component_data->pins[checked_pin_ordinal.value() - 1];
+            // Доформируем элемент упаковочной информации, который будет проекцировать логический вывод pin_logical_name на ножку
+            // component_pin_data для секции next_section_name.
+            const string& next_section_name = spkg_spec_info->sect_names[pin_ordinal_index - 1];
+            sect_name_to_pack[next_section_name][pin_logical_name] = component_pin_data.pin_al_number;
+        }
+        return {};
+    }
+
+    // Apn - алфавитно-цифровой номер ножки.
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeApnHandler::HandleOpenNode(TreeNodeData* node_data)
+    {
+        if (GetWorkshop()->IsPrevNodeContainer(node_data, PDIFKeywords::PDIF_KEY_SPKG))
+            return {};
+        else
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "Apn"}};
+    }
+
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeApnHandler::HandleCloseNode(TreeNodeData* node_data)
+    {
+        // Получаем вышележащий элемент стека объектов, описывающий загружаемый в данный момент радиокомпонент (основной или встроенный).
+        PDIFFileWorkshop::TreeNodeData* current_component_node = GetWorkshop()->FindNodeByType(NodeSpecType::NODE_TYPE_RADIO_COMPONENT);
+        if (!current_component_node)
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "Apn"}};
+        RadioComponentDesc::SourceData* component_data =
+            (RadioComponentDesc::SourceData*)(current_component_node->spec_info.handler_spec_data.get());
+        // Корректный узел содержит столько параметров, сколько определено ножек для данного радиокомпонента.
+        if (node_data->args.size() != component_data->pins.size())
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAMS_QUANTITY, {}}};
+        for (size_t param_index = 0; param_index < node_data->args.size(); ++param_index)
+        {
+            // Все параметры - строки. Каждый из них - "алфавитно-цифровой номер" некоторой ножки, которые следуют тут в том же порядке,
+            // в котором они определялись узлами P.
+            if (!holds_alternative<string>(node_data->args[param_index]))
+                return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_TYPE, {}}};
+            // Заменяем "алфавитно-цифровой номер" ножек на их новые значения, имена же оставляем прежними.
+            component_data->pins[param_index].pin_al_number = get<string>(node_data->args[param_index]);
+        }
+        return {};
+    }
 } // namespace HandlerPDIF

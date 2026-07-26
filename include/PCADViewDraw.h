@@ -475,7 +475,7 @@ public:
 
     ObjPoint(int layer_number, wxPoint point_center, int point_radius, bool is_fill = true,
              PointCategory point_cat = PointCategory::POINT_CAT_COMMON, int point_type = 0);
-    virtual ~ObjPoint= default;
+    virtual ~ObjPoint() = default;
     virtual wxRect DrawObject(DrawContext& draw_context) const override;
     virtual std::string GetObjectLongText(DrawContext& draw_context) const override;
     virtual std::string GetObjectShortText(DrawContext& draw_context) const override;

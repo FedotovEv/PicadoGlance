@@ -61,7 +61,7 @@
 			<Add option="-mthreads" />
 			<Add option='[[if (GetCompilerFactory().GetCompilerVersionString(_T(&quot;gcc&quot;)) &gt;= _T(&quot;4.8.0&quot;)) print(_T(&quot;-Wno-unused-local-typedefs&quot;));]]' />
 			<Add option="-Winvalid-pch" />
-			<Add option="-include wx_pch.h" />
+			<Add option="-include include\wx_pch.h" />
 			<Add option="-Wno-unused-local-typedefs" />
 			<Add option="-Wno-deprecated-declarations" />
 			<Add option="-Wno-deprecated-enum-enum-conversion" />
@@ -71,6 +71,7 @@
 			<Add option="-DWX_PRECOMP" />
 			<Add directory="C:/wxWidgets_3_2_10/include" />
 			<Add directory="C:/MinGW/include" />
+			<Add directory="include" />
 		</Compiler>
 		<ResourceCompiler>
 			<Add directory="C:/wxWidgets_3_2_10/include" />
@@ -96,63 +97,116 @@
 			<Add library="libversion.a" />
 			<Add library="liboleacc.a" />
 		</Linker>
-		<Unit filename="src/ApertureFile.cpp" />
-		<Unit filename="include/ApertureFile.h" />
-		<Unit filename="src/ApertureProvider.cpp" />
-		<Unit filename="include/ApertureProvider.h" />
-		<Unit filename="src/DrawGraphicalEntities.cpp" />
-		<Unit filename="include/DrawGraphicalEntities.h" />
-		<Unit filename="src/DrillDatabaseProperties.cpp" />
-		<Unit filename="include/DrillDatabaseProperties.h" />
-		<Unit filename="src/EditDrillBitsProperties.cpp" />
-		<Unit filename="include/EditDrillBitsProperties.h" />
-		<Unit filename="src/FileInfoDialog.cpp" />
-		<Unit filename="include/FileInfoDialog.h" />
-		<Unit filename="src/HandlerPDIF.cpp" />
-		<Unit filename="include/HandlerPDIF.h" />
-		<Unit filename="src/HandlerPLT.cpp" />
-		<Unit filename="include/HandlerPLT.h" />
-		<Unit filename="src/HandlerPLT8.cpp" />
-		<Unit filename="include/HandlerPLT8.h" />
-		<Unit filename="src/LayersSettings.cpp" />
-		<Unit filename="include/LayersSettings.h" />
-		<Unit filename="src/OptionsDialog.cpp" />
-		<Unit filename="include/OptionsDialog.h" />
-		<Unit filename="src/PCADFile.cpp" />
-		<Unit filename="include/PCADFile.h" />
-		<Unit filename="src/PCADTextExport.cpp" />
-		<Unit filename="include/PCADTextExport.h" />
-		<Unit filename="src/PCADViewDraw.cpp" />
-		<Unit filename="include/PCADViewDraw.h" />
-		<Unit filename="src/PCADViewerApp.cpp" />
-		<Unit filename="include/PCADViewerApp.h" />
-		<Unit filename="src/PCADViewerMain.cpp" />
-		<Unit filename="include/PCADViewerMain.h" />
-		<Unit filename="src/ProviderStamp.cpp" />
-		<Unit filename="include/ProviderStamp.h" />
-		<Unit filename="src/SetCanvasSize.cpp" />
-		<Unit filename="include/SetCanvasSize.h" />
-		<Unit filename="src/TBLFileServer.cpp" />
-		<Unit filename="include/TBLFileServer.h" />
-		<Unit filename="src/chr_font.cpp" />
-		<Unit filename="include/chr_font.h" />
-		<Unit filename="src/gerber.cpp" />
-		<Unit filename="include/gerber.h" />
-		<Unit filename="src/macroses.cpp" />
-		<Unit filename="include/macroses.h" />
-		<Unit filename="include/redefine_.h" />
-		<Unit filename="resource/resource.rc">
-			<Option compilerVar="WINDRES" />
+		<Unit filename="include/ApertureFile.h">
+			<Option target="Release" />
 		</Unit>
-		<Unit filename="src/scrollingdialog.cpp" />
-		<Unit filename="include/scrollingdialog.h" />
-		<Unit filename="src/svg.cpp" />
-		<Unit filename="include/svg.h" />
-		<Unit filename="include/version.h" />
+		<Unit filename="include/ApertureProvider.h">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/DrawGraphicalEntities.h">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/DrillDatabaseProperties.h">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/EditDrillBitsProperties.h">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/FileInfoDialog.h">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/HandlerPDIF.h">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/HandlerPLT.h">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/HandlerPLT8.h">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/LayersSettings.h">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/OptionsDialog.h">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/PCADFile.h">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/PCADTextExport.h">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/PCADViewDraw.h">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/PCADViewerApp.h">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/PCADViewerMain.h">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/ProviderStamp.h">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/SetCanvasSize.h">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/TBLFileServer.h">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/chr_font.h">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/gerber.h">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/macroses.h">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/redefine_.h">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/scrollingdialog.h">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/svg.h">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/version.h">
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="include/wx_pch.h">
 			<Option compile="1" />
 			<Option weight="0" />
+			<Option target="Release" />
 		</Unit>
+		<Unit filename="resource/resource.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
+		<Unit filename="src/ApertureFile.cpp" />
+		<Unit filename="src/ApertureProvider.cpp" />
+		<Unit filename="src/DrawGraphicalEntities.cpp" />
+		<Unit filename="src/DrillDatabaseProperties.cpp" />
+		<Unit filename="src/EditDrillBitsProperties.cpp" />
+		<Unit filename="src/FileInfoDialog.cpp" />
+		<Unit filename="src/HandlerPDIF.cpp" />
+		<Unit filename="src/HandlerPLT.cpp" />
+		<Unit filename="src/HandlerPLT8.cpp" />
+		<Unit filename="src/LayersSettings.cpp" />
+		<Unit filename="src/OptionsDialog.cpp" />
+		<Unit filename="src/PCADFile.cpp" />
+		<Unit filename="src/PCADTextExport.cpp" />
+		<Unit filename="src/PCADViewDraw.cpp" />
+		<Unit filename="src/PCADViewerApp.cpp" />
+		<Unit filename="src/PCADViewerMain.cpp" />
+		<Unit filename="src/ProviderStamp.cpp" />
+		<Unit filename="src/SetCanvasSize.cpp" />
+		<Unit filename="src/TBLFileServer.cpp" />
+		<Unit filename="src/chr_font.cpp" />
+		<Unit filename="src/gerber.cpp" />
+		<Unit filename="src/macroses.cpp" />
+		<Unit filename="src/scrollingdialog.cpp" />
+		<Unit filename="src/svg.cpp" />
 		<Unit filename="wxsmith/DrillDatabaseProperties.wxs" />
 		<Unit filename="wxsmith/EditDrillBitsProperties.wxs" />
 		<Unit filename="wxsmith/FileInfoDialog.wxs" />

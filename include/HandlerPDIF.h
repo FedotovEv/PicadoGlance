@@ -100,7 +100,7 @@ namespace HandlerPDIF
 
         virtual std::vector<std::pair<std::string, std::string>> GetFileExtensions() const override
         {
-            using std::literals;
+            using namespace std::literals;
 
             std::pair<std::string, std::string> extension_pair =
                 {"Базы данных PCAD в формате взаимообмена информацией PDIF (*.pdf)"s, "*.pdf"s};
@@ -616,6 +616,11 @@ namespace HandlerPDIF
         class NodePKGHandler : public TreeNodeHandler     // PKG - контейнер с упаковочной информацией для УГО радиокомпонента.
         {
         public:
+            struct PKGHelper : public ComponentPKGSectDef
+            {
+                size_t current_pnl_index = 0;
+            };
+
             NodePKGHandler(PDIFFileWorkshop* p_workshop = nullptr) : TreeNodeHandler(p_workshop)
             {}
             std::optional<ErrorInfo> HandleOpenNode(TreeNodeData* node_data) override;
@@ -625,6 +630,11 @@ namespace HandlerPDIF
         class NodeSPKGHandler : public TreeNodeHandler    // SPKG - контейнер с упаковочной информацией конструктива радиокомпонента.
         {
         public:
+            struct SPKGHelper : public ComponentSPKGSectDef
+            {
+                std::vector<std::string> sect_names;
+            };
+
             NodeSPKGHandler(PDIFFileWorkshop* p_workshop = nullptr) : TreeNodeHandler(p_workshop)
             {}
             std::optional<ErrorInfo> HandleOpenNode(TreeNodeData* node_data) override;
@@ -1069,7 +1079,7 @@ namespace HandlerPDIF
         class NodeSpHandler : public TreeNodeHandler           // Sp - парность ножек (только цифровая).
         {
         public:
-            NodeTmHandler(PDIFFileWorkshop* p_workshop = nullptr) : TreeNodeHandler(p_workshop)
+            NodeSpHandler(PDIFFileWorkshop* p_workshop = nullptr) : TreeNodeHandler(p_workshop)
             {}
             std::optional<ErrorInfo> HandleOpenNode(TreeNodeData* node_data) override;
             std::optional<ErrorInfo> HandleCloseNode(TreeNodeData* node_data) override;
@@ -1357,7 +1367,7 @@ namespace HandlerPDIF
         int FindLayerByName(const std::string& find_layer_name) const;
         // Вспомогательные функции, применяемые обработчиками событий узлов для ориентации в текущем состоянии узлового стека
         // (в своём текущем положении в дереве базы данных).
-        bool IsPrevNodeContainer(TreeNodeData* node_data) const;
+        bool IsPrevNodeContainer(TreeNodeData* node_data, PDIFKeywords key = PDIFKeywords::PDIF_KEY_ANY) const;
         bool IsPrevNodeAttributed(TreeNodeData* node_data) const;
         // Поиск самого последнего (ближе всего к верхущке стека) узла дерева, лежащего на его текущей обходимой в данной момент ветке.
         TreeNodeData* FindNodeByType(NodeSpecType find_type) const;

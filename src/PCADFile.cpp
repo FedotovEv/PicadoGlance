@@ -8,6 +8,8 @@ using namespace aperture;
 using namespace DrawEntities;
 using namespace std;
 
+const LayerDesc LayerDesc::LAYER_DESC_INVALID{.layer_name = {}, .layer_number = -1, .layer_color = -1, .layer_wx_color = {}};
+
 static const GraphObj* ScanForGraphObject(uint32_t graph_object_ordinal, const std::vector<GraphObj*>& graph_objects)
 {
     for (GraphObj* graph_obj_ptr : graph_objects)
@@ -160,7 +162,7 @@ void NetDefDesc::NetDefDescClear() noexcept
 NetDefDesc::NetDefDesc(SourceData&& net_def_data) :
     ExAttrsCollection(move(net_def_data.ex_attr_collection)),
     net_name_(move(net_def_data.net_name)),
-    net_parts_(move(net_def_data.net_parts)),
+    net_parts_(move(net_def_data.net_parts))
 {}
 
 NetDefDesc::NetDefDesc(NetDefDesc&& other) noexcept :
@@ -298,7 +300,7 @@ PCADFile::PCADFile(ApertureProvider& aperture_provider) :
 PCADFile::PCADFile(vector<GraphObj*> graph_objects, vector<LayerDesc> layers,
                    ApertureProvider& aperture_provider, FileDefValues file_values) :
     graph_objects_(move(graph_objects)), layers_(move(layers)),
-    aperture_provider_(aperture_provider), file_values_(file_values)
+    file_values_(file_values), aperture_provider_(aperture_provider)
 {
     InitLayersColor();
 }
@@ -309,23 +311,26 @@ void PCADFile::PCADFileClear()
         delete graph_obj_ptr;
     graph_objects_.clear();
     layers_.clear();
-    radio_elements_ .clear();
-    radio_element_insertions_.clear();
+    cross_layers_pinholes_.clear();
+    radio_components_.clear();
+    radio_comp_inserts_.clear();
     nets_.clear();
 }
 
-PCADFile::PCADFile(PCADFile&& other) : aperture_provider_(other.aperture_provider_)
+PCADFile::PCADFile(PCADFile&& other) :
+    graph_objects_(move(other.graph_objects_)),
+    layers_(move(other.layers_)),
+    cross_layers_pinholes_(move(other.cross_layers_pinholes_)),
+    radio_components_(move(other.radio_components_)),
+    radio_comp_inserts_(move(other.radio_comp_inserts_)),
+    nets_(move(other.nets_)),
+    file_values_(move(other.file_values_)),
+    aperture_provider_(other.aperture_provider_)
 {
-    graph_objects_ = move(other.graph_objects_);
-    layers_ = move(other.layers_);
-    radio_elements_ = move(other.radio_elements_);
-    radio_element_insertions_ = move(other.radio_element_insertions_);
-    nets_ = move(other.nets_);
-    file_values_ = move(other.file_values_);
-    other.PCADFileClear();
+    other.graph_objects_.clear();
 }
 
-PCADFile::InitLayersColor()
+void PCADFile::InitLayersColor()
 {
     StdWXObjects std_wx_objects;
 
@@ -360,12 +365,14 @@ PCADFile& PCADFile::operator=(PCADFile&& other)
     {
         PCADFileClear();
         graph_objects_ = move(other.graph_objects_);
+        other.graph_objects_.clear();
         layers_ = move(other.layers_);
-        radio_elements_ = move(other.radio_elements_);
-        radio_element_insertions_ = move(other.radio_element_insertions_);
+        cross_layers_pinholes_ = move(other.cross_layers_pinholes_);
+        radio_components_ = move(other.radio_components_);
+        other.radio_components_.clear();
+        radio_comp_inserts_ = move(other.radio_comp_inserts_);
         nets_ = move(other.nets_);
         file_values_ = move(other.file_values_);
-        other.PCADFileClear();
     }
     return *this;
 }

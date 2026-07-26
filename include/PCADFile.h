@@ -50,6 +50,8 @@ struct LayerAttributes
 
 struct LayerDesc : public ExAttrsCollection
 {
+    static const LayerDesc LAYER_DESC_INVALID;
+
     std::string layer_name;     // Имя (название) слоя.
     int layer_number;           // Номер слоя в списке VLYR (отсчитывается от нуля).
     int layer_color = 0;        // Индекс в палитре, которым должна выводиться графика слоя.
@@ -126,8 +128,10 @@ struct PinLabelDef
 
 struct ComponentPinDef : public ExAttrsCollection
 {  // Описание отдельного вывода некоторого радиоэлемента (секция PIN_DEF PDIF-документа).
-    std::string pin_name;       // Имя вывода на УГО компонента.
-    int layer_number = -1;      // Номер слоя в списке VLYR (отсчитывается от нуля), на котором размещено условное изображение вывода.
+    std::string pin_al_number;   // "Алфавитно-цифровой номер" ножки прибора (задается только для конструктива).
+    std::string pin_name;        // Имя вывода, задаётся как для УГО (имя вывода логического вентиля), так и для
+                                 // физического устройства (конструктива).
+    int layer_number = -1;       // Номер слоя в списке VLYR (отсчитывается от нуля), на котором размещено условное изображение вывода.
     // pin_type - тип вывода. Для режима УГО - текстовая строка - один из вариантов "INPUT", "OUTPUT", "I/O", "OC", "OE",
     // "TRI", "AN",  "7", "8", "9", "10", "11", "12", "13", "14", "15", и. т. д.
     // Для конструктива элемента тип ножки (целое число) от 1 до 50 или от 101 до 255.
@@ -139,25 +143,31 @@ struct ComponentPinDef : public ExAttrsCollection
     PinLabelDef pin_label;      // Сведения о текстовой метке, сопровождающей данный вывод.
 };
 
+// Словарь, отражающий логическое имя вывода на "алфавитно-цифровой номер" ножки некоторой секции физического прибора, которая ему
+// соответствует "в железе". Ключ - имя вывода логического вентиля (pin_name), значение - "алфавитно-цифровой номер" ножки (pin_al_number).
+using PinNameToALNumber = std::unordered_map<std::string, std::string>;
+// Словарь, ключ которого есть имя какой-либо секции (как правило, из диапазона A-Z). Значение - упаковочные данные этой секции.
+using SectNameToPackInfo = std::unordered_map<std::string, PinNameToALNumber>;
+
 struct ComponentPKGSectDef
 { // Структура описания секционирования радиокомпонента при описании его УГО.
-    // PhysNamesList - тип данных для хранения списка алфавитно-цифровых имён ("номеров") ножек физического прибора в том же порядке,
-    // в котором они описаны в списке выводов его УГО.
-    using PhysNamesList = std::vector<std::string>;
     // Словарь, объявленный ниже, содержит в качестве ключа имя секции (как правило, однобуквенное в диапазоне A-Z), а в качестве
-    // значения - список алфавитно-цифровых имён ("номеров") ножек физического прибора, которым соответствуют логические выводы компонента
-    // ("логические" - то есть выводы на его УГО).
-    std::unordered_map<std::string, PhysNamesList> pin_pkg_data;
+    // значения - подсловарь (ассоциативный массив "нижнего уровня") преобразования логических имён выводов вентиля (его УГО) в
+    // соответствующие им "алфавитно-цифровые номера" ножек физического прибора.
+    SectNameToPackInfo pin_pkg_data;
 };
 
 struct ComponentSPKGSectDef
 { // Структура описания секционирования радиокомпонента для его конструктива (сведения о секциях в составе реального прибора).
-    // Словарь, отражающий логическое имя вывода на "алфавитно-цифровой номер" ножки физического прибора, которая ему соответствует
-    // "в железе".
-    using PinNameToPhysName = std::unordered_map<std::string, std::string>;
-    // Ключ нижеопределённого словаря - имя секции (как правило, однобуквенное в диапазоне A-Z). Значение - отображение логических имён
-    // выводов на их физические имена для данной секции.
-    std::unordered_map<std::string, PinNameToPhysName> sect_spkg_data;
+    // Реальный прибор может быть неоднородным (гетерогенным) и иметь конструктивно различные секции. Каждый такой тип (группа)
+    // секций описывается одним элементом нижеследующего вектора.
+    // ------------------
+    // Массив sect_spkg_data содержит упаковочные данные различных секций физического устройства. Каждый отдельный его элемент
+    // соответствует группе однородных (схемотехнически и конструктивно) одинаковых секций. Элемент - словарь, ключ которого
+    // суть имя какой-либо секции (как правило, из диапазона A-Z), принадлежащей к данной однородной группе. А значение - упаковочные
+    // данные этой секции - подсловарь типа PinNameToALNumber. Для него, в свою очередь, ключ - логическое имя вывода, а значение -
+    // - "алфавитно-цифровой номер" соответствющей ножки конструктива для указанной секции.
+    std::vector<SectNameToPackInfo> sect_spkg_data;
 };
 
 using ComponentSectDef = std::variant<ComponentPKGSectDef, ComponentSPKGSectDef>;
@@ -403,8 +413,9 @@ private:
     std::vector<RadioComponentDesc> radio_components_;          // Массив с описаниями радиоэлементов, встроенных в данный файл.
     std::vector<RadioComponentInsertion> radio_comp_inserts_;   // Массив описаний актов вставки радиоэлементов в схему файла.
     std::vector<NetDefDesc> nets_;                              // Массив определений токопроводящих цепей схемы или платы.
-    aperture::ApertureProvider& aperture_provider_;             // Ссылка на диспетчер апертур.
     FileDefValues file_values_;                                 // Общее описание характеристик файла.
+
+    aperture::ApertureProvider& aperture_provider_;             // Ссылка на диспетчер апертур.
 
 public:
     PCADFile(aperture::ApertureProvider& aperture_provider);
@@ -520,7 +531,7 @@ public:
         if (layer_num >= 0 && layer_num < static_cast<int>(layers_.size()))
             return layers_[layer_num];
         else //  Слой по умолчанию с невозможными параметрами
-            return {"", -1, -1, {}};
+            return LayerDesc::LAYER_DESC_INVALID;
     }
 
     void SetLayerAttributes(int layer_num, LayerAttributes layer_attributes) const
@@ -609,7 +620,7 @@ public:
             return std::string(wxGetTranslation(PARAM_TYPE_MISMATCH_MSG).mb_str());
         case PCADLoadError::LOAD_FILE_INCORRECT_PARAM_VALUE:
             return std::string(wxGetTranslation(PARAM_INVALID_VALUE_MSG).mb_str());
-        case PCADLoadError::LOAD_FILE_COMAMND_UNACCEPTABLE_HERE:
+        case PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE:
             return std::string(wxGetTranslation(PARAM_COMAMND_UNACCEPTABLE_HERE_MSG).mb_str());
         default:
             return {};
