@@ -77,12 +77,12 @@ RadioComponentDesc& RadioComponentDesc::operator=(RadioComponentDesc&& other) no
 
 const GraphObj* RadioComponentDesc::ScanForGraphObject(uint32_t graph_object_ordinal) const
 {
-    return ScanForGraphObject(graph_object_ordinal, graph_objects_);
+    return ::ScanForGraphObject(graph_object_ordinal, graph_objects_);
 }
 
 const GraphObj* RadioComponentDesc::ScanForGraphObject(wxColor graph_obj_ord_as_color) const
 {
-    return ScanForGraphObject(graph_obj_ord_as_color, graph_objects_);
+    return ::ScanForGraphObject(graph_obj_ord_as_color, graph_objects_);
 }
 
 // Функция-член общей очистки данных структуры RadioComponentInsertion.
@@ -190,12 +190,12 @@ NetDefDesc& NetDefDesc::operator=(NetDefDesc&& other) noexcept
 
 const GraphObj* NetDefDesc::ScanForGraphObject(uint32_t graph_object_ordinal) const
 {
-    return ScanForGraphObject(graph_object_ordinal, net_parts_);
+    return ::ScanForGraphObject(graph_object_ordinal, net_parts_);
 }
 
 const GraphObj* NetDefDesc::ScanForGraphObject(wxColor graph_obj_ord_as_color) const
 {
-    return ScanForGraphObject(graph_obj_ord_as_color, net_parts_);
+    return ::ScanForGraphObject(graph_obj_ord_as_color, net_parts_);
 }
 
 void PCADFile::DrawFile(DrawContext& draw_context, const CanvasContext& canvas_context, SelectContourData& select_contour)

@@ -1254,7 +1254,7 @@ namespace HandlerPDIF
         const std::unordered_map<PDIFOps, TreeNodeHandler*> opcode_to_handler
         {
             // Обработчики обслуживания контейнерных узлов.
-            {PDIFOps::PDIFOP_CONT_COMPONENT &node_component_handler},   // COMPONENT - корневой узел всей древовидной структуры PDIF-документа.
+            {PDIFOps::PDIFOP_CONT_COMPONENT, &node_component_handler},  // COMPONENT - корневой узел всей древовидной структуры PDIF-документа.
             {PDIFOps::PDIFOP_CONT_COMPDEF, &node_comp_def_handler},     // COMP_DEF - контейнер описания вложенного радиокомпонента.
             {PDIFOps::PDIFOP_CONT_N, &node_n_handler},                  // N - контейнерное описание проводящей цепи схемы или платы.
             {PDIFOps::PDIFOP_CONT_I, &node_i_handler},                  // I - контейнерное описание вставки радиокомпонента (его конкретной единичной копии).
@@ -1370,7 +1370,8 @@ namespace HandlerPDIF
         bool IsPrevNodeContainer(TreeNodeData* node_data, PDIFKeywords key = PDIFKeywords::PDIF_KEY_ANY) const;
         bool IsPrevNodeAttributed(TreeNodeData* node_data) const;
         // Поиск самого последнего (ближе всего к верхущке стека) узла дерева, лежащего на его текущей обходимой в данной момент ветке.
-        TreeNodeData* FindNodeByType(NodeSpecType find_type) const;
+        const TreeNodeData* FindNodeByType(NodeSpecType find_type) const;
+        TreeNodeData* FindNodeByType(NodeSpecType find_type);
         // Проверка соответствия "хвоста" (суффикса) маршрута concrete_path требованиям трафарета pattern_tail_path.
         bool CheckNodeStackTail(const TreePathType& concrete_path, const TreePathType& pattern_tail_path) const;
     };

@@ -1780,11 +1780,12 @@ namespace HandlerPDIF
     // Функция поиска (и определения номера) слоя с именем find_layer_name в списке слоёв layers.
     int PDIFFileWorkshop::FindLayerByName(const std::string& find_layer_name) const
     {
-        auto layers_it = find_if(layers.begin(), layers.end(), [&find_layer_name](const LayerDesc& layer_desc) -> bool
+        auto layers_it = find_if
+            (load_file_data.layers.begin(), load_file_data.layers.end(), [&find_layer_name](const LayerDesc& layer_desc) -> bool
             {
                 return layer_desc.layer_name == find_layer_name;
             });
-        return layers_it == layers.end() ? -1 : layers_it - layers.begin();
+        return layers_it == load_file_data.layers.end() ? -1 : layers_it - load_file_data.layers.begin();
     }
 
     // Метод определения типа линии по его символьной сигнатуре.
@@ -1893,7 +1894,7 @@ namespace HandlerPDIF
     }
 
     // Поиск в дереве узла с типом find_type, ближайшего к текущему анализируемому (верхнему в стеке node_stack).
-    PDIFFileWorkshop::TreeNodeData* PDIFFileWorkshop::FindNodeByType(NodeSpecType find_type) const
+    const PDIFFileWorkshop::TreeNodeData* PDIFFileWorkshop::FindNodeByType(NodeSpecType find_type) const
     {
         for (int stack_index = static_cast<int>(node_stack.size()) - 1; stack_index >= 0; --stack_index)
         {
@@ -1901,6 +1902,11 @@ namespace HandlerPDIF
                 return &node_stack[stack_index];
         }
         return nullptr;
+    }
+
+    PDIFFileWorkshop::TreeNodeData* PDIFFileWorkshop::FindNodeByType(NodeSpecType find_type)
+    {
+        return const_cast<TreeNodeData*>(const_cast<const PDIFFileWorkshop*>(this)->FindNodeByType(find_type));
     }
 
     // Проверка некоторого хвоста (суффикса) маршрута concrete_path на соответствие трафарету pattern_tail_path.
@@ -2274,8 +2280,7 @@ namespace HandlerPDIF
 
         // Разбор загружаемого файла закончен успешно. Конструируем и возвращаем PCAD-документ на основе
         // полученной в процессе информации.
-        return {PCADFile(move(graph_objects), move(layers), additional_load_info.aperture_provider,
-                         move(file_values)), PCADLoadError::LOAD_FILE_NO_ERROR};
+        return {PCADFile(move(load_file_data), additional_load_info.aperture_provider), PCADLoadError::LOAD_FILE_NO_ERROR};
     }
 
     // Определения методов конкретных классов-обработчиов командных узлов дерева PDIF-базы данных.
@@ -4052,6 +4057,115 @@ namespace HandlerPDIF
             // Заменяем "алфавитно-цифровой номер" ножек на их новые значения, имена же оставляем прежними.
             component_data->pins[param_index].pin_al_number = get<string>(node_data->args[param_index]);
         }
+        return {};
+    }
+
+    // Объекты-обработчики узлов параметров вставки радиокомпонент.
+    // CN - сведения о соединении выводов экземпляра компонента с цепями схемы или платы.
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeCNHandler::HandleOpenNode(TreeNodeData* node_data)
+    {
+        if (GetWorkshop()->IsPrevNodeContainer(node_data, PDIFKeywords::PDIF_KEY_I))
+            return {};   // CN - непосредственная подсекция I.
+        else
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "CN"}};
+    }
+
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeCNHandler::HandleCloseNode(TreeNodeData* node_data)
+    {
+        // Команда имеет два формата.
+        // Для первого её формата узел должен содержать столько пар строковых параметров, сколько ножек имеет вставляемый радиокомпонент.
+        // Каждая пара состоит из имени контакта (первый член пары - имя вывода или ножки) и имени токопроводящей цепи, к которой этот
+        // контакт подсоединён. При отсутствии соединения в качестве имени цепи используется знак вопроса '?'.
+        // Для второго формата имена контактов не приводятся, параметры представляют собой просто список соединённых с ними цепей.
+        // В обоих случаях порядок и количество элементов (пар или строк) совпадают с порядком и количеством выводов компонента.
+        // Выделяем определитель радиокомпонента, которому принадлежит данный вывод.
+        PDIFFileWorkshop::TreeNodeData* current_component_node = GetWorkshop()->FindNodeByType(NodeSpecType::NODE_TYPE_RADIO_COMPONENT);
+        assert(current_component_node);
+        RadioComponentDesc::SourceData* component_data =
+            (RadioComponentDesc::SourceData*)(current_component_node->spec_info.handler_spec_data.get());
+        // Далее нам потребуется указатель на дескриптор блока "вставочной" информации, который мы, собственно, в данный момент и формируем.
+        PDIFFileWorkshop::TreeNodeData* current_insertion_node = GetWorkshop()->FindNodeByType(NodeSpecType::NODE_TYPE_COMP_INSERTION);
+        assert(current_insertion_node);
+        RadioComponentInsertion::SourceData* insertion_data =
+            (RadioComponentInsertion::SourceData*)(current_insertion_node->spec_info.handler_spec_data.get());
+        // Проверим корректность количества аргументов узла, а также выясним формат команды.
+        bool is_full_format = true;
+        if (node_data->args.size() == component_data->pins.size())
+            is_full_format = false; // Это второй (сокращённый) формат команды.
+        else if (node_data->args.size() == component_data->pins.size() * 2)
+            is_full_format = true; // Это первый (полный) формат команды.
+        else    // Недопустимое количество аргументов узла.
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAMS_QUANTITY, {}}};
+
+        // Все параметры должны быть строковыми.
+        for (size_t param_index = 0; param_index < node_data->args.size(); ++param_index)
+            if (!holds_alternative<string>(node_data->args[param_index]))
+                return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_TYPE, {}}};
+
+        // Форма всех аргументов верная, формат также допустим - переходим к его разбору.
+        if (is_full_format)
+        { // Анализ полного формата команды.
+            for (size_t param_index = 0, proc_pin_index = 0; param_index < node_data->args.size(); param_index += 2, ++proc_pin_index)
+            {
+                const string& pin_name = get<string>(node_data->args[param_index]);
+                const string& net_name = get<string>(node_data->args[param_index + 1]);
+                if (net_name == "?")
+                    continue;   // Вывод не подсоединён к какой-либо цепи - пропускаем этот терм.
+                if (pin_name != "*")
+                    // Проверим наличие вывода с таким именем в списке определённых для данного радиокомпонента.
+                    if (pin_name != component_data->pins[proc_pin_index].pin_name)
+                        return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_VALUE, "Invalid_pin_name : "s + pin_name}};
+                // Все параметры пары корректны, создаём описывающий её элемент в списке соединений.
+                insertion_data->connect_info.push_back({pin_name, net_name});
+            }
+        }
+        else
+        { // Анализ краткого формата команды.
+            for (size_t param_index = 0; param_index < node_data->args.size(); ++param_index)
+            {
+                const string& net_name = get<string>(node_data->args[param_index]);
+                if (net_name == "?")
+                    continue;   // Вывод не подсоединён к какой-либо цепи - пропускаем этот терм.
+                insertion_data->connect_info.push_back({component_data->pins[param_index].pin_name, net_name});
+            }
+        }
+        return {};
+    }
+
+    // IPT - переназначение типов ножек для конкретного экземпляра установленного на плату радиокомпонента.
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeIPTHandler::HandleOpenNode(TreeNodeData* node_data)
+    {
+        if (GetWorkshop()->IsPrevNodeContainer(node_data, PDIFKeywords::PDIF_KEY_I))
+            return {};  // IPT - непосредственная подсекция I.
+        else
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "IPT"}};
+    }
+
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeIPTHandler::HandleCloseNode(TreeNodeData* node_data)
+    {
+
+        return {};
+    }
+
+    // Rd - позиционное обозначение экземпляра компонента - его текст и положение.
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeRdHandler::HandleOpenNode(TreeNodeData* node_data)
+    {
+        return {};
+    }
+
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeRdHandler::HandleCloseNode(TreeNodeData* node_data)
+    {
+        return {};
+    }
+
+    // Pn - обозначение вывода элемента - текст и координаты точки размещения.
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodePnHandler::HandleOpenNode(TreeNodeData* node_data)
+    {
+        return {};
+    }
+
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodePnHandler::HandleCloseNode(TreeNodeData* node_data)
+    {
         return {};
     }
 } // namespace HandlerPDIF
