@@ -1,6 +1,3 @@
-#ifndef HEADER_4B1953D7769E0D1C
-#define HEADER_4B1953D7769E0D1C
-
 #pragma once
 
 //Имя нашей программы (должен совпадать с именем ее исполняемого файла)
@@ -73,6 +70,9 @@ enum class PCADLoadError
     LOAD_FILE_INCORRECT_PARAM_TYPE,
     LOAD_FILE_INCORRECT_PARAM_VALUE,
     LOAD_FILE_COMMAND_UNACCEPTABLE_HERE,
+    LOAD_FILE_COMPONENT_NOT_FOUND,          // При загрузке документа не найден требуемый радиокомпонент.
+    LOAD_FILE_PIN_NOT_FOUND,                // При загрузке документа некоторый необходимый вывод либо ножка.
+    LOAD_FILE_INSERTION_NOT_FOUND,          // При загрузке документа какой-то нужный вставочный блок.
     VALUE_NOT_FOUND,
     VALUE_ALREADY_EXISTS,
     VALUE_DUPLICATES,
@@ -109,5 +109,3 @@ struct OptionsData
 
 std::string UpcaseString(const std::string& arg_string);
 std::string TrimString(const std::string& arg_string);
-#endif // header guard 
-

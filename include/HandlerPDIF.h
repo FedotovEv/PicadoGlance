@@ -598,6 +598,11 @@ namespace HandlerPDIF
         class NodeIHandler : public TreeNodeHandler // I - контейнерное описание вставки радиокомпонента (его конкретной единичной копии).
         {
         public:
+            struct IHelper : public RadioComponentInsertion::SourceData
+            {
+                size_t current_pn_index = 0;
+            };
+
             NodeIHandler(PDIFFileWorkshop* p_workshop = nullptr) : TreeNodeHandler(p_workshop)
             {}
             std::optional<ErrorInfo> HandleOpenNode(TreeNodeData* node_data) override;
@@ -1364,7 +1369,10 @@ namespace HandlerPDIF
         wxRect ConvRectToLog(wxRect pict_rect) const;
         // Проверка совпадения маршрута concrete_path шаблону pattern_path.
         bool IsPDIFPathCorrespond(const TreePathType& concrete_path, const TreePathType& pattern_path) const;
+        // Поиск существующего (имеющегося в поле load_file_data.layers) слоя с именем find_layer_name.
         int FindLayerByName(const std::string& find_layer_name) const;
+        // Поиск существующего (среди уже описанных в поле load_file_data) радиокомпонента с именем find_component_name.
+        int FindComponentByName(const std::string& find_component_name) const;
         // Вспомогательные функции, применяемые обработчиками событий узлов для ориентации в текущем состоянии узлового стека
         // (в своём текущем положении в дереве базы данных).
         bool IsPrevNodeContainer(TreeNodeData* node_data, PDIFKeywords key = PDIFKeywords::PDIF_KEY_ANY) const;
@@ -1374,6 +1382,8 @@ namespace HandlerPDIF
         TreeNodeData* FindNodeByType(NodeSpecType find_type);
         // Проверка соответствия "хвоста" (суффикса) маршрута concrete_path требованиям трафарета pattern_tail_path.
         bool CheckNodeStackTail(const TreePathType& concrete_path, const TreePathType& pattern_tail_path) const;
+        // Загрузка значения типа логического вывода или ножки из строкового параметра узла.
+        std::optional<PinType> LoadPinTypeFromParam(const std::string& str_pin_type) const;
     };
 } // namespace HandlerPDIF
 #endif // header guard

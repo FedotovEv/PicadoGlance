@@ -1788,6 +1788,18 @@ namespace HandlerPDIF
         return layers_it == load_file_data.layers.end() ? -1 : layers_it - load_file_data.layers.begin();
     }
 
+    // Обнаружение и возврат порядкового индекса существующего в load_file_data.radio_components радиокомпонента с именем find_component_name.
+    int PDIFFileWorkshop::FindComponentByName(const std::string& find_component_name) const
+    {
+        auto component_it = find_if
+            (load_file_data.radio_components.begin(), load_file_data.radio_components.end(),
+                [&find_component_name](const RadioComponentDesc& component_desc) -> bool
+                {
+                    return component_desc.GetName() == find_component_name;
+                });
+        return component_it == load_file_data.radio_components.end() ? -1 : component_it - load_file_data.radio_components.begin();
+    }
+
     // Метод определения типа линии по его символьной сигнатуре.
     optional<LineType> PDIFFileWorkshop::FindLineType(const std::string& line_type_sign)
     {
@@ -1961,6 +1973,27 @@ namespace HandlerPDIF
         // Весь шаблон pattern_tail_path соответствует некоторому суффиксу проверяемого маршрута concrete_path
         // (от символа с индексом test_pos до его конца). Так что общее условие проверки следует считать выполненным.
         return true;
+    }
+
+    // Загрузка значения типа логического вывода или ножки из строкового параметра узла. Целевой тип данных определяется видом
+    // загружаемой базы данных.
+    optional<PinType> PDIFFileWorkshop::LoadPinTypeFromParam(const std::string& str_pin_type) const
+    {
+        // Для схем тип узла строковый, для плат - числовой (целочисленный).
+        if (load_file_data.file_values.file_flags & FileFlags::FILE_FLAG_EDITOR_PCCAPS)
+        { // База данных описывает УГО или схему - тип узла строковый.
+            return str_pin_type;
+        }
+        else
+        { // База данных описывает конструктив радиоэлемента или плату - тип узла числовой.
+            const char *conv_str_arg = str_pin_type.c_str();
+            char *conv_text_end;
+            int dig_pin_type = strtol(conv_str_arg, &conv_text_end, 10);
+            if (conv_text_end - conv_str_arg == static_cast<int>(str_pin_type.size()))
+                return dig_pin_type;
+            else
+                return {};
+        }
     }
 
     // Основной метод загрузки данных из PDIF-потока.
@@ -2384,7 +2417,7 @@ namespace HandlerPDIF
             return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_TYPE, {}}};      // Оба имени обязательно строки.
 
         // Создаём для новой создаваемой вставки блок для описывающей её информации.
-        RadioComponentInsertion::SourceData* insertion_data = new (nothrow) RadioComponentInsertion::SourceData;
+        NodeIHandler::IHelper* insertion_data = new (nothrow) NodeIHandler::IHelper;
         if (!insertion_data)
             return {{PCADLoadError::LOAD_FILE_MEMORY_ERROR, {}}};
         // Память под блок специфической информации, накопительно описывающей новую вставку радиокомпонента, успешно выделена.
@@ -2398,9 +2431,9 @@ namespace HandlerPDIF
     optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeIHandler::HandleCloseNode(TreeNodeData* node_data)
     {
         assert(node_data->spec_info.type == NodeSpecType::NODE_TYPE_COMP_INSERTION);
-        RadioComponentInsertion::SourceData* insertion_data =
-            (RadioComponentInsertion::SourceData*)(node_data->spec_info.handler_spec_data.get());
-        GetWorkshop()->load_file_data.radio_comp_inserts.push_back(RadioComponentInsertion(move(*insertion_data)));
+        NodeIHandler::IHelper* insertion_data = (NodeIHandler::IHelper*)(node_data->spec_info.handler_spec_data.get());
+        RadioComponentInsertion::SourceData* src_insertion_data = static_cast<RadioComponentInsertion::SourceData*>(insertion_data);
+        GetWorkshop()->load_file_data.radio_comp_inserts.push_back(RadioComponentInsertion(move(*src_insertion_data)));
         return {};
     }
 
@@ -2462,7 +2495,7 @@ namespace HandlerPDIF
         RadioComponentDesc::SourceData* component_data =
             (RadioComponentDesc::SourceData*)(current_component_node->spec_info.handler_spec_data.get());
         // Добавляем вновь сформированный вывод в список имеющихся выводов текущего анализируемого радиокомпонента.
-        component_data->sections_def = move(*static_cast<ComponentPKGSectDef*>(pkg_sect_data));
+        component_data->sections_def = ComponentSectDef{move(*static_cast<ComponentPKGSectDef*>(pkg_sect_data))};
         return {};
     }
 
@@ -2489,7 +2522,7 @@ namespace HandlerPDIF
         RadioComponentDesc::SourceData* component_data =
             (RadioComponentDesc::SourceData*)(current_component_node->spec_info.handler_spec_data.get());
         // Добавляем очередную полученную порцию упаковочной информации в структуру описания текущего анализируемого радиокомпонента.
-        component_data->sections_def = move(*static_cast<ComponentSPKGSectDef*>(spkg_sect_data));
+        component_data->sections_def = ComponentSectDef{move(*static_cast<ComponentSPKGSectDef*>(spkg_sect_data))};
         return {};
     }
 
@@ -3445,22 +3478,12 @@ namespace HandlerPDIF
         if (!current_pin_def_node)
             return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "Pt"}};
         ComponentPinDef* pin_def_info = (ComponentPinDef*)(current_pin_def_node->spec_info.handler_spec_data.get());
-
         // Для схем тип узла строковый, для плат - числовой (целочисленный).
-        if (GetWorkshop()->load_file_data.file_values.file_flags & FileFlags::FILE_FLAG_EDITOR_PCCAPS)
-        { // База данных описывает УГО или схему - тип узла строковый.
-            pin_def_info->pin_type = str_pin_type;
-        }
+        if (optional<PinType> opt_pin_type = GetWorkshop()->LoadPinTypeFromParam(str_pin_type); opt_pin_type)
+            pin_def_info->pin_type = opt_pin_type.value();
         else
-        { // База данных описывает конструктив радиоэлемента или плату - тип узла числовой.
-            const char *conv_str_arg = str_pin_type.c_str();
-            char *conv_text_end;
-            int dig_pin_type = strtol(conv_str_arg, &conv_text_end, 10);
-            if (conv_text_end - conv_str_arg == static_cast<int>(str_pin_type.size()))
-                pin_def_info->pin_type = dig_pin_type;
-            else
-                return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_VALUE, {}}};
-        }
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_VALUE, {}}};
+
         return {};
     }
 
@@ -4078,21 +4101,25 @@ namespace HandlerPDIF
         // контакт подсоединён. При отсутствии соединения в качестве имени цепи используется знак вопроса '?'.
         // Для второго формата имена контактов не приводятся, параметры представляют собой просто список соединённых с ними цепей.
         // В обоих случаях порядок и количество элементов (пар или строк) совпадают с порядком и количеством выводов компонента.
-        // Выделяем определитель радиокомпонента, которому принадлежит данный вывод.
-        PDIFFileWorkshop::TreeNodeData* current_component_node = GetWorkshop()->FindNodeByType(NodeSpecType::NODE_TYPE_RADIO_COMPONENT);
-        assert(current_component_node);
-        RadioComponentDesc::SourceData* component_data =
-            (RadioComponentDesc::SourceData*)(current_component_node->spec_info.handler_spec_data.get());
-        // Далее нам потребуется указатель на дескриптор блока "вставочной" информации, который мы, собственно, в данный момент и формируем.
+
+        // Получаем указатель на дескриптор блока "вставочной" информации, который мы, собственно, в данный момент и формируем.
         PDIFFileWorkshop::TreeNodeData* current_insertion_node = GetWorkshop()->FindNodeByType(NodeSpecType::NODE_TYPE_COMP_INSERTION);
         assert(current_insertion_node);
-        RadioComponentInsertion::SourceData* insertion_data =
-            (RadioComponentInsertion::SourceData*)(current_insertion_node->spec_info.handler_spec_data.get());
+        if (!current_insertion_node)
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "CN"}};
+        NodeIHandler::IHelper* insertion_data = (NodeIHandler::IHelper*)(current_insertion_node->spec_info.handler_spec_data.get());
+
+        // Отыскиваем определитель радиокомпонента, который требуется вставить в схему или на плату.
+        int insert_component_index = GetWorkshop()->FindComponentByName(insertion_data->comp_name);
+        if (insert_component_index < 0)
+            return {{PCADLoadError::LOAD_FILE_COMPONENT_NOT_FOUND , "CN : "s + insertion_data->comp_name}};
+        RadioComponentDesc& component_data = GetWorkshop()->load_file_data.radio_components[insert_component_index];
+
         // Проверим корректность количества аргументов узла, а также выясним формат команды.
         bool is_full_format = true;
-        if (node_data->args.size() == component_data->pins.size())
+        if (node_data->args.size() == component_data.pins_size())
             is_full_format = false; // Это второй (сокращённый) формат команды.
-        else if (node_data->args.size() == component_data->pins.size() * 2)
+        else if (node_data->args.size() == component_data.pins_size() * 2)
             is_full_format = true; // Это первый (полный) формат команды.
         else    // Недопустимое количество аргументов узла.
             return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAMS_QUANTITY, {}}};
@@ -4107,16 +4134,31 @@ namespace HandlerPDIF
         { // Анализ полного формата команды.
             for (size_t param_index = 0, proc_pin_index = 0; param_index < node_data->args.size(); param_index += 2, ++proc_pin_index)
             {
-                const string& pin_name = get<string>(node_data->args[param_index]);
+                string pin_name = get<string>(node_data->args[param_index]);
                 const string& net_name = get<string>(node_data->args[param_index + 1]);
+
                 if (net_name == "?")
                     continue;   // Вывод не подсоединён к какой-либо цепи - пропускаем этот терм.
                 if (pin_name != "*")
-                    // Проверим наличие вывода с таким именем в списке определённых для данного радиокомпонента.
-                    if (pin_name != component_data->pins[proc_pin_index].pin_name)
+                { // Проверим наличие вывода с таким именем среди существующих для данного радиокомпонента.
+                    auto test_pin_it = component_data.pins_begin();
+                    for (; test_pin_it != component_data.pins_end(); ++test_pin_it)
+                    {
+                        if (test_pin_it->pin_name == pin_name)
+                            break;
+                    }
+                    if (test_pin_it == component_data.pins_end())
                         return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_VALUE, "Invalid_pin_name : "s + pin_name}};
+                    proc_pin_index = test_pin_it - component_data.pins_begin();
+                }
+                else
+                { // Явно имя подсоединяемого  вывода не задано, используем текущий вывод по порядку.
+                    if (proc_pin_index >= component_data.pins_size())
+                        return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_VALUE, "Invalid_pin_number : "s + to_string(proc_pin_index)}};
+                    pin_name = (component_data.pins_begin() + proc_pin_index)->pin_name;
+                }
                 // Все параметры пары корректны, создаём описывающий её элемент в списке соединений.
-                insertion_data->connect_info.push_back({pin_name, net_name});
+                insertion_data->connect_info.push_back({move(pin_name), net_name});
             }
         }
         else
@@ -4124,9 +4166,11 @@ namespace HandlerPDIF
             for (size_t param_index = 0; param_index < node_data->args.size(); ++param_index)
             {
                 const string& net_name = get<string>(node_data->args[param_index]);
+                const string& component_pin_name = (component_data.pins_begin() + param_index)->pin_name;
+
                 if (net_name == "?")
                     continue;   // Вывод не подсоединён к какой-либо цепи - пропускаем этот терм.
-                insertion_data->connect_info.push_back({component_data->pins[param_index].pin_name, net_name});
+                insertion_data->connect_info.push_back({component_pin_name, net_name});
             }
         }
         return {};
@@ -4142,12 +4186,79 @@ namespace HandlerPDIF
     }
 
     optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeIPTHandler::HandleCloseNode(TreeNodeData* node_data)
-    {
+    { // Переопределение типов контакта для всех ножек данного экземпляра компонента.
+        // Команда может иметь два формата - с указанием имён ножек (полный формат) и без его указания (краткий).
+        // Получаем указатель на дескриптор блока "вставочной" информации, который мы, собственно, в данный момент и формируем.
+        PDIFFileWorkshop* use_workshop = GetWorkshop();
+        PDIFFileWorkshop::TreeNodeData* current_insertion_node = use_workshop->FindNodeByType(NodeSpecType::NODE_TYPE_COMP_INSERTION);
+        assert(current_insertion_node);
+        if (!current_insertion_node)
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "IPT"}};
+        NodeIHandler::IHelper* insertion_data = (NodeIHandler::IHelper*)(current_insertion_node->spec_info.handler_spec_data.get());
 
+        // Отыскиваем определитель радиокомпонента, который требуется вставить в схему или на плату.
+        int insert_component_index = use_workshop->FindComponentByName(insertion_data->comp_name);
+        if (insert_component_index < 0)
+            return {{PCADLoadError::LOAD_FILE_COMPONENT_NOT_FOUND , "IPT : "s + insertion_data->comp_name}};
+        RadioComponentDesc& component_data = use_workshop->load_file_data.radio_components[insert_component_index];
+
+        // Проверим корректность количества аргументов узла, а также выясним формат команды.
+        bool is_full_format = true;
+        if (node_data->args.size() == component_data.pins_size())
+            is_full_format = false; // Это второй (сокращённый) формат команды.
+        else if (node_data->args.size() == component_data.pins_size() * 2)
+            is_full_format = true; // Это первый (полный) формат команды.
+        else    // Недопустимое количество аргументов узла.
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAMS_QUANTITY, {}}};
+
+        // Все параметры должны быть строковыми.
+            for (size_t param_index = 0; param_index < node_data->args.size(); ++param_index)
+                if (!holds_alternative<string>(node_data->args[param_index]))
+                    return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_TYPE, {}}};
+
+        // Форма всех аргументов верная, формат также допустим - переходим к его разбору.
+        if (is_full_format)
+        { // Анализ полного формата команды.
+            for (size_t param_index = 0; param_index < node_data->args.size(); param_index += 2)
+            {
+                const string& pin_name = get<string>(node_data->args[param_index]);
+                const string& str_pin_type = get<string>(node_data->args[param_index + 1]);
+                // Проверим наличие вывода с таким именем среди существующих для данного радиокомпонента.
+                auto test_pin_it = component_data.pins_begin();
+                for (; test_pin_it != component_data.pins_end(); ++test_pin_it)
+                {
+                    if (test_pin_it->pin_name == pin_name)
+                        break;
+                }
+                if (test_pin_it == component_data.pins_end())
+                    return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_VALUE, "Invalid_pin_name : "s + pin_name}};
+
+                if (optional<PinType> opt_pin_type = use_workshop->LoadPinTypeFromParam(str_pin_type); opt_pin_type)
+                    insertion_data->pin_type_info.push_back({pin_name, opt_pin_type.value()});
+                else
+                    return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_VALUE, {}}};
+            }
+        }
+        else
+        { // Анализ краткого формата команды.
+            for (size_t param_index = 0; param_index < node_data->args.size(); ++param_index)
+            {
+                const string& str_pin_type = get<string>(node_data->args[param_index]);
+                // Выясним имя ножки с порядковым индексом param_index.
+                if (param_index >= component_data.pins_size())
+                    return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_VALUE, "Invalid_pin_number : "s + to_string(param_index)}};
+                const string& pin_name = (component_data.pins_begin() + param_index)->pin_name;
+
+                if (optional<PinType> opt_pin_type = use_workshop->LoadPinTypeFromParam(str_pin_type); opt_pin_type)
+                    insertion_data->pin_type_info.push_back({pin_name, opt_pin_type.value()});
+                else
+                    return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_VALUE, {}}};
+            }
+        }
         return {};
     }
 
-    // Rd - позиционное обозначение экземпляра компонента - его текст и положение.
+    // Rd - позиционное обозначение экземпляра вставленного экземпляра компонента - его текст и положение.
     optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeRdHandler::HandleOpenNode(TreeNodeData* node_data)
     {
         return {};
@@ -4155,10 +4266,36 @@ namespace HandlerPDIF
 
     optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeRdHandler::HandleCloseNode(TreeNodeData* node_data)
     {
+        // Параметры этого узла - текст конструкторского обозначения и двузначная координатная пара его реперной точки.
+        if (node_data->args.size() != 3)
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAMS_QUANTITY, {}}};
+        // Сначала следует строка (текст позиционного обозначения), затем - числовая координатная пара.
+        if (!holds_alternative<string>(node_data->args[0]) ||
+            !holds_alternative<int64_t>(node_data->args[1]) || !holds_alternative<int64_t>(node_data->args[2]))
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_TYPE, {}}};
+
+        // Получаем указатель на дескриптор блока "вставочной" информации, который в данный момент формируется.
+        PDIFFileWorkshop* use_workshop = GetWorkshop();
+        PDIFFileWorkshop::TreeNodeData* current_insertion_node = use_workshop->FindNodeByType(NodeSpecType::NODE_TYPE_COMP_INSERTION);
+        assert(current_insertion_node);
+        if (!current_insertion_node)
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "IPT"}};
+        NodeIHandler::IHelper* insertion_data = (NodeIHandler::IHelper*)(current_insertion_node->spec_info.handler_spec_data.get());
+
+        const string& position_designator_text = get<string>(node_data->args[0]);
+        int text_anchor_x = get<int64_t>(node_data->args[1]),
+            text_anchor_y = get<int64_t>(node_data->args[2]);
+        wxPoint text_anchor_log = GetWorkshop()->ConvPntToLog(text_anchor_x, text_anchor_y);
+
+        // Конструируем графический объект текстовой надписи с конструкторским обозначением данной копии радиокомпонента.
+        insertion_data->refdes_obj = new ObjText
+            (node_data->node_settings.layer_number, text_anchor_log,
+             node_data->node_settings.text_orient, node_data->node_settings.text_height,
+             node_data->node_settings.text_align, move(position_designator_text));
         return {};
     }
 
-    // Pn - обозначение вывода элемента - текст и координаты точки размещения.
+    // Pn - обозначение вывода элемента для его отдельной копии - текст и координаты точки размещения.
     optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodePnHandler::HandleOpenNode(TreeNodeData* node_data)
     {
         return {};
@@ -4166,6 +4303,435 @@ namespace HandlerPDIF
 
     optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodePnHandler::HandleCloseNode(TreeNodeData* node_data)
     {
+        // Параметры этого узла - текст подписи к ножке и двузначная координатная пара её якорной точки.
+        if (node_data->args.size() != 3)
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAMS_QUANTITY, {}}};
+        // Сначала следует строка (текст подписи), затем - числовая координатная пара.
+        if (!holds_alternative<string>(node_data->args[0]) ||
+            !holds_alternative<int64_t>(node_data->args[1]) || !holds_alternative<int64_t>(node_data->args[2]))
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_TYPE, {}}};
+
+        // Получаем указатель на дескриптор блока "вставочной" информации, который в данный момент формируется.
+        PDIFFileWorkshop* use_workshop = GetWorkshop();
+        PDIFFileWorkshop::TreeNodeData* current_insertion_node = use_workshop->FindNodeByType(NodeSpecType::NODE_TYPE_COMP_INSERTION);
+        assert(current_insertion_node);
+        if (!current_insertion_node)
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "Pn"}};
+        NodeIHandler::IHelper* insertion_data = (NodeIHandler::IHelper*)(current_insertion_node->spec_info.handler_spec_data.get());
+
+        const string& pin_label_text = get<string>(node_data->args[0]);
+        int text_anchor_x = get<int64_t>(node_data->args[1]),
+            text_anchor_y = get<int64_t>(node_data->args[2]);
+        wxPoint text_anchor_log = GetWorkshop()->ConvPntToLog(text_anchor_x, text_anchor_y);
+
+        // Конструируем графический текстовый объект очередной текстовой надписи с конструкторским обозначением данной копии радиокомпонента.
+        insertion_data->pin_labels.push_back
+            (new ObjText
+                (node_data->node_settings.layer_number, text_anchor_log,
+                 node_data->node_settings.text_orient, node_data->node_settings.text_height,
+                 node_data->node_settings.text_align, move(pin_label_text)));
+        ++insertion_data->current_pn_index;
+
+        return {};
+    }
+
+    // ------ Группа обработчиков назначения "внутренних" атрибутов для различных сущностей PCAD-документа
+    // (терминалы внутри подсекции ../ATR/IN).
+
+    // Org - Точка привязки символа.
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeOrgHandler::HandleOpenNode(TreeNodeData* node_data)
+    {
+        return {};
+    }
+
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeOrgHandler::HandleCloseNode(TreeNodeData* node_data)
+    {
+        // Параметры этого узла - двузначная координатная пара якорной точки радиокомпонента.
+        if (node_data->args.size() != 2)
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAMS_QUANTITY, {}}};
+        // Координатная пара состоит из двух целых чисел.
+        if (!holds_alternative<int64_t>(node_data->args[0]) || !holds_alternative<int64_t>(node_data->args[1]))
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_TYPE, {}}};
+
+        // Выделяем определитель радиокомпонента, с которым связана эта упаковка.
+        PDIFFileWorkshop::TreeNodeData* current_component_node = GetWorkshop()->FindNodeByType(NodeSpecType::NODE_TYPE_RADIO_COMPONENT);
+        assert(current_component_node);
+        if (!current_component_node)
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "Org"}};
+        RadioComponentDesc::SourceData* component_data =
+            (RadioComponentDesc::SourceData*)(current_component_node->spec_info.handler_spec_data.get());
+        // Извлекаем из параметров узла и назначаем текущему библиотечному компоненту якорную точку привязки.
+        int component_anchor_x = get<int64_t>(node_data->args[0]),
+            component_anchor_y = get<int64_t>(node_data->args[1]);
+        component_data->org_pos = GetWorkshop()->ConvPntToLog(component_anchor_x, component_anchor_y);
+        return {};
+    }
+
+    // Ty - Тип компонента.
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeTyHandler::HandleOpenNode(TreeNodeData* node_data)
+    {
+        return {};
+    }
+
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeTyHandler::HandleCloseNode(TreeNodeData* node_data)
+    {
+        // Параметрами такой узловой команды является одно единственное целое число - идентификационный код типа компонента (ID).
+        if (node_data->args.size() != 1)
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAMS_QUANTITY, {}}};
+        // Идентификационный код типа компонента - целочисленный.
+        if (!holds_alternative<int64_t>(node_data->args[0]))
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_TYPE, {}}};
+
+        // Выделяем определитель радиокомпонента, с которым связана эта упаковка.
+        PDIFFileWorkshop::TreeNodeData* current_component_node = GetWorkshop()->FindNodeByType(NodeSpecType::NODE_TYPE_RADIO_COMPONENT);
+        assert(current_component_node);
+        if (!current_component_node)
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "Ty"}};
+        RadioComponentDesc::SourceData* component_data =
+            (RadioComponentDesc::SourceData*)(current_component_node->spec_info.handler_spec_data.get());
+
+        component_data->ty_id = get<int64_t>(node_data->args[0]);
+        return {};
+    }
+
+    // Smd - Прибор, монтируемый на поверхность (только для печатной платы).
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeSmdHandler::HandleOpenNode(TreeNodeData* node_data)
+    {
+        return {};
+    }
+
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeSmdHandler::HandleCloseNode(TreeNodeData* node_data)
+    {
+        // Здесь параметр единственный.
+        if (node_data->args.size() != 1)
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAMS_QUANTITY, {}}};
+        // И он - строка.
+        if (!holds_alternative<string>(node_data->args[0]))
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_TYPE, {}}};
+
+        // Выделяем определитель радиокомпонента, с которым связана эта упаковка.
+        PDIFFileWorkshop::TreeNodeData* current_component_node = GetWorkshop()->FindNodeByType(NodeSpecType::NODE_TYPE_RADIO_COMPONENT);
+        assert(current_component_node);
+        if (!current_component_node)
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "Smd"}};
+        RadioComponentDesc::SourceData* component_data =
+            (RadioComponentDesc::SourceData*)(current_component_node->spec_info.handler_spec_data.get());
+        string smd_flag = get<string>(node_data->args[0]);
+        if (smd_flag == "Y")
+            component_data->is_smd = true;
+        else if (smd_flag == "N")
+            component_data->is_smd = false;
+        else
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_VALUE, smd_flag}};
+
+        return {};
+    }
+
+    // Jmp - "Jumper" (только для печатной платы).
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeJmpHandler::HandleOpenNode(TreeNodeData* node_data)
+    {
+        return {};
+    }
+
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeJmpHandler::HandleCloseNode(TreeNodeData* node_data)
+    {
+        // Здесь параметр единственный.
+        if (node_data->args.size() != 1)
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAMS_QUANTITY, {}}};
+        // И он - строка.
+        if (!holds_alternative<string>(node_data->args[0]))
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_TYPE, {}}};
+
+        // Выделяем определитель радиокомпонента, с которым связана эта упаковка.
+        PDIFFileWorkshop::TreeNodeData* current_component_node = GetWorkshop()->FindNodeByType(NodeSpecType::NODE_TYPE_RADIO_COMPONENT);
+        assert(current_component_node);
+        if (!current_component_node)
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "Jmp"}};
+        RadioComponentDesc::SourceData* component_data =
+            (RadioComponentDesc::SourceData*)(current_component_node->spec_info.handler_spec_data.get());
+        string jumper_flag = get<string>(node_data->args[0]);
+        if (jumper_flag == "Y")
+            component_data->is_jumper = true;
+        else if (jumper_flag == "N")
+            component_data->is_jumper = false;
+        else
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_VALUE, jumper_flag}};
+
+        return {};
+    }
+
+    // Pl - Координаты местоположения вставленного экземпляра радиокомпонента.
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodePlHandler::HandleOpenNode(TreeNodeData* node_data)
+    {
+        return {};
+    }
+
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodePlHandler::HandleCloseNode(TreeNodeData* node_data)
+    {
+        // Параметры этого узла - двузначная координатная пара якорной точки радиокомпонента.
+        if (node_data->args.size() != 2)
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAMS_QUANTITY, {}}};
+        // Координатная пара состоит из двух целых чисел.
+        if (!holds_alternative<int64_t>(node_data->args[0]) || !holds_alternative<int64_t>(node_data->args[1]))
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_TYPE, {}}};
+
+        // Получаем указатель на дескриптор блока "вставочной" информации, который в данный момент формируется.
+        PDIFFileWorkshop::TreeNodeData* current_insertion_node = GetWorkshop()->FindNodeByType(NodeSpecType::NODE_TYPE_COMP_INSERTION);
+        assert(current_insertion_node);
+        if (!current_insertion_node)
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "Pn"}};
+        NodeIHandler::IHelper* insertion_data = (NodeIHandler::IHelper*)(current_insertion_node->spec_info.handler_spec_data.get());
+
+        // Извлекаем из параметров узла и назначаем экземпляру указанную точку местоположения.
+        int insert_place_x = get<int64_t>(node_data->args[0]),
+            insert_place_y = get<int64_t>(node_data->args[1]);
+        insertion_data->place_pos = GetWorkshop()->ConvPntToLog(insert_place_x, insert_place_y);
+        return {};
+    }
+
+    // Sc - Масштабные коэффициенты вставки компонента по осям X и Y.
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeScHandler::HandleOpenNode(TreeNodeData* node_data)
+    {
+        return {};
+    }
+
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeScHandler::HandleCloseNode(TreeNodeData* node_data)
+    {
+        // Параметры этого узла - два масштабных коэффициента, определяющих относительный размер вставленного экземпляра
+        // радиокомпонента относительно его библиотечного прототипа.
+        if (node_data->args.size() != 2)
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAMS_QUANTITY, {}}};
+        // Оба масштабных коэффициента - целые числа, заданные в процентах.
+        if (!holds_alternative<int64_t>(node_data->args[0]) || !holds_alternative<int64_t>(node_data->args[1]))
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_TYPE, {}}};
+
+        // Получаем указатель на дескриптор блока "вставочной" информации, который в данный момент формируется.
+        PDIFFileWorkshop::TreeNodeData* current_insertion_node = GetWorkshop()->FindNodeByType(NodeSpecType::NODE_TYPE_COMP_INSERTION);
+        assert(current_insertion_node);
+        if (!current_insertion_node)
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "Sc"}};
+        NodeIHandler::IHelper* insertion_data = (NodeIHandler::IHelper*)(current_insertion_node->spec_info.handler_spec_data.get());
+        // Назначаем вставке масштабы, указанные в процентах в параметрах данной узловой команды.
+        insertion_data->scale_x = static_cast<double>(get<int64_t>(node_data->args[0])) / 100.0;  // Горизонтальный масштаб вставленной копии xкомпонента.
+        insertion_data->scale_y = static_cast<double>(get<int64_t>(node_data->args[1])) / 100.0;  // Вертикальный масштаб вставленной копии компонента.
+        return {};
+    }
+
+    // Ro - Угол вращения.
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeRoHandler::HandleOpenNode(TreeNodeData* node_data)
+    {
+        return {};
+    }
+
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeRoHandler::HandleCloseNode(TreeNodeData* node_data)
+    {
+        // Параметр такого узла единственный.
+        if (node_data->args.size() != 1)
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAMS_QUANTITY, {}}};
+        // И это целочисленный коэффициент нормального поворота в диапазоне от 0 до 3.
+        if (!holds_alternative<int64_t>(node_data->args[0]))
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_TYPE, {}}};
+
+        // Получаем указатель на дескриптор блока "вставочной" информации, который в данный момент формируется.
+        PDIFFileWorkshop::TreeNodeData* current_insertion_node = GetWorkshop()->FindNodeByType(NodeSpecType::NODE_TYPE_COMP_INSERTION);
+        assert(current_insertion_node);
+        if (!current_insertion_node)
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "Sc"}};
+        NodeIHandler::IHelper* insertion_data = (NodeIHandler::IHelper*)(current_insertion_node->spec_info.handler_spec_data.get());
+
+        if (optional<int> checked_ro_val = CheckIntValue(get<int64_t>(node_data->args[0]), 3); checked_ro_val)
+             insertion_data->rotate_factor = checked_ro_val.value();
+        else
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_VALUE, {}}};   // Фактор нормального поворота вне допустимых пределов.
+
+        return {};
+    }
+
+    // Mr -  Статус зеркальности (только для базы данных принципиальной схемы).
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeMrHandler::HandleOpenNode(TreeNodeData* node_data)
+    {
+        return {};
+    }
+
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeMrHandler::HandleCloseNode(TreeNodeData* node_data)
+    {
+        // Здесь параметр единственный.
+        if (node_data->args.size() != 1)
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAMS_QUANTITY, {}}};
+        // И он - строка ("Y" или "N").
+        if (!holds_alternative<string>(node_data->args[0]))
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_TYPE, {}}};
+
+        // Получаем указатель на дескриптор блока "вставочной" информации, который в данный момент формируется.
+        PDIFFileWorkshop::TreeNodeData* current_insertion_node = GetWorkshop()->FindNodeByType(NodeSpecType::NODE_TYPE_COMP_INSERTION);
+        assert(current_insertion_node);
+        if (!current_insertion_node)
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "Mr"}};
+        NodeIHandler::IHelper* insertion_data = (NodeIHandler::IHelper*)(current_insertion_node->spec_info.handler_spec_data.get());
+
+        string mirror_flag = get<string>(node_data->args[0]);
+        if (mirror_flag == "Y")
+            insertion_data->is_mirror = true;
+        else if (mirror_flag == "N")
+            insertion_data->is_mirror = false;
+        else
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_VALUE, mirror_flag}};
+
+        return {};
+    }
+
+    // Nl - Местоположение имени копии компонента.
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeNlHandler::HandleOpenNode(TreeNodeData* node_data)
+    {
+        return {};
+    }
+
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeNlHandler::HandleCloseNode(TreeNodeData* node_data)
+    {
+        // Параметры этого узла - двузначная координатная пара якорной точки видимого изображения частного имени копии компонента.
+        if (node_data->args.size() != 2)
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAMS_QUANTITY, {}}};
+        // Координатная пара состоит из двух целых чисел.
+        if (!holds_alternative<int64_t>(node_data->args[0]) || !holds_alternative<int64_t>(node_data->args[1]))
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_TYPE, {}}};
+
+        // Получаем указатель на дескриптор блока "вставочной" информации, который в данный момент формируется.
+        PDIFFileWorkshop::TreeNodeData* current_insertion_node = GetWorkshop()->FindNodeByType(NodeSpecType::NODE_TYPE_COMP_INSERTION);
+        assert(current_insertion_node);
+        if (!current_insertion_node)
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "Nl"}};
+        NodeIHandler::IHelper* insertion_data = (NodeIHandler::IHelper*)(current_insertion_node->spec_info.handler_spec_data.get());
+
+        // Извлекаем из параметров узла и назначаем экземпляру указанную реперную точку видимой надписи, содержащей его частное имя.
+        int insert_name_anchor_x = get<int64_t>(node_data->args[0]),
+            insert_name_anchor_y = get<int64_t>(node_data->args[1]);
+        insertion_data->ins_name_pos = GetWorkshop()->ConvPntToLog(insert_name_anchor_x, insert_name_anchor_y);
+        return {};
+    }
+
+    // Ps - Сторона размещения компонентов (только для печатной платы).
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodePsHandler::HandleOpenNode(TreeNodeData* node_data)
+    {
+        return {};
+    }
+
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodePsHandler::HandleCloseNode(TreeNodeData* node_data)
+    {
+        // Параметр узла единственный и строковый (один символ - "T" или "B").
+        if (node_data->args.size() != 1)
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAMS_QUANTITY, {}}};
+        if (!holds_alternative<string>(node_data->args[0]))
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_TYPE, {}}};
+
+        // Получаем указатель на дескриптор блока "вставочной" информации, который в данный момент формируется.
+        PDIFFileWorkshop::TreeNodeData* current_insertion_node = GetWorkshop()->FindNodeByType(NodeSpecType::NODE_TYPE_COMP_INSERTION);
+        assert(current_insertion_node);
+        if (!current_insertion_node)
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "Ps"}};
+        NodeIHandler::IHelper* insertion_data = (NodeIHandler::IHelper*)(current_insertion_node->spec_info.handler_spec_data.get());
+
+        string pcb_side_flag = get<string>(node_data->args[0]);
+        if (pcb_side_flag == "T")
+            insertion_data->on_top_side = true;
+        else if (pcb_side_flag == "B")
+            insertion_data->on_top_side = false;
+        else
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_VALUE, pcb_side_flag}};
+
+        return {};
+    }
+
+    // Pa - Угол установки компонента.
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodePaHandler::HandleOpenNode(TreeNodeData* node_data)
+    {
+        return {};
+    }
+
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodePaHandler::HandleCloseNode(TreeNodeData* node_data)
+    {
+        // Параметр такого узла единственный.
+        if (node_data->args.size() != 1)
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAMS_QUANTITY, {}}};
+        // И это целочисленный угол установки радиокомпонента в диапазоне от 0 до 89 градусов по часовой стрелке.
+        if (!holds_alternative<int64_t>(node_data->args[0]))
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_TYPE, {}}};
+
+        // Получаем указатель на дескриптор блока "вставочной" информации, который в данный момент формируется.
+        PDIFFileWorkshop::TreeNodeData* current_insertion_node = GetWorkshop()->FindNodeByType(NodeSpecType::NODE_TYPE_COMP_INSERTION);
+        assert(current_insertion_node);
+        if (!current_insertion_node)
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "Pa"}};
+        NodeIHandler::IHelper* insertion_data = (NodeIHandler::IHelper*)(current_insertion_node->spec_info.handler_spec_data.get());
+
+        if (optional<int> checked_pa_val = CheckIntValue(get<int64_t>(node_data->args[0]), 90); checked_pa_val)
+             insertion_data->set_angle = checked_pa_val.value();
+        else
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_VALUE, {}}};   // Угол установки вне допустимых пределов.
+
+        return {};
+    }
+
+    // Un - Присваиваемое пользователем имя (для вставки компонента, только для PC-CAPS).
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeUnCompHandler::HandleOpenNode(TreeNodeData* node_data)
+    {
+        return {};
+    }
+
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeUnCompHandler::HandleCloseNode(TreeNodeData* node_data)
+    {
+        // Параметр узла единственный и строковый (один символ - "Y" или "N").
+        if (node_data->args.size() != 1)
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAMS_QUANTITY, {}}};
+        if (!holds_alternative<string>(node_data->args[0]))
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_TYPE, {}}};
+
+        // Получаем указатель на дескриптор блока "вставочной" информации, который в данный момент формируется.
+        PDIFFileWorkshop::TreeNodeData* current_insertion_node = GetWorkshop()->FindNodeByType(NodeSpecType::NODE_TYPE_COMP_INSERTION);
+        assert(current_insertion_node);
+        if (!current_insertion_node)
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "Un"}};
+        NodeIHandler::IHelper* insertion_data = (NodeIHandler::IHelper*)(current_insertion_node->spec_info.handler_spec_data.get());
+
+        string user_name_flag = get<string>(node_data->args[0]);
+        if (user_name_flag == "Y")
+            insertion_data->is_user_ins_name = true;
+        else if (user_name_flag == "N")
+            insertion_data->is_user_ins_name = false;
+        else
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_VALUE, user_name_flag}};
+
+        return {};
+    }
+
+    // Un - Присваиваемое пользователем имя (для проводящей цепи, только для PC-CAPS).
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeUnNetHandler::HandleOpenNode(TreeNodeData* node_data)
+    {
+        return {};
+    }
+
+    optional<FileWorkshop::ErrorInfo> PDIFFileWorkshop::NodeUnNetHandler::HandleCloseNode(TreeNodeData* node_data)
+    {
+        // Параметр узла единственный и строковый (один символ - "Y" или "N").
+        if (node_data->args.size() != 1)
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAMS_QUANTITY, {}}};
+        if (!holds_alternative<string>(node_data->args[0]))
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_TYPE, {}}};
+
+        // Получаем указатель на формируемый в данный момент дескриптор токопроводящей цепи.
+        PDIFFileWorkshop::TreeNodeData* current_net_node = GetWorkshop()->FindNodeByType(NodeSpecType::NODE_TYPE_NET_DESC);
+        assert(current_net_node);
+        if (!current_net_node)
+            return {{PCADLoadError::LOAD_FILE_COMMAND_UNACCEPTABLE_HERE, "Un"}};
+        NetDefDesc::SourceData* net_desc_data = (NetDefDesc::SourceData*)(current_net_node->spec_info.handler_spec_data.get());
+
+        string user_name_flag = get<string>(node_data->args[0]);
+        if (user_name_flag == "Y")
+            net_desc_data->is_user_net_name = true;
+        else if (user_name_flag == "N")
+            net_desc_data->is_user_net_name = false;
+        else
+            return {{PCADLoadError::LOAD_FILE_INCORRECT_PARAM_VALUE, user_name_flag}};
+
         return {};
     }
 } // namespace HandlerPDIF

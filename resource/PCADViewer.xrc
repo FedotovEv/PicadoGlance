@@ -1,19 +1,19 @@
 <?xml version="1.0"?>
 <resource xmlns="http://www.wxwidgets.org/wxxrc" version="2.5.3.0">
-<object class="wxBitmap" name="check_sign_d">resource\database_check.png</object>
-<object class="wxBitmap" name="cross_sign_d">resource\delete_database.png</object>
-<object class="wxBitmap" name="down_sign">resource\down.png</object>
-<object class="wxBitmap" name="equal_sign">resource\equal.png</object>
-<object class="wxBitmap" name="left_sign">resource\left.png</object>
-<object class="wxBitmap" name="minus_sign">resource\minus.png</object>
-<object class="wxBitmap" name="plus_sign">resource\plus.png</object>
-<object class="wxBitmap" name="print_sign">resource\print.png</object>
-<object class="wxBitmap" name="right_sign">resource\right.png</object>
-<object class="wxBitmap" name="up_sign">resource\up.png</object>
-<object class="wxBitmap" name="export_sign">resource\export.png</object>
-<object class="wxBitmap" name="check_sign">resource\RecursivelyCheckAll.png</object>
-<object class="wxBitmap" name="cross_sign">resource\RecursivelyUncheckAll.png</object>
-<object class="wxBitmap" name="one_to_one_sign">resource\OneX.png</object>
-<object class="wxBitmap" name="portrait_landscape_sign">resource\PhoneRotateToLandscapeLeft.png</object>
-<object class="fontCHR" name="default_chr_font">resource\litt.chr</object>
+<object class="wxBitmap" name="check_sign_d">database_check.png</object>
+<object class="wxBitmap" name="cross_sign_d">delete_database.png</object>
+<object class="wxBitmap" name="down_sign">down.png</object>
+<object class="wxBitmap" name="equal_sign">equal.png</object>
+<object class="wxBitmap" name="left_sign">left.png</object>
+<object class="wxBitmap" name="minus_sign">minus.png</object>
+<object class="wxBitmap" name="plus_sign">plus.png</object>
+<object class="wxBitmap" name="print_sign">print.png</object>
+<object class="wxBitmap" name="right_sign">right.png</object>
+<object class="wxBitmap" name="up_sign">up.png</object>
+<object class="wxBitmap" name="export_sign">export.png</object>
+<object class="wxBitmap" name="check_sign">RecursivelyCheckAll.png</object>
+<object class="wxBitmap" name="cross_sign">RecursivelyUncheckAll.png</object>
+<object class="wxBitmap" name="one_to_one_sign">OneX.png</object>
+<object class="wxBitmap" name="portrait_landscape_sign">PhoneRotateToLandscapeLeft.png</object>
+<object class="fontCHR" name="default_chr_font">litt.chr</object>
 </resource>

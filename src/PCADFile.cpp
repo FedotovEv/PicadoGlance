@@ -26,51 +26,83 @@ static const GraphObj* ScanForGraphObject(wxColor graph_obj_ord_as_color, const 
     return nullptr;
 }
 
-void RadioComponentDesc::RadioComponentDescClear() noexcept
+void ComponentSectDef::Clear() noexcept
+{
+    ComponentSectDefVar* sect_def_var = static_cast<ComponentSectDefVar*>(this);
+    if (std::holds_alternative<ComponentPKGSectDef>(*sect_def_var))
+        std::get<ComponentPKGSectDef>(*sect_def_var).Clear();
+    else if (std::holds_alternative<ComponentSPKGSectDef>(*sect_def_var))
+        std::get<ComponentSPKGSectDef>(*sect_def_var).Clear();
+}
+
+void RadioComponentDesc::Clear() noexcept
 {
     for (GraphObj* graph_obj_ptr : graph_objects_)
         delete graph_obj_ptr;
-    graph_objects_.clear();
-    pins_.clear();
-    comp_name_.clear();
-    ty_id_ = 0;
-    ExAttrsCollection::clear();
+    (*this) = {};
 }
 
 RadioComponentDesc::RadioComponentDesc(SourceData&& radio_component_data) :
     ExAttrsCollection(move(radio_component_data.ex_attr_collection)),
     comp_name_(move(radio_component_data.comp_name)),
-    ty_id_(radio_component_data.ty_id),
     graph_objects_(move(radio_component_data.graph_objects)),
-    pins_(move(radio_component_data.pins))
+    pins_(move(radio_component_data.pins)),
+    package_id_(move(radio_component_data.package_id)),
+    refdes_(move(radio_component_data.refdes)),
+    sections_def_(move(radio_component_data.sections_def)),
+    // Переносим внутренние атрибуты.
+    org_pos_(radio_component_data.org_pos),
+    ty_id_(radio_component_data.ty_id),
+    is_smd_(radio_component_data.is_smd),
+    is_jumper_(radio_component_data.is_jumper)
 {}
 
 RadioComponentDesc::RadioComponentDesc(RadioComponentDesc&& other) noexcept :
     ExAttrsCollection(move(other)),
     comp_name_(move(other.comp_name_)),
-    ty_id_(other.ty_id_),
     graph_objects_(move(other.graph_objects_)),
-    pins_(move(other.pins_))
+    pins_(move(other.pins_)),
+    package_id_(move(other.package_id_)),
+    refdes_(move(other.refdes_)),
+    sections_def_(move(other.sections_def_)),
+    // Переносим внутренние атрибуты.
+    org_pos_(other.org_pos_),
+    ty_id_(other.ty_id_),
+    is_smd_(other.is_smd_),
+    is_jumper_(other.is_jumper_)
 {
+    other.org_pos_ = wxPoint();
     other.ty_id_ = 0;
+    other.is_smd_ = false;
+    other.is_jumper_ = false;
 }
 
 RadioComponentDesc::~RadioComponentDesc() noexcept
 {
-    RadioComponentDescClear();
+    Clear();
 }
 
 RadioComponentDesc& RadioComponentDesc::operator=(RadioComponentDesc&& other) noexcept
 {
     if (this != &other)
     {
-        RadioComponentDescClear();
+        Clear();
         *static_cast<ExAttrsCollection*>(this) = move(other);
         comp_name_ = move(other.comp_name_);
-        ty_id_ = other.ty_id_;
-        other.ty_id_ = 0;
         graph_objects_ = move(other.graph_objects_);
         pins_ = move(other.pins_);
+        package_id_ = move(other.package_id_);
+        refdes_ = move(other.refdes_);
+        sections_def_ = move(other.sections_def_);
+        // Переносим внутренние атрибуты.
+        org_pos_ = other.org_pos_;
+        other.org_pos_ = wxPoint();
+        ty_id_ = other.ty_id_;
+        other.ty_id_ = 0;
+        is_smd_ = other.is_smd_;
+        other.is_smd_ = false;
+        is_jumper_ = other.is_jumper_;
+        other.is_jumper_ = false;
     }
     return *this;
 }
@@ -86,17 +118,13 @@ const GraphObj* RadioComponentDesc::ScanForGraphObject(wxColor graph_obj_ord_as_
 }
 
 // Функция-член общей очистки данных структуры RadioComponentInsertion.
-void RadioComponentInsertion::RadioComponentInsertionClear() noexcept
+void RadioComponentInsertion::Clear() noexcept
 {
     delete refdes_obj_;
     refdes_obj_ = nullptr;
     for (GraphObj* graph_obj_ptr : pin_labels_)
         delete graph_obj_ptr;
-    pin_labels_.clear();
-    connect_info_.clear();
-    comp_name_.clear();
-    comp_number_ = -1;
-    ExAttrsCollection::clear();
+    (*this) = {};
 }
 
 RadioComponentInsertion::RadioComponentInsertion(SourceData&& component_insert_data) :
@@ -104,7 +132,18 @@ RadioComponentInsertion::RadioComponentInsertion(SourceData&& component_insert_d
     comp_name_(move(component_insert_data.comp_name)),
     insertion_name_(move(component_insert_data.insertion_name)),
     refdes_obj_(move(component_insert_data.refdes_obj)),
-    pin_labels_(move(component_insert_data.pin_labels))
+    pin_labels_(move(component_insert_data.pin_labels)),
+    pin_type_info_(move(component_insert_data.pin_type_info)),
+    // Перенос внутренних атрибутов вставки.
+    is_mirror_(component_insert_data.is_mirror),
+    on_top_side_(component_insert_data.on_top_side),
+    is_user_ins_name_(component_insert_data.is_user_ins_name),
+    place_pos_(component_insert_data.place_pos),
+    scale_x_(component_insert_data.scale_x),
+    scale_y_(component_insert_data.scale_y),
+    rotate_factor_(component_insert_data.rotate_factor),
+    ins_name_pos_(component_insert_data.ins_name_pos),
+    set_angle_(component_insert_data.set_angle)
 {
     for (const std::pair<std::string, std::string>& conn_info_pair : component_insert_data.connect_info)
     {
@@ -121,22 +160,42 @@ RadioComponentInsertion::RadioComponentInsertion(RadioComponentInsertion&& other
     comp_number_(other.comp_number_),
     refdes_obj_(other.refdes_obj_),
     pin_labels_(move(other.pin_labels_)),
-    connect_info_(move(other.connect_info_))
+    connect_info_(move(other.connect_info_)),
+    pin_type_info_(move(other.pin_type_info_)),
+    // Перенос внутренних атрибутов вставки.
+    is_mirror_(other.is_mirror_),
+    on_top_side_(other.on_top_side_),
+    is_user_ins_name_(other.is_user_ins_name_),
+    place_pos_(other.place_pos_),
+    scale_x_(other.scale_x_),
+    scale_y_(other.scale_y_),
+    rotate_factor_(other.rotate_factor_),
+    ins_name_pos_(other.ins_name_pos_),
+    set_angle_(other.set_angle_)
 {
     other.comp_number_ = -1;
     other.refdes_obj_ = nullptr;
+    other.is_mirror_ = false;
+    other.on_top_side_ = true;
+    other.is_user_ins_name_ = false;
+    other.place_pos_ = wxPoint();
+    other.scale_x_ = 1.0;
+    other.scale_y_ = 1.0;
+    other.rotate_factor_ = 0;
+    other.ins_name_pos_ = {};
+    other.set_angle_ = 0.0;
 }
 
 RadioComponentInsertion::~RadioComponentInsertion() noexcept
 {
-    RadioComponentInsertionClear();
+    Clear();
 }
 
 RadioComponentInsertion& RadioComponentInsertion::operator=(RadioComponentInsertion&& other) noexcept
 {
     if (this != &other)
     {
-        RadioComponentInsertionClear();
+        Clear();
         *static_cast<ExAttrsCollection*>(this) = move(other);
         comp_name_ = move(other.comp_name_);
         comp_number_ = other.comp_number_;
@@ -145,45 +204,71 @@ RadioComponentInsertion& RadioComponentInsertion::operator=(RadioComponentInsert
         other.refdes_obj_ = nullptr;
         pin_labels_ = move(other.pin_labels_);
         connect_info_ = move(other.connect_info_);
+        pin_type_info_ = move(other.pin_type_info_);
+        // Перенос внутренних атрибутов вставки.
+        is_mirror_ = other.is_mirror_;
+        other.is_mirror_ = false;
+        on_top_side_ = other.on_top_side_;
+        other.on_top_side_ = true;
+        is_user_ins_name_ = other.is_user_ins_name_;
+        other.is_user_ins_name_ = false;
+        place_pos_ = other.place_pos_;
+        other.place_pos_ = wxPoint();
+        scale_x_ = other.scale_x_;
+        other.scale_x_ = 1.0;
+        scale_y_ = other.scale_y_;
+        other.scale_y_ = 1.0;
+        rotate_factor_ = other.rotate_factor_;
+        other.rotate_factor_ = 0;
+        ins_name_pos_ = other.ins_name_pos_;
+        other.ins_name_pos_ = {};
+        set_angle_ = other.set_angle_;
+        other.set_angle_ = 0.0;
     }
     return *this;
 }
 
 // Функция-член полной очистки объекта класса NetDefDesc.
-void NetDefDesc::NetDefDescClear() noexcept
+void NetDefDesc::Clear() noexcept
 {
     for (GraphObj* graph_obj_ptr : net_parts_)
         delete graph_obj_ptr;
-    net_parts_.clear();
-    net_name_.clear();
-    ExAttrsCollection::clear();
+    (*this) = {};
 }
 
 NetDefDesc::NetDefDesc(SourceData&& net_def_data) :
     ExAttrsCollection(move(net_def_data.ex_attr_collection)),
     net_name_(move(net_def_data.net_name)),
-    net_parts_(move(net_def_data.net_parts))
+    net_parts_(move(net_def_data.net_parts)),
+    // Внутренние атрибуты токопроводящей цепи.
+    is_user_net_name_(net_def_data.is_user_net_name)
 {}
 
 NetDefDesc::NetDefDesc(NetDefDesc&& other) noexcept :
     ExAttrsCollection(move(other)),
     net_name_(move(other.net_name_)),
-    net_parts_(move(other.net_parts_))
-{}
+    net_parts_(move(other.net_parts_)),
+    // Внутренние атрибуты токопроводящей цепи.
+    is_user_net_name_(other.is_user_net_name_)
+{
+    other.is_user_net_name_ = false;
+}
 
 NetDefDesc::~NetDefDesc() noexcept
 {
-    NetDefDescClear();
+    Clear();
 }
 
 NetDefDesc& NetDefDesc::operator=(NetDefDesc&& other) noexcept
 {
     if (this != &other)
     {
-        NetDefDescClear();
+        Clear();
         *static_cast<ExAttrsCollection*>(this) = move(other);
         net_name_ = move(other.net_name_);
         net_parts_ = move(other.net_parts_);
+        is_user_net_name_ = other.is_user_net_name_;
+        other.is_user_net_name_ = false;
     }
     return *this;
 }

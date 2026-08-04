@@ -151,6 +151,7 @@
 		<Unit filename="include/SetCanvasSize.h">
 			<Option target="Release" />
 		</Unit>
+		<Unit filename="include/DatabaseResBrowser.h" />
 		<Unit filename="include/TBLFileServer.h">
 			<Option target="Release" />
 		</Unit>
@@ -201,12 +202,14 @@
 		<Unit filename="src/PCADViewerMain.cpp" />
 		<Unit filename="src/ProviderStamp.cpp" />
 		<Unit filename="src/SetCanvasSize.cpp" />
+		<Unit filename="src/DatabaseResBrowser.cpp" />		
 		<Unit filename="src/TBLFileServer.cpp" />
 		<Unit filename="src/chr_font.cpp" />
 		<Unit filename="src/gerber.cpp" />
 		<Unit filename="src/macroses.cpp" />
 		<Unit filename="src/scrollingdialog.cpp" />
 		<Unit filename="src/svg.cpp" />
+		<Unit filename="wxsmith/DatabaseResBrowser.wxs" />
 		<Unit filename="wxsmith/DrillDatabaseProperties.wxs" />
 		<Unit filename="wxsmith/EditDrillBitsProperties.wxs" />
 		<Unit filename="wxsmith/FileInfoDialog.wxs" />
@@ -229,6 +232,7 @@
 					<wxDialog wxs="wxsmith/OptionsDialog.wxs" src="OptionsDialog.cpp" hdr="OptionsDialog.h" fwddecl="0" i18n="1" name="OptionsDialog" language="CPP" />
 					<wxDialog wxs="wxsmith/EditDrillBitsProperties.wxs" src="EditDrillBitsProperties.cpp" hdr="EditDrillBitsProperties.h" fwddecl="0" i18n="1" name="EditDrillBitsProperties" language="CPP" />
 					<wxDialog wxs="wxsmith/DrillDatabaseProperties.wxs" src="DrillDatabaseProperties.cpp" hdr="DrillDatabaseProperties.h" fwddecl="0" i18n="1" name="DrillDatabaseProperties" language="CPP" />
+					<wxDialog wxs="wxsmith/DatabaseResBrowser.wxs" src="DatabaseResBrowser.cpp" hdr="DatabaseResBrowser.h" fwddecl="0" i18n="1" name="DatabaseResBrowser" language="CPP" />
 				</resources>
 			</wxsmith>
 		</Extensions>
