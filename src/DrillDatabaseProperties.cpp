@@ -29,23 +29,23 @@ DrillDatabaseProperties::DrillDatabaseProperties(wxWindow* parent,wxWindowID id,
     wxStaticBoxSizer* DrillDatabaseEncodingSizer;
     wxStdDialogButtonSizer* DrillDatabasePropsButtons;
 
-    Create(parent, wxID_ANY, _("Свойства базы данных инструментов сверловки"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE, _T("wxID_ANY"));
+    Create(parent, wxID_ANY, _("РЎРІРѕР№СЃС‚РІР° Р±Р°Р·С‹ РґР°РЅРЅС‹С… РёРЅСЃС‚СЂСѓРјРµРЅС‚РѕРІ СЃРІРµСЂР»РѕРІРєРё"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE, _T("wxID_ANY"));
     DrillDatabasePropMainSizer = new wxBoxSizer(wxVERTICAL);
-    DrillDatabaseEncodingSizer = new wxStaticBoxSizer(wxHORIZONTAL, this, _("Кодировка информационных строк TBL-файла"));
-    DrillDatabaseEncodingCombo = new wxComboBox(this, ID_COMBO_DATABASE_ENCODING, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("ID_COMBO_DATABASE_ENCODING"));
+    DrillDatabaseEncodingSizer = new wxStaticBoxSizer(wxHORIZONTAL, this, _("РљРѕРґРёСЂРѕРІРєР° РёРЅС„РѕСЂРјР°С†РёРѕРЅРЅС‹С… СЃС‚СЂРѕРє TBL-С„Р°Р№Р»Р°"));
+    DrillDatabaseEncodingCombo = new wxComboBox(DrillDatabaseEncodingSizer->GetStaticBox(), ID_COMBO_DATABASE_ENCODING, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("ID_COMBO_DATABASE_ENCODING"));
     DrillDatabaseEncodingSizer->Add(DrillDatabaseEncodingCombo, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     DrillDatabasePropMainSizer->Add(DrillDatabaseEncodingSizer, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     DrillDatabaseOptionsSizer = new wxBoxSizer(wxVERTICAL);
-    DrillTBLDatabaseStrictCheck = new wxCheckBox(this, ID_CHECKBOX_TBL_FORMAT_STRICT, _("Строгий стандарт PCAD4 TBL"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_CHECKBOX_TBL_FORMAT_STRICT"));
+    DrillTBLDatabaseStrictCheck = new wxCheckBox(this, ID_CHECKBOX_TBL_FORMAT_STRICT, _("РЎС‚СЂРѕРіРёР№ СЃС‚Р°РЅРґР°СЂС‚ PCAD4 TBL"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_CHECKBOX_TBL_FORMAT_STRICT"));
     DrillTBLDatabaseStrictCheck->SetValue(false);
     DrillDatabaseOptionsSizer->Add(DrillTBLDatabaseStrictCheck, 1, wxALL|wxALIGN_LEFT, 5);
-    DrillFileSortingCheck = new wxCheckBox(this, ID_CHECKBOX_SORTING_DRILL_FILE, _("Сортировка файла сверловки"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_CHECKBOX_SORTING_DRILL_FILE"));
+    DrillFileSortingCheck = new wxCheckBox(this, ID_CHECKBOX_SORTING_DRILL_FILE, _("РЎРѕСЂС‚РёСЂРѕРІРєР° С„Р°Р№Р»Р° СЃРІРµСЂР»РѕРІРєРё"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_CHECKBOX_SORTING_DRILL_FILE"));
     DrillFileSortingCheck->SetValue(false);
     DrillDatabaseOptionsSizer->Add(DrillFileSortingCheck, 1, wxALL|wxALIGN_LEFT, 5);
     DrillDatabasePropMainSizer->Add(DrillDatabaseOptionsSizer, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     DrillDatabasePropsButtons = new wxStdDialogButtonSizer();
-    DrillDatabasePropsButtons->AddButton(new wxButton(this, wxID_OK, _("Принять")));
-    DrillDatabasePropsButtons->AddButton(new wxButton(this, wxID_CANCEL, _("Отменить")));
+    DrillDatabasePropsButtons->AddButton(new wxButton(this, wxID_OK, _("РџСЂРёРЅСЏС‚СЊ")));
+    DrillDatabasePropsButtons->AddButton(new wxButton(this, wxID_CANCEL, _("РћС‚РјРµРЅРёС‚СЊ")));
     DrillDatabasePropsButtons->Realize();
     dynamic_cast <wxButton *> (this->FindWindow(wxID_OK))->SetDefault();
     DrillDatabasePropMainSizer->Add(DrillDatabasePropsButtons, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
@@ -57,7 +57,7 @@ DrillDatabaseProperties::DrillDatabaseProperties(wxWindow* parent,wxWindowID id,
     Connect(ID_CHECKBOX_SORTING_DRILL_FILE, wxEVT_COMMAND_CHECKBOX_CLICKED, (wxObjectEventFunction)&DrillDatabaseProperties::OnDrillFileSortingCheckClick);
     //*)
 
-    // Заполнение списка DrillDatabaseEncodingCombo выбора кодировок информационных строк TBL-файлов их доступными значениями.
+    // Р—Р°РїРѕР»РЅРµРЅРёРµ СЃРїРёСЃРєР° DrillDatabaseEncodingCombo РІС‹Р±РѕСЂР° РєРѕРґРёСЂРѕРІРѕРє РёРЅС„РѕСЂРјР°С†РёРѕРЅРЅС‹С… СЃС‚СЂРѕРє TBL-С„Р°Р№Р»РѕРІ РёС… РґРѕСЃС‚СѓРїРЅС‹РјРё Р·РЅР°С‡РµРЅРёСЏРјРё.
     for (int enc_index = 1; enc_index <= static_cast<int>(TBLFileServer::DrillFileStringEncoding::ENCODE_TEXT_MAX); ++enc_index)
         DrillDatabaseEncodingCombo->AppendText
             (wxString::FromUTF8
@@ -75,7 +75,7 @@ void DrillDatabaseProperties::SetTBLDataServer(TBLFileServer* p_use_tbl_server)
 {
     m_use_tbl_server = p_use_tbl_server;
     if (m_use_tbl_server)
-    { // Установим органы управления нашего диалога в соответствии с конфигурацией, хранящейся в сервере m_use_tbl_server.
+    { // РЈСЃС‚Р°РЅРѕРІРёРј РѕСЂРіР°РЅС‹ СѓРїСЂР°РІР»РµРЅРёСЏ РЅР°С€РµРіРѕ РґРёР°Р»РѕРіР° РІ СЃРѕРѕС‚РІРµС‚СЃС‚РІРёРё СЃ РєРѕРЅС„РёРіСѓСЂР°С†РёРµР№, С…СЂР°РЅСЏС‰РµР№СЃСЏ РІ СЃРµСЂРІРµСЂРµ m_use_tbl_server.
         m_property_saver = m_use_tbl_server->GetDrillDatabaseProperties();
         DrillFileSortingCheck->SetValue(m_property_saver.is_sorting_during_generate);
         DrillTBLDatabaseStrictCheck->SetValue(m_property_saver.is_PCAD4_TBL_strict_format);

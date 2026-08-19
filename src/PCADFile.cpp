@@ -137,12 +137,12 @@ RadioComponentInsertion::RadioComponentInsertion(SourceData&& component_insert_d
     // Перенос внутренних атрибутов вставки.
     is_mirror_(component_insert_data.is_mirror),
     on_top_side_(component_insert_data.on_top_side),
+    ins_name_pos_(component_insert_data.ins_name_pos),
     is_user_ins_name_(component_insert_data.is_user_ins_name),
     place_pos_(component_insert_data.place_pos),
     scale_x_(component_insert_data.scale_x),
     scale_y_(component_insert_data.scale_y),
     rotate_factor_(component_insert_data.rotate_factor),
-    ins_name_pos_(component_insert_data.ins_name_pos),
     set_angle_(component_insert_data.set_angle)
 {
     for (const std::pair<std::string, std::string>& conn_info_pair : component_insert_data.connect_info)
@@ -165,12 +165,12 @@ RadioComponentInsertion::RadioComponentInsertion(RadioComponentInsertion&& other
     // Перенос внутренних атрибутов вставки.
     is_mirror_(other.is_mirror_),
     on_top_side_(other.on_top_side_),
+    ins_name_pos_(other.ins_name_pos_),
     is_user_ins_name_(other.is_user_ins_name_),
     place_pos_(other.place_pos_),
     scale_x_(other.scale_x_),
     scale_y_(other.scale_y_),
     rotate_factor_(other.rotate_factor_),
-    ins_name_pos_(other.ins_name_pos_),
     set_angle_(other.set_angle_)
 {
     other.comp_number_ = -1;

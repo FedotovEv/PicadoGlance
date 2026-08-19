@@ -10,6 +10,7 @@
 #include "PCADFile.h"
 #include "HandlerPLT.h"
 #include "HandlerPLT8.h"
+#include "HandlerPDIF.h"
 #include "gerber.h"
 #include "PCADViewerApp.h"
 #include "PCADViewDraw.h"
@@ -238,6 +239,7 @@ bool PCADViewerApp::OnInit()
     file_factory.RegisterFileWorkshop(new HandlerPLT8::PLT8FileWorkshop);
     file_factory.RegisterFileWorkshop(new HandlerGERBER::GERBERFileWorkshop);
     file_factory.RegisterFileWorkshop(new HandlerGERBER::EXCELLONFileWorkshop);
+    file_factory.RegisterFileWorkshop(new HandlerPDIF::PDIFFileWorkshop);
     pcad_file = PCADFile(aperture_provider);
     // Инициализируем состояние форматного холста-подложки
     canvas_context.is_canvas = false;

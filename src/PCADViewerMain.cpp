@@ -40,6 +40,7 @@
 #include "OptionsDialog.h"
 #include "EditDrillBitsProperties.h"
 #include "DrillDatabaseProperties.h"
+#include "DatabaseResBrowser.h"
 #include "svg.h"
 
 using namespace std;
@@ -164,6 +165,7 @@ const wxWindowID PCADViewerFrame::IdMenuCanvasPortrait = wxNewId();
 const wxWindowID PCADViewerFrame::IdMenuCanvasLandscape = wxNewId();
 const wxWindowID PCADViewerFrame::IdMenuCanvasYesNo = wxNewId();
 const wxWindowID PCADViewerFrame::IdMenuSetCanvasSize = wxNewId();
+const wxWindowID PCADViewerFrame::IdMenuDatabaseBrowse = wxNewId();
 const wxWindowID PCADViewerFrame::IdMenuOptions = wxNewId();
 const wxWindowID PCADViewerFrame::IdMenuHelpIndex = wxNewId();
 const wxWindowID PCADViewerFrame::IdMenuAbout = wxNewId();
@@ -242,7 +244,7 @@ PCADViewerFrame::PCADViewerFrame(wxWindow* parent, wxWindowID id) : select_timer
     ToolBarItemCopy = MainToolBar->AddTool(ToolCopy, _("Копировать"), wxArtProvider::GetBitmap(wxART_MAKE_ART_ID_FROM_STR(_T("wxART_COPY")),wxART_TOOLBAR), wxArtProvider::GetBitmap(wxART_MAKE_ART_ID_FROM_STR(_T("wxART_COPY")),wxART_TOOLBAR), wxITEM_NORMAL, _("Копировать помеченные элементы, элементы на холсте или всё"), _("Копировать помеченные элементы, элементы на холсте или всё"));
     MainToolBar->AddSeparator();
     ToolBarItemDownX = MainToolBar->AddTool(ToolScalDownX, _("Уменьшить масштаб по X"), wxArtProvider::GetBitmap(wxART_MAKE_ART_ID_FROM_STR(_T("wxART_SCALE_MINUS")),wxART_TOOLBAR), wxArtProvider::GetBitmap(wxART_MAKE_ART_ID_FROM_STR(_T("wxART_SCALE_MINUS")),wxART_TOOLBAR), wxITEM_NORMAL, _("Уменьшить масштаб на ступень по оси X или изотропно"), _("Уменьшить масштаб на ступень по оси X или изотропно"));
-    ComboBoxScaleX = new wxComboBox(MainToolBar, ID_COMBOBOX_SCALE_X, wxEmptyString, wxDefaultPosition, wxDLG_UNIT(this,wxSize(40,-1)), 0, 0, wxCB_DROPDOWN, wxDefaultValidator, _T("ID_COMBOBOX_SCALE_X"));
+    ComboBoxScaleX = new wxComboBox(MainToolBar, ID_COMBOBOX_SCALE_X, wxEmptyString, wxDefaultPosition, wxDLG_UNIT(MainToolBar,wxSize(40,-1)), 0, 0, wxCB_DROPDOWN, wxDefaultValidator, _T("ID_COMBOBOX_SCALE_X"));
     MainToolBar->AddControl(ComboBoxScaleX);
     ToolBarItemUpX = MainToolBar->AddTool(ToolScaleUpX, _("Увеличить масштаб по X"), wxArtProvider::GetBitmap(wxART_MAKE_ART_ID_FROM_STR(_T("wxART_SCALE_PLUS")),wxART_TOOLBAR), wxArtProvider::GetBitmap(wxART_MAKE_ART_ID_FROM_STR(_T("wxART_SCALE_PLUS")),wxART_TOOLBAR), wxITEM_NORMAL, _("Увеличить масштаб на ступень по оси X или изотропно"), _("Увеличить масштаб на ступень по оси X или изотропно"));
     ToolBarItemScale1To1X = MainToolBar->AddTool(ToolOneToOneX, _("Масштаб 1:1 по X"), wxArtProvider::GetBitmap(wxART_MAKE_ART_ID_FROM_STR(_T("wxART_SCALE_ONE_TO_ONE")),wxART_TOOLBAR), wxArtProvider::GetBitmap(wxART_MAKE_ART_ID_FROM_STR(_T("wxART_SCALE_ONE_TO_ONE")),wxART_TOOLBAR), wxITEM_NORMAL, _("Установить масштаб 1:1 по оси X или по обоим осям"), _("Установить масштаб 1:1 по оси X или по обоим осям"));
@@ -250,16 +252,14 @@ PCADViewerFrame::PCADViewerFrame(wxWindow* parent, wxWindowID id) : select_timer
     ToolBarItemEqualScales = MainToolBar->AddTool(ToolEqualScales, _("Равные"), wxArtProvider::GetBitmap(wxART_MAKE_ART_ID_FROM_STR(_T("wxART_EQUAL_SCALES")),wxART_TOOLBAR), wxArtProvider::GetBitmap(wxART_MAKE_ART_ID_FROM_STR(_T("wxART_EQUAL_SCALES")),wxART_TOOLBAR), wxITEM_CHECK, _("Включить/выключить режим равных масштабов"), _("Включить/выключить режим равных масштабов по обоим осям"));
     MainToolBar->AddSeparator();
     ToolBarItemDownY = MainToolBar->AddTool(ToolScalDownY, _("Уменьшить масштаб по Y"), wxArtProvider::GetBitmap(wxART_MAKE_ART_ID_FROM_STR(_T("wxART_SCALE_MINUS")),wxART_TOOLBAR), wxArtProvider::GetBitmap(wxART_MAKE_ART_ID_FROM_STR(_T("wxART_SCALE_MINUS")),wxART_TOOLBAR), wxITEM_NORMAL, _("Уменьшить масштаб на ступень по оси Y или изотропно"), _("Уменьшить масштаб на ступень по оси Y или изотропно"));
-    ComboBoxScaleY = new wxComboBox(MainToolBar, ID_COMBOBOX_SCALE_Y, wxEmptyString, wxDefaultPosition, wxDLG_UNIT(this,wxSize(40,-1)), 0, 0, 0, wxDefaultValidator, _T("ID_COMBOBOX_SCALE_Y"));
+    ComboBoxScaleY = new wxComboBox(MainToolBar, ID_COMBOBOX_SCALE_Y, wxEmptyString, wxDefaultPosition, wxDLG_UNIT(MainToolBar,wxSize(40,-1)), 0, 0, 0, wxDefaultValidator, _T("ID_COMBOBOX_SCALE_Y"));
     MainToolBar->AddControl(ComboBoxScaleY);
     ToolBarItemUpY = MainToolBar->AddTool(ToolScaleUpY, _("Увеличить масштаб по Y"), wxArtProvider::GetBitmap(wxART_MAKE_ART_ID_FROM_STR(_T("wxART_SCALE_PLUS")),wxART_TOOLBAR), wxArtProvider::GetBitmap(wxART_MAKE_ART_ID_FROM_STR(_T("wxART_SCALE_PLUS")),wxART_TOOLBAR), wxITEM_NORMAL, _("Увеличить масштаб на ступень по оси Y или изотропно"), _("Увеличить масштаб на ступень по оси Y или изотропно"));
     ToolBarItemScale1To1Y = MainToolBar->AddTool(ToolOneToOneY, _("Масштаб 1:1 по Y"), wxArtProvider::GetBitmap(wxART_MAKE_ART_ID_FROM_STR(_T("wxART_SCALE_ONE_TO_ONE")),wxART_TOOLBAR), wxArtProvider::GetBitmap(wxART_MAKE_ART_ID_FROM_STR(_T("wxART_SCALE_ONE_TO_ONE")),wxART_TOOLBAR), wxITEM_NORMAL, _("Установить масштаб 1:1 по оси Y или по обоим осям"), _("Установить масштаб 1:1 по оси Y или по обоим осям"));
     MainToolBar->AddSeparator();
-    SpinCanvasSizeHor = new wxSpinCtrl(MainToolBar, ID_SPINCTRL_CANVAS_HOR, _T("0"), wxDefaultPosition, wxDLG_UNIT(this,wxSize(40,-1)), 0, 0, 100, 0, _T("ID_SPINCTRL_CANVAS_HOR"));
-    SpinCanvasSizeHor->SetValue(_T("0"));
+    SpinCanvasSizeHor = new wxSpinCtrl(MainToolBar, ID_SPINCTRL_CANVAS_HOR, _T("0"), wxDefaultPosition, wxDLG_UNIT(MainToolBar,wxSize(40,-1)), 0, 0, 100, 0, _T("ID_SPINCTRL_CANVAS_HOR"));
     MainToolBar->AddControl(SpinCanvasSizeHor);
-    SpinCanvasSizeVert = new wxSpinCtrl(MainToolBar, ID_SPINCTRL_CANVAS_VERT, _T("0"), wxDefaultPosition, wxDLG_UNIT(this,wxSize(40,-1)), 0, 0, 100, 0, _T("ID_SPINCTRL_CANVAS_VERT"));
-    SpinCanvasSizeVert->SetValue(_T("0"));
+    SpinCanvasSizeVert = new wxSpinCtrl(MainToolBar, ID_SPINCTRL_CANVAS_VERT, _T("0"), wxDefaultPosition, wxDLG_UNIT(MainToolBar,wxSize(40,-1)), 0, 0, 100, 0, _T("ID_SPINCTRL_CANVAS_VERT"));
     MainToolBar->AddControl(SpinCanvasSizeVert);
     MainToolBar->AddSeparator();
     ToolBarCanvasYesNo = MainToolBar->AddTool(ToolCanvasYesNo, _("Включить/Выключить холст"), wxArtProvider::GetBitmap(wxART_MAKE_ART_ID_FROM_STR(_T("wxART_TICK_MARK")),wxART_TOOLBAR), wxArtProvider::GetBitmap(wxART_MAKE_ART_ID_FROM_STR(_T("wxART_TICK_MARK")),wxART_TOOLBAR), wxITEM_CHECK, _("Включить/выключить отображение холста"), _("Включить/выключить режим отображения холста"));
@@ -431,6 +431,10 @@ PCADViewerFrame::PCADViewerFrame(wxWindow* parent, wxWindowID id) : select_timer
     MenuItemSetCanvasSize = new wxMenuItem(MenuCanvas, IdMenuSetCanvasSize, _("Установка размера"), wxEmptyString, wxITEM_NORMAL);
     MenuCanvas->Append(MenuItemSetCanvasSize);
     MenuBar1->Append(MenuCanvas, _("Холст"));
+    Menu1 = new wxMenu();
+    MenuItemDatabaseBrowse = new wxMenuItem(Menu1, IdMenuDatabaseBrowse, _("Обзор"), _("Обзор данных загруженного документа"), wxITEM_NORMAL);
+    Menu1->Append(MenuItemDatabaseBrowse);
+    MenuBar1->Append(Menu1, _("Документ"));
     MenuParams = new wxMenu();
     MenuItemOptions = new wxMenuItem(MenuParams, IdMenuOptions, _("Параметры"), _("Установка некоторых параметров программы"), wxITEM_NORMAL);
     MenuParams->Append(MenuItemOptions);
@@ -532,6 +536,7 @@ PCADViewerFrame::PCADViewerFrame(wxWindow* parent, wxWindowID id) : select_timer
     Connect(IdMenuCanvasLandscape, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemCanvasLandscapeSelected);
     Connect(IdMenuCanvasYesNo, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemCanvasYesNoSelected);
     Connect(IdMenuSetCanvasSize, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemSetCanvasSizeSelected);
+    Connect(IdMenuDatabaseBrowse, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemDatabaseBrowseSelected);
     Connect(IdMenuOptions, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemOptionsSelected);
     Connect(IdMenuHelpIndex, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnMenuItemHelpIndexSelected);
     Connect(IdMenuAbout, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PCADViewerFrame::OnAbout);
@@ -2896,4 +2901,29 @@ void PCADViewerFrame::OnMenuDrillParams(wxCommandEvent& event)
 
 void PCADViewerFrame::OnMenuMakeDrillFile(wxCommandEvent& event)
 {
+}
+
+void PCADViewerFrame::OnMenuItemDatabaseBrowseSelected(wxCommandEvent& event)
+{
+    PCADViewerApp* this_app = static_cast<PCADViewerApp*>(wxTheApp);
+    DatabaseResBrowser document_browser_dialog(this);
+
+    std::vector<DatabaseResBrowser::LoadDatabaseError> load_error_list =
+        document_browser_dialog.LoadPCADFileData(&this_app->pcad_file);
+    if (!load_error_list.empty())
+    {
+        wxArrayString error_desc_array;
+        for (const DatabaseResBrowser::LoadDatabaseError& error_info : load_error_list)
+            error_desc_array.Add(DatabaseResBrowser::DatabaseErrorToString(error_info.code) + " : " + error_info.position);
+
+        wxSingleChoiceDialog error_info_list
+            (this, _("Список ошибок, возникших при разборе текущего документа"), _("Ошибки анализа документа"), error_desc_array);
+        if (error_info_list.ShowModal() != wxID_OK)
+            // Если при просмотре списка ошибок пользователь закрыл диалог их показа кнопкой прерывания, сразу выходим
+            // без открывания основного диалога обозревателя базы.
+            return;
+    };
+
+    if (document_browser_dialog.ShowModal() != wxID_OK)
+        wxMessageBox(document_browser_dialog.GetErrorMessage(), _("Ошибка при обзоре содержимого документа"));
 }

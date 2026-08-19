@@ -1,13 +1,1074 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <wxsmith>
 	<object class="wxDialog" name="DatabaseResBrowser">
+		<title>Объекты базы данных</title>
+		<centered>1</centered>
 		<size>1195,506</size>
-		<object class="wxStaticBoxSizer" variable="StaticBoxSizer1" member="no">
-			<label>Компоненты</label>
+		<id_arg>0</id_arg>
+		<handler function="OnInit" entry="EVT_INIT_DIALOG" />
+		<handler function="OnClose" entry="EVT_CLOSE" />
+		<object class="wxBoxSizer" variable="MainDialogSizer" member="no">
 			<orient>wxVERTICAL</orient>
 			<object class="sizeritem">
-				<object class="wxListBox" name="ID_LISTBOX1" variable="ListBox1" member="yes">
-					<default>-1</default>
+				<object class="wxBoxSizer" variable="CommonDatabaseContentSizer" member="no">
+					<object class="sizeritem">
+						<object class="wxStaticBoxSizer" variable="ComponentsBoxSizer" member="no">
+							<label>Компоненты</label>
+							<orient>wxVERTICAL</orient>
+							<object class="sizeritem">
+								<object class="wxChoice" name="ID_CHOICE_COMPONENTS_LIST" variable="ComponentsListChoice" member="yes">
+									<tooltip>Список компонентов базы данных</tooltip>
+									<handler function="OnComponentsListChoiceSelect" entry="EVT_CHOICE" />
+								</object>
+								<flag>wxEXPAND</flag>
+								<border>5</border>
+							</object>
+							<object class="sizeritem">
+								<object class="wxStaticBoxSizer" variable="ComponentPropertiesSizer" member="no">
+									<label>Свойства компонента</label>
+									<orient>wxVERTICAL</orient>
+									<object class="sizeritem">
+										<object class="wxBoxSizer" variable="ComponentCommonPropertiesSizer" member="no">
+											<object class="sizeritem">
+												<object class="wxStaticText" name="wxID_ANY" variable="ComponentNameTitle" member="no">
+													<label>Имя</label>
+												</object>
+												<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+											</object>
+											<object class="sizeritem">
+												<object class="wxTextCtrl" name="ID_TEXT_COMPONENT_NAME" variable="ComponentNameText" member="yes">
+													<value>Нет</value>
+													<style>wxTE_READONLY</style>
+												</object>
+												<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+												<option>1</option>
+											</object>
+											<object class="sizeritem">
+												<object class="wxStaticText" name="wxID_ANY" variable="ComponentPackageIDTitle" member="no">
+													<label>Упаковка</label>
+												</object>
+												<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+											</object>
+											<object class="sizeritem">
+												<object class="wxTextCtrl" name="ID_TEXT_COMPONENT_PACKAGE_ID" variable="ComponentPackageIDText" member="yes">
+													<value>Нет</value>
+													<style>wxTE_READONLY</style>
+												</object>
+												<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+												<option>1</option>
+											</object>
+											<object class="sizeritem">
+												<object class="wxStaticText" name="wxID_ANY" variable="ComponentTyIDTitle" member="no">
+													<label>Код типа</label>
+												</object>
+												<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+											</object>
+											<object class="sizeritem">
+												<object class="wxTextCtrl" name="ID_TEXT_COMPONENT_TY_ID" variable="ComponentTyIDText" member="yes">
+													<value>0</value>
+													<style>wxTE_READONLY</style>
+												</object>
+												<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+												<option>1</option>
+											</object>
+										</object>
+										<flag>wxBOTTOM|wxEXPAND</flag>
+										<border>5</border>
+									</object>
+									<object class="sizeritem">
+										<object class="wxBoxSizer" variable="ComponentOrgPropertiesSizer" member="no">
+											<object class="sizeritem">
+												<object class="wxStaticText" name="wxID_ANY" variable="ComponentOrgCoordsTitle" member="no">
+													<label>Координаты</label>
+												</object>
+												<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+											</object>
+											<object class="sizeritem">
+												<object class="wxTextCtrl" name="ID_TEXT_COMPONENT_ORG_COORDS" variable="ComponentOrgCoordsText" member="yes">
+													<value>Нет</value>
+													<style>wxTE_READONLY</style>
+												</object>
+												<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+												<option>1</option>
+											</object>
+											<object class="sizeritem">
+												<object class="wxCheckBox" name="ID_CHECK_IS_COMPONENT_PLANAR" variable="IsComponentPlanar" member="yes">
+													<label>Планар</label>
+													<enabled>0</enabled>
+												</object>
+												<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+											</object>
+											<object class="sizeritem">
+												<object class="wxCheckBox" name="ID_CHECK_IS_COMPONENT_JUMPER" variable="IsComponentJumper" member="yes">
+													<label>Перемычка</label>
+													<enabled>0</enabled>
+												</object>
+												<flag>wxLEFT|wxRIGHT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+											</object>
+										</object>
+										<flag>wxEXPAND</flag>
+										<border>5</border>
+										<option>1</option>
+									</object>
+								</object>
+								<flag>wxTOP|wxEXPAND</flag>
+								<border>5</border>
+								<option>1</option>
+							</object>
+							<object class="sizeritem">
+								<object class="wxStaticBoxSizer" variable="ComponentSectionsInfoSizer" member="yes">
+									<label>Секций - 0</label>
+									<object class="sizeritem">
+										<object class="wxTreeCtrl" name="ID_TREE_COMPONENT_SECT_INFO" variable="ComponentSectInfoTree" member="yes">
+											<image_list>&lt;none&gt;</image_list>
+											<tree_items>
+												<item>ComponentSectInfoTree</item>
+												<item>&lt;none&gt;</item>
+											</tree_items>
+											<items_text>
+												<item2>ComponentSectInfoTree</item2>
+												<item2>&lt;none&gt;</item2>
+											</items_text>
+										</object>
+										<flag>wxEXPAND</flag>
+										<border>5</border>
+										<option>1</option>
+									</object>
+								</object>
+								<flag>wxTOP|wxEXPAND</flag>
+								<border>5</border>
+								<option>2</option>
+							</object>
+							<object class="sizeritem">
+								<object class="wxStaticBoxSizer" variable="ComponentRefDesPropertiesSizer" member="no">
+									<label>Конструкторское обозначение</label>
+									<orient>wxVERTICAL</orient>
+									<object class="sizeritem">
+										<object class="wxBoxSizer" variable="ComponentRefDesCoordsLayerSizer" member="no">
+											<object class="sizeritem">
+												<object class="wxStaticText" name="wxID_ANY" variable="ComponentRefDesCoordsTitle" member="no">
+													<label>Координаты</label>
+												</object>
+												<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+											</object>
+											<object class="sizeritem">
+												<object class="wxTextCtrl" name="ID_TEXT_COMPONENT_REFDES_COORDS" variable="ComponentRefDesCoordsText" member="yes">
+													<style>wxTE_READONLY</style>
+												</object>
+												<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+												<option>1</option>
+											</object>
+											<object class="sizeritem">
+												<object class="wxStaticText" name="wxID_ANY" variable="ComponentRefDesLayerTitle" member="no">
+													<label>Слой</label>
+												</object>
+												<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+											</object>
+											<object class="sizeritem">
+												<object class="wxTextCtrl" name="ID_TEXT_COMPONENT_REFDES_LAYER" variable="ComponentRefDesLayerText" member="yes">
+													<value>Нет</value>
+													<style>wxTE_READONLY</style>
+												</object>
+												<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+												<option>1</option>
+											</object>
+										</object>
+										<flag>wxEXPAND</flag>
+										<border>5</border>
+										<option>1</option>
+									</object>
+									<object class="sizeritem">
+										<object class="wxStaticBoxSizer" variable="ComponentRefDesTextPropertiesSizer" member="no">
+											<label>Параметры текста</label>
+											<object class="sizeritem">
+												<object class="wxStaticText" name="wxID_ANY" variable="ComponentRefDesTextHeightTitle" member="no">
+													<label>Высота</label>
+												</object>
+												<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+											</object>
+											<object class="sizeritem">
+												<object class="wxTextCtrl" name="ID_TEXT_COMPONENT_REFDES_HEIGHT" variable="ComponentRefDesHeightText" member="yes">
+													<value>0</value>
+													<style>wxTE_READONLY</style>
+												</object>
+												<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+												<option>1</option>
+											</object>
+											<object class="sizeritem">
+												<object class="wxStaticText" name="wxID_ANY" variable="ComponentRefDesTextOrientTitle" member="no">
+													<label>Ориентация</label>
+												</object>
+												<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+											</object>
+											<object class="sizeritem">
+												<object class="wxChoice" name="ID_CHOICE_COMPONENT_REFDES_ORIENT" variable="ComponentRefDesOrientChoice" member="yes">
+													<enabled>0</enabled>
+												</object>
+												<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+												<option>1</option>
+											</object>
+											<object class="sizeritem">
+												<object class="wxStaticText" name="wxID_ANY" variable="ComponentRefDesTextAlignTitle" member="no">
+													<label>Выравнивание</label>
+												</object>
+												<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+											</object>
+											<object class="sizeritem">
+												<object class="wxChoice" name="ID_CHOICE_COMPONENT_REFDES_ALIGN" variable="ComponentRefDesAlignChoice" member="yes">
+													<enabled>0</enabled>
+												</object>
+												<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+												<option>1</option>
+											</object>
+										</object>
+										<flag>wxTOP|wxEXPAND</flag>
+										<border>5</border>
+										<option>1</option>
+									</object>
+								</object>
+								<flag>wxTOP|wxEXPAND</flag>
+								<border>5</border>
+								<option>1</option>
+							</object>
+							<object class="sizeritem">
+								<object class="wxStaticBoxSizer" variable="ComponentPinsInfoSizer" member="yes">
+									<label>Выводов - 0</label>
+									<orient>wxVERTICAL</orient>
+									<object class="sizeritem">
+										<object class="wxChoice" name="ID_CHOICE_COMPONENT_PINS_LIST" variable="ComponentPinsListChoice" member="yes">
+											<tooltip>Список выводов компонента</tooltip>
+											<handler function="OnComponentPinsListChoiceSelect" entry="EVT_CHOICE" />
+										</object>
+										<flag>wxBOTTOM|wxEXPAND</flag>
+										<border>5</border>
+									</object>
+									<object class="sizeritem">
+										<object class="wxBoxSizer" variable="PinPropertiesSizer" member="no">
+											<orient>wxVERTICAL</orient>
+											<object class="sizeritem">
+												<object class="wxBoxSizer" variable="ComponentPinAlNumNameLayerSizer" member="no">
+													<object class="sizeritem">
+														<object class="wxStaticText" name="wxID_ANY" variable="ComponentPinAlNumTitle" member="no">
+															<label>БЦН</label>
+														</object>
+														<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+													</object>
+													<object class="sizeritem">
+														<object class="wxTextCtrl" name="ID_TEXT_COMPONENT_PIN_ALNUM" variable="ComponentPinAlNumText" member="yes">
+															<value>Нет</value>
+															<style>wxTE_READONLY</style>
+														</object>
+														<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+														<option>1</option>
+													</object>
+													<object class="sizeritem">
+														<object class="wxStaticText" name="wxID_ANY" variable="ComponentPinNameTitle" member="no">
+															<label>Имя</label>
+														</object>
+														<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+													</object>
+													<object class="sizeritem">
+														<object class="wxTextCtrl" name="ID_TEXT_COMPONENT_PIN_NAME" variable="ComponentPinNameText" member="yes">
+															<value>Нет</value>
+															<style>wxTE_READONLY</style>
+														</object>
+														<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+														<option>1</option>
+													</object>
+													<object class="sizeritem">
+														<object class="wxStaticText" name="wxID_ANY" variable="ComponentPinLayerTitle" member="no">
+															<label>Слой</label>
+														</object>
+														<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+													</object>
+													<object class="sizeritem">
+														<object class="wxTextCtrl" name="ID_TEXT_COMPONENT_PIN_LAYER" variable="ComponentPinLayerText" member="yes">
+															<value>Нет</value>
+															<style>wxTE_READONLY</style>
+														</object>
+														<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+														<option>1</option>
+													</object>
+												</object>
+												<flag>wxBOTTOM|wxEXPAND</flag>
+												<border>5</border>
+												<option>1</option>
+											</object>
+											<object class="sizeritem">
+												<object class="wxBoxSizer" variable="ComponentPinPropertiesSizer" member="no">
+													<object class="sizeritem">
+														<object class="wxStaticText" name="ID_STATICTEXT1" variable="ComponentPinCoordsTitle" member="yes">
+															<label>Координаты</label>
+														</object>
+														<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+													</object>
+													<object class="sizeritem">
+														<object class="wxTextCtrl" name="ID_TEXT_COMPONENT_PIN_COORDS" variable="ComponentPinCoordsText" member="yes">
+															<style>wxTE_READONLY</style>
+														</object>
+														<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+														<option>1</option>
+													</object>
+													<object class="sizeritem">
+														<object class="wxStaticText" name="ID_STATICTEXT3" variable="ComponentPinTypeTitle" member="yes">
+															<label>Тип</label>
+														</object>
+														<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+													</object>
+													<object class="sizeritem">
+														<object class="wxTextCtrl" name="ID_TEXT_COMPONENT_PIN_TYPE" variable="ComponentPinTypeText" member="yes">
+															<style>wxTE_READONLY</style>
+														</object>
+														<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+														<option>1</option>
+													</object>
+													<object class="sizeritem">
+														<object class="wxStaticText" name="ID_STATICTEXT4" variable="ComponentPinEquivTitle" member="yes">
+															<label>Эквивалент</label>
+														</object>
+														<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+													</object>
+													<object class="sizeritem">
+														<object class="wxTextCtrl" name="ID_TEXT_COMPONENT_PIN_EQUIV" variable="ComponentPinEquivText" member="yes">
+															<value>0</value>
+															<style>wxTE_READONLY</style>
+														</object>
+														<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+														<option>1</option>
+													</object>
+												</object>
+												<flag>wxEXPAND</flag>
+												<border>5</border>
+												<option>1</option>
+											</object>
+										</object>
+										<flag>wxTOP|wxLEFT|wxRIGHT|wxEXPAND</flag>
+										<border>5</border>
+									</object>
+									<object class="sizeritem">
+										<object class="wxStaticBoxSizer" variable="ComponentPinLabelPropertiesSizer" member="no">
+											<label>Этикетка вывода</label>
+											<orient>wxVERTICAL</orient>
+											<object class="sizeritem">
+												<object class="wxBoxSizer" variable="ComponentPinLabelCoordsLayerSizer" member="no">
+													<object class="sizeritem">
+														<object class="wxStaticText" name="ID_STATICTEXT2" variable="ComponentPinLabelCoordsTitle" member="yes">
+															<label>Координаты</label>
+														</object>
+														<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+													</object>
+													<object class="sizeritem">
+														<object class="wxTextCtrl" name="ID_TEXT_COMPONENT_PIN_LABEL_COORDS" variable="ComponentPinLabelCoordsText" member="yes">
+															<style>wxTE_READONLY</style>
+														</object>
+														<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+														<option>1</option>
+													</object>
+													<object class="sizeritem">
+														<object class="wxStaticText" name="ID_STATICTEXT5" variable="ComponentPinLabelLayerTitle" member="yes">
+															<label>Слой</label>
+														</object>
+														<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+													</object>
+													<object class="sizeritem">
+														<object class="wxTextCtrl" name="ID_TEXT_COMPONENT_PIN_LABEL_LAYER" variable="ComponentPinLabelLayerText" member="yes">
+															<value>Нет</value>
+															<style>wxTE_READONLY</style>
+														</object>
+														<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+														<option>1</option>
+													</object>
+												</object>
+												<flag>wxEXPAND</flag>
+												<border>5</border>
+												<option>1</option>
+											</object>
+											<object class="sizeritem">
+												<object class="wxStaticBoxSizer" variable="StaticBoxSizer2ComponentPinLabelTextParamsSizer" member="no">
+													<label>Параметры текста</label>
+													<object class="sizeritem">
+														<object class="wxStaticText" name="ID_STATICTEXT6" variable="ComponentPinLabelHeightTitle" member="yes">
+															<label>Высота</label>
+														</object>
+														<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+													</object>
+													<object class="sizeritem">
+														<object class="wxTextCtrl" name="ID_TEXT_COMPONENT_PIN_LABEL_HEIGHT" variable="ComponentPinLabelHeightText" member="yes">
+															<value>0</value>
+															<style>wxTE_READONLY</style>
+														</object>
+														<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+														<option>1</option>
+													</object>
+													<object class="sizeritem">
+														<object class="wxStaticText" name="ID_STATICTEXT7" variable="ComponentPinLabelOrientTitle" member="yes">
+															<label>Ориентация</label>
+														</object>
+														<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+													</object>
+													<object class="sizeritem">
+														<object class="wxChoice" name="ID_CHOICE_COMPONENT_PIN_LABEL_ORIENT" variable="ComponentPinLabelOrientChoice" member="yes">
+															<enabled>0</enabled>
+														</object>
+														<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+														<option>1</option>
+													</object>
+													<object class="sizeritem">
+														<object class="wxStaticText" name="ID_STATICTEXT8" variable="ComponentPinLabelAlignTitle" member="yes">
+															<label>Выравнивание</label>
+														</object>
+														<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+													</object>
+													<object class="sizeritem">
+														<object class="wxChoice" name="ID_CHOICE_COMPONENT_PIN_LABEL_ALIGN" variable="ComponentPinLabelAlignChoice" member="yes">
+															<enabled>0</enabled>
+														</object>
+														<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+														<option>1</option>
+													</object>
+												</object>
+												<flag>wxTOP|wxEXPAND</flag>
+												<border>5</border>
+												<option>1</option>
+											</object>
+										</object>
+										<flag>wxEXPAND</flag>
+										<border>5</border>
+										<option>2</option>
+									</object>
+								</object>
+								<flag>wxTOP|wxEXPAND</flag>
+								<border>5</border>
+								<option>2</option>
+							</object>
+						</object>
+						<flag>wxALL|wxEXPAND</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxStaticBoxSizer" variable="NetsBoxSizer" member="no">
+							<label>Цепи</label>
+							<orient>wxVERTICAL</orient>
+							<object class="sizeritem">
+								<object class="wxChoice" name="ID_CHOICE_NETS_LIST" variable="NetsListChoice" member="yes">
+									<handler function="OnNetsListChoiceSelect" entry="EVT_CHOICE" />
+								</object>
+								<flag>wxBOTTOM|wxEXPAND</flag>
+								<border>5</border>
+							</object>
+							<object class="sizeritem">
+								<object class="wxBoxSizer" variable="NetNameSizer" member="no">
+									<object class="sizeritem">
+										<object class="wxStaticText" name="wxID_ANY" variable="NetNameTitle" member="no">
+											<label>Имя</label>
+										</object>
+										<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+										<border>5</border>
+									</object>
+									<object class="sizeritem">
+										<object class="wxTextCtrl" name="ID_TEXT_NET_NAME" variable="NetNameText" member="yes">
+											<value>Нет</value>
+											<style>wxTE_READONLY</style>
+										</object>
+										<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+										<border>5</border>
+										<option>1</option>
+									</object>
+									<object class="sizeritem">
+										<object class="wxCheckBox" name="ID_CHECK_IS_NET_USER_NAME" variable="IsNetUserNameCheck" member="yes">
+											<label>Назначено пользователем</label>
+											<enabled>0</enabled>
+										</object>
+										<flag>wxLEFT|wxRIGHT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+										<border>5</border>
+									</object>
+								</object>
+								<flag>wxTOP|wxBOTTOM|wxEXPAND</flag>
+								<border>5</border>
+							</object>
+							<object class="sizeritem">
+								<object class="wxStaticBoxSizer" variable="NetObjectsInfoSizer" member="yes">
+									<label>Фрагментов - 0</label>
+									<orient>wxVERTICAL</orient>
+									<object class="sizeritem">
+										<object class="wxChoice" name="ID_CHOICE_NET_OBJECTS_LIST" variable="NetObjectsListChoice" member="yes">
+											<handler function="OnNetObjectsListChoiceSelect" entry="EVT_CHOICE" />
+										</object>
+										<flag>wxBOTTOM|wxEXPAND</flag>
+										<border>5</border>
+									</object>
+									<object class="sizeritem">
+										<object class="wxTextCtrl" name="ID_TEXT_NET_OBJECT_DESCRIPTION" variable="NetObjectDescriptionText" member="yes">
+											<style>wxTE_MULTILINE|wxTE_READONLY</style>
+										</object>
+										<flag>wxTOP|wxEXPAND</flag>
+										<border>5</border>
+										<option>1</option>
+									</object>
+								</object>
+								<flag>wxALL|wxEXPAND</flag>
+								<border>5</border>
+								<option>1</option>
+							</object>
+						</object>
+						<flag>wxALL|wxEXPAND</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxStaticBoxSizer" variable="InsertionsBoxSizer" member="no">
+							<label>Вставки</label>
+							<orient>wxVERTICAL</orient>
+							<object class="sizeritem">
+								<object class="wxChoice" name="ID_CHOICE_INSERTIONS_LIST" variable="InsertionsListChoice" member="yes">
+									<handler function="OnInsertionsListChoiceSelect" entry="EVT_CHOICE" />
+								</object>
+								<flag>wxBOTTOM|wxEXPAND</flag>
+								<border>5</border>
+							</object>
+							<object class="sizeritem">
+								<object class="wxStaticBoxSizer" variable="InsertPropertiesSizer" member="no">
+									<label>Свойства вставки</label>
+									<orient>wxVERTICAL</orient>
+									<object class="sizeritem">
+										<object class="wxBoxSizer" variable="InsertNamesSizer" member="no">
+											<object class="sizeritem">
+												<object class="wxStaticText" name="wxID_ANY" variable="InsertNameTitle" member="no">
+													<label>Имя</label>
+												</object>
+												<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+											</object>
+											<object class="sizeritem">
+												<object class="wxTextCtrl" name="ID_TEXT_INSERT_NAME" variable="InsertNameText" member="yes">
+													<value>Нет</value>
+													<style>wxTE_READONLY</style>
+												</object>
+												<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+												<option>1</option>
+											</object>
+											<object class="sizeritem">
+												<object class="wxStaticText" name="wxID_ANY" variable="InsertNameCoordsTitle" member="no">
+													<label>Координаты</label>
+												</object>
+												<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+											</object>
+											<object class="sizeritem">
+												<object class="wxTextCtrl" name="ID_TEXT_INSERT_NAME_COORDS" variable="InsertNameCoordsText" member="yes">
+													<style>wxTE_READONLY</style>
+												</object>
+												<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+												<option>1</option>
+											</object>
+											<object class="sizeritem">
+												<object class="wxCheckBox" name="ID_CHECK_IS_INSERT_USER_NAME" variable="IsInsertUserNameCheck" member="yes">
+													<label>Назначено пользователем</label>
+													<enabled>0</enabled>
+												</object>
+												<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+											</object>
+											<object class="sizeritem">
+												<object class="wxStaticText" name="wxID_ANY" variable="InsertComponentNameTitle" member="no">
+													<label>Компонент</label>
+												</object>
+												<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+											</object>
+											<object class="sizeritem">
+												<object class="wxTextCtrl" name="ID_TEXT_INSERT_COMPONENT_NAME" variable="InsertComponentNameText" member="yes">
+													<value>Нет</value>
+													<style>wxTE_READONLY</style>
+												</object>
+												<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+												<option>1</option>
+											</object>
+										</object>
+										<flag>wxTOP|wxEXPAND</flag>
+										<border>5</border>
+										<option>1</option>
+									</object>
+									<object class="sizeritem">
+										<object class="wxBoxSizer" variable="InsertCoordsSizer" member="no">
+											<object class="sizeritem">
+												<object class="wxStaticText" name="wxID_ANY" variable="InsertCoordsTitle" member="no">
+													<label>Координаты</label>
+												</object>
+												<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+											</object>
+											<object class="sizeritem">
+												<object class="wxTextCtrl" name="ID_TEXT_INSERT_COORDS" variable="InsertCoordsText" member="yes">
+													<style>wxTE_READONLY</style>
+												</object>
+												<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+												<option>1</option>
+											</object>
+											<object class="sizeritem">
+												<object class="wxCheckBox" name="ID_CHECK_IS_INSERT_MIRRORING" variable="IsInsertMirroring" member="yes">
+													<label>Зеркально</label>
+													<enabled>0</enabled>
+												</object>
+												<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+											</object>
+											<object class="sizeritem">
+												<object class="wxCheckBox" name="ID_CHECK_IS_INSERT_ON_TOP" variable="IsInsertOnTop" member="yes">
+													<label>На стороне деталей</label>
+													<enabled>0</enabled>
+												</object>
+												<flag>wxLEFT|wxRIGHT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+											</object>
+										</object>
+										<flag>wxTOP|wxEXPAND</flag>
+										<border>5</border>
+										<option>1</option>
+									</object>
+									<object class="sizeritem">
+										<object class="wxBoxSizer" variable="InsertRotateScaleSizer" member="no">
+											<object class="sizeritem">
+												<object class="wxStaticText" name="wxID_ANY" variable="InsertScaleXTitle" member="no">
+													<label>Масштаб по X</label>
+												</object>
+												<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+											</object>
+											<object class="sizeritem">
+												<object class="wxTextCtrl" name="ID_TEXT_INSERT_SCALE_X" variable="InsertScaleXText" member="yes">
+													<style>wxTE_READONLY</style>
+												</object>
+												<flag>wxRIGHT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+												<option>1</option>
+											</object>
+											<object class="sizeritem">
+												<object class="wxStaticText" name="wxID_ANY" variable="InsertScaleYTitle" member="no">
+													<label>Масштаб по Y</label>
+												</object>
+												<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+											</object>
+											<object class="sizeritem">
+												<object class="wxTextCtrl" name="ID_TEXT_INSERT_SCALE_Y" variable="InsertScaleYText" member="yes">
+													<style>wxTE_READONLY</style>
+												</object>
+												<flag>wxRIGHT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+												<option>1</option>
+											</object>
+											<object class="sizeritem">
+												<object class="wxStaticText" name="wxID_ANY" variable="InsertRotateFactorTitle" member="no">
+													<label>Фактор поворота</label>
+												</object>
+												<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+											</object>
+											<object class="sizeritem">
+												<object class="wxTextCtrl" name="ID_TEXT_INSERT_ROTATE_FACTOR" variable="InsertRotateFactorText" member="yes">
+													<style>wxTE_READONLY</style>
+												</object>
+												<flag>wxRIGHT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+												<option>1</option>
+											</object>
+											<object class="sizeritem">
+												<object class="wxStaticText" name="wxID_ANY" variable="InsertSetAngleTitle" member="no">
+													<label>Угол установки</label>
+												</object>
+												<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+											</object>
+											<object class="sizeritem">
+												<object class="wxTextCtrl" name="ID_TEXT_INSERT_SET_ANGLE" variable="InsertSetAngleText" member="yes">
+													<style>wxTE_READONLY</style>
+												</object>
+												<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+												<option>1</option>
+											</object>
+										</object>
+										<flag>wxTOP|wxEXPAND</flag>
+										<border>5</border>
+										<option>1</option>
+									</object>
+								</object>
+								<flag>wxTOP|wxEXPAND</flag>
+								<border>5</border>
+								<option>1</option>
+							</object>
+							<object class="sizeritem">
+								<object class="wxStaticBoxSizer" variable="InsertRefDesSizer" member="no">
+									<label>Конструкторское обозначение</label>
+									<orient>wxVERTICAL</orient>
+									<object class="sizeritem">
+										<object class="wxBoxSizer" variable="InsertRefDesCoordsLayerSizer" member="no">
+											<object class="sizeritem">
+												<object class="wxStaticText" name="wxID_ANY" variable="InsertRefDesCoordsTitle" member="no">
+													<label>Координаты</label>
+												</object>
+												<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+											</object>
+											<object class="sizeritem">
+												<object class="wxTextCtrl" name="ID_TEXT_INSERT_REFDES_COORDS" variable="InsertRefDesCoordsText" member="yes">
+													<style>wxTE_READONLY</style>
+												</object>
+												<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+												<option>1</option>
+											</object>
+											<object class="sizeritem">
+												<object class="wxStaticText" name="wxID_ANY" variable="InsertRefDesLayerTitle" member="no">
+													<label>Слой</label>
+												</object>
+												<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+											</object>
+											<object class="sizeritem">
+												<object class="wxTextCtrl" name="ID_TEXT_INSERT_REFDES_LAYER" variable="InsertRefDesLayerText" member="yes">
+													<value>Нет</value>
+													<style>wxTE_READONLY</style>
+												</object>
+												<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+												<option>1</option>
+											</object>
+										</object>
+										<flag>wxTOP|wxEXPAND</flag>
+										<border>5</border>
+										<option>1</option>
+									</object>
+									<object class="sizeritem">
+										<object class="wxStaticBoxSizer" variable="InsertRefDesTextParamsSizer" member="no">
+											<label>Параметры текста</label>
+											<object class="sizeritem">
+												<object class="wxStaticText" name="wxID_ANY" variable="InsertRefDesHeightTitle" member="no">
+													<label>Высота</label>
+												</object>
+												<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+											</object>
+											<object class="sizeritem">
+												<object class="wxTextCtrl" name="ID_TEXT_INSERT_REFDES_HEIGHT" variable="InsertRefDesHeightText" member="yes">
+													<value>0</value>
+													<style>wxTE_READONLY</style>
+												</object>
+												<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+												<option>1</option>
+											</object>
+											<object class="sizeritem">
+												<object class="wxStaticText" name="wxID_ANY" variable="InsertRefDesOrientTitle" member="no">
+													<label>Ориентация</label>
+												</object>
+												<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+											</object>
+											<object class="sizeritem">
+												<object class="wxChoice" name="ID_CHOICE_INSERT_REFDES_ORIENT" variable="InsertRefDesOrientChoice" member="yes">
+													<enabled>0</enabled>
+												</object>
+												<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+												<option>1</option>
+											</object>
+											<object class="sizeritem">
+												<object class="wxStaticText" name="wxID_ANY" variable="InsertRefDesAlignTitle" member="no">
+													<label>Выравнивание</label>
+												</object>
+												<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+											</object>
+											<object class="sizeritem">
+												<object class="wxChoice" name="ID_CHOICE_INSERT_REFDES_ALIGN" variable="InsertRefDesAlignChoice" member="yes">
+													<enabled>0</enabled>
+												</object>
+												<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+												<option>1</option>
+											</object>
+										</object>
+										<flag>wxTOP|wxEXPAND</flag>
+										<border>5</border>
+										<option>1</option>
+									</object>
+								</object>
+								<flag>wxTOP|wxEXPAND</flag>
+								<border>5</border>
+								<option>1</option>
+							</object>
+							<object class="sizeritem">
+								<object class="wxStaticBoxSizer" variable="InsertPinsInfoSizer" member="yes">
+									<label>Выводов - 0</label>
+									<orient>wxVERTICAL</orient>
+									<object class="sizeritem">
+										<object class="wxChoice" name="ID_CHOICE_INSERT_PIN_NAMES_LIST" variable="InsertPinNamesListChoice" member="yes">
+											<handler function="OnInsertPinNamesListChoiceSelect" entry="EVT_CHOICE" />
+										</object>
+										<flag>wxBOTTOM|wxEXPAND</flag>
+										<border>5</border>
+									</object>
+									<object class="sizeritem">
+										<object class="wxBoxSizer" variable="InsertPinNamesSizer" member="no">
+											<object class="sizeritem">
+												<object class="wxStaticText" name="wxID_ANY" variable="InsertPinAlNumTitle" member="no">
+													<label>БЦН</label>
+												</object>
+												<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+											</object>
+											<object class="sizeritem">
+												<object class="wxTextCtrl" name="ID_TEXT_INSERT_PIN_ALNUM" variable="InsertPinAlNumText" member="yes">
+													<style>wxTE_READONLY</style>
+												</object>
+												<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+												<option>1</option>
+											</object>
+											<object class="sizeritem">
+												<object class="wxStaticText" name="wxID_ANY" variable="InsertPinNameTitle" member="no">
+													<label>Имя</label>
+												</object>
+												<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+											</object>
+											<object class="sizeritem">
+												<object class="wxTextCtrl" name="ID_TEXT_INSERT_PIN_NAME" variable="InsertPinNameText" member="yes">
+													<value>Нет</value>
+													<style>wxTE_READONLY</style>
+												</object>
+												<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+												<option>1</option>
+											</object>
+											<object class="sizeritem">
+												<object class="wxStaticText" name="ID_STATICTEXT9" variable="InsertPinTypeTitle" member="yes">
+													<label>Тип</label>
+												</object>
+												<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+											</object>
+											<object class="sizeritem">
+												<object class="wxTextCtrl" name="ID_TEXT_INSERT_PIN_TYPE" variable="InsertPinTypeText" member="yes">
+													<style>wxTE_READONLY</style>
+												</object>
+												<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+												<option>1</option>
+											</object>
+											<object class="sizeritem">
+												<object class="wxStaticText" name="ID_STATICTEXT10" variable="InsertPinNetNameConnectTitle" member="yes">
+													<label>Соединён с цепью</label>
+												</object>
+												<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+											</object>
+											<object class="sizeritem">
+												<object class="wxTextCtrl" name="ID_TEXT_INSERT_PIN_NET_NAME_CONNECT" variable="InsertPinNetNameConnectText" member="yes">
+													<style>wxTE_READONLY</style>
+												</object>
+												<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+												<option>1</option>
+											</object>
+										</object>
+										<flag>wxTOP|wxEXPAND</flag>
+										<border>5</border>
+										<option>1</option>
+									</object>
+									<object class="sizeritem">
+										<object class="wxStaticBoxSizer" variable="InsertPinLabelPropertiesSizer" member="no">
+											<label>Этикетка вывода</label>
+											<orient>wxVERTICAL</orient>
+											<object class="sizeritem">
+												<object class="wxBoxSizer" variable="InsertPinLabelCoordsLayerSizer" member="no">
+													<object class="sizeritem">
+														<object class="wxStaticText" name="wxID_ANY" variable="InsertPinLabelCoordsTitle" member="no">
+															<label>Координаты</label>
+														</object>
+														<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+													</object>
+													<object class="sizeritem">
+														<object class="wxTextCtrl" name="ID_TEXT_INSERT_PIN_LABEL_COORDS" variable="InsertPinLabelCoordsText" member="yes">
+															<style>wxTE_READONLY</style>
+														</object>
+														<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+														<option>1</option>
+													</object>
+													<object class="sizeritem">
+														<object class="wxStaticText" name="wxID_ANY" variable="InsertPinLabelLayerTitle" member="no">
+															<label>Слой</label>
+														</object>
+														<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+													</object>
+													<object class="sizeritem">
+														<object class="wxTextCtrl" name="ID_TEXT_INSERT_PIN_LABEL_LAYER" variable="InsertPinLabelLayerText" member="yes">
+															<value>Нет</value>
+															<style>wxTE_READONLY</style>
+														</object>
+														<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+														<option>1</option>
+													</object>
+												</object>
+												<flag>wxEXPAND</flag>
+												<border>5</border>
+												<option>1</option>
+											</object>
+											<object class="sizeritem">
+												<object class="wxStaticBoxSizer" variable="InsertPinLabelTextParamsSizer" member="no">
+													<label>Параметры текста</label>
+													<object class="sizeritem">
+														<object class="wxStaticText" name="wxID_ANY" variable="InsertPinLabelHeightTitle" member="no">
+															<label>Высота</label>
+														</object>
+														<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+													</object>
+													<object class="sizeritem">
+														<object class="wxTextCtrl" name="ID_TEXT_INSERT_PIN_LABEL_HEIGHT" variable="InsertPinLabelHeightText" member="yes">
+															<value>0</value>
+															<style>wxTE_READONLY</style>
+														</object>
+														<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+														<option>1</option>
+													</object>
+													<object class="sizeritem">
+														<object class="wxStaticText" name="wxID_ANY" variable="InsertPinLabelOrientTitle" member="no">
+															<label>Ориентация</label>
+														</object>
+														<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+													</object>
+													<object class="sizeritem">
+														<object class="wxChoice" name="ID_CHOICE_INSERT_PIN_LABEL_ORIENT" variable="InsertPinLabelOrientChoice" member="yes">
+															<enabled>0</enabled>
+														</object>
+														<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+														<option>1</option>
+													</object>
+													<object class="sizeritem">
+														<object class="wxStaticText" name="wxID_ANY" variable="InsertPinLabelAlignTitle" member="no">
+															<label>Выравнивание</label>
+														</object>
+														<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+													</object>
+													<object class="sizeritem">
+														<object class="wxChoice" name="ID_CHOICE_INSERT_PIN_LABEL_ALIGN" variable="InsertPinLabelAlignChoice" member="yes">
+															<enabled>0</enabled>
+														</object>
+														<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+														<option>1</option>
+													</object>
+												</object>
+												<flag>wxTOP|wxEXPAND</flag>
+												<border>5</border>
+												<option>1</option>
+											</object>
+										</object>
+										<flag>wxTOP|wxEXPAND</flag>
+										<border>5</border>
+										<option>2</option>
+									</object>
+								</object>
+								<flag>wxTOP|wxEXPAND</flag>
+								<border>5</border>
+								<option>2</option>
+							</object>
+						</object>
+						<flag>wxALL|wxEXPAND</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+				</object>
+				<flag>wxEXPAND</flag>
+				<border>5</border>
+			</object>
+			<object class="sizeritem">
+				<object class="wxBoxSizer" variable="FooterButtonsSizer" member="no">
+					<object class="sizeritem">
+						<object class="wxButton" name="ID_BUTTON_EXPORT_AS_TEXT" variable="ExportAsTextButton" member="yes">
+							<label>Экспортировать как текст</label>
+							<handler function="OnExportAsTextButtonClick" entry="EVT_BUTTON" />
+						</object>
+						<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxButton" name="ID_BUTTON_EXPORT_AS_XML" variable="ExportAsXMLButton" member="yes">
+							<label>Экспортировать как XML</label>
+							<handler function="OnExportAsXMLButtonClick" entry="EVT_BUTTON" />
+						</object>
+						<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxButton" name="ID_BUTTON_EXIT_DIALOG" variable="ExitDialogButton" member="yes">
+							<label>Выйти</label>
+							<handler function="OnExitDialogButtonClick" entry="EVT_BUTTON" />
+						</object>
+						<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
 				</object>
 				<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
 				<border>5</border>

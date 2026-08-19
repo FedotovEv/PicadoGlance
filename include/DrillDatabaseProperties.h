@@ -6,6 +6,7 @@
 #include <wx/combobox.h>
 #include <wx/dialog.h>
 #include <wx/sizer.h>
+#include <wx/statbox.h>
 //*)
 
 #include "TBLFileServer.h"
@@ -43,7 +44,7 @@ class DrillDatabaseProperties: public wxDialog
 
         DECLARE_EVENT_TABLE()
 
-        // Локальные поля объекта диалога.
+        // Р›РѕРєР°Р»СЊРЅС‹Рµ РїРѕР»СЏ РѕР±СЉРµРєС‚Р° РґРёР°Р»РѕРіР°.
         TBLFileServer* m_use_tbl_server = nullptr;
         TBLFileServer::DrillDatabasePropertiesSaver m_property_saver;
 };

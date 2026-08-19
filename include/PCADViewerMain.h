@@ -117,6 +117,7 @@ class PCADViewerFrame: public wxFrame
         void OnMenuDrillBitSetup(wxCommandEvent& event);
         void OnMenuDrillParams(wxCommandEvent& event);
         void OnMenuMakeDrillFile(wxCommandEvent& event);
+        void OnMenuItemDatabaseBrowseSelected(wxCommandEvent& event);
         //*)
 
         enum UpdateSpinCanvasMode
@@ -279,6 +280,7 @@ class PCADViewerFrame: public wxFrame
         static const wxWindowID IdMenuCanvasLandscape;
         static const wxWindowID IdMenuCanvasYesNo;
         static const wxWindowID IdMenuSetCanvasSize;
+        static const wxWindowID IdMenuDatabaseBrowse;
         static const wxWindowID IdMenuOptions;
         static const wxWindowID IdMenuHelpIndex;
         static const wxWindowID IdMenuAbout;
@@ -289,6 +291,7 @@ class PCADViewerFrame: public wxFrame
         wxBoxSizer* BoxSizer2;
         wxComboBox* ComboBoxScaleX;
         wxComboBox* ComboBoxScaleY;
+        wxMenu* Menu1;
         wxMenu* MenuCanvas;
         wxMenu* MenuEdit;
         wxMenu* MenuFile;
@@ -325,6 +328,7 @@ class PCADViewerFrame: public wxFrame
         wxMenuItem* MenuItemCanvasPortrait;
         wxMenuItem* MenuItemCanvasYesNo;
         wxMenuItem* MenuItemClose;
+        wxMenuItem* MenuItemDatabaseBrowse;
         wxMenuItem* MenuItemDiffScales;
         wxMenuItem* MenuItemDoCopyToClipboard;
         wxMenuItem* MenuItemEqualScales;

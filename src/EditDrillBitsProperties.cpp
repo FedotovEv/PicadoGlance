@@ -3,8 +3,8 @@
 
 #ifndef WX_PRECOMP
     //(*InternalHeadersPCH(EditDrillBitsProperties)
-    #include <wx/intl.h>
     #include <wx/string.h>
+    #include <wx/intl.h>
     //*)
 #endif
 //(*InternalHeaders(EditDrillBitsProperties)
@@ -106,7 +106,6 @@ EditDrillBitsProperties::EditDrillBitsProperties(wxWindow* parent,wxWindowID id)
     StaticText1 = new wxStaticText(this, ID_STATICTEXT3, _("Количество типов выводов"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT3"));
     BoxSizer3->Add(StaticText1, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     PinCountSpin = new wxSpinCtrl(this, ID_SPIN_PIN_COUNT, _T("10"), wxDefaultPosition, wxDefaultSize, 0, 0, 3000, 10, _T("ID_SPIN_PIN_COUNT"));
-    PinCountSpin->SetValue(_T("10"));
     BoxSizer3->Add(PinCountSpin, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     BoxSizer1->Add(BoxSizer3, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     BoxSizer1->Add(-1,-1,1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);

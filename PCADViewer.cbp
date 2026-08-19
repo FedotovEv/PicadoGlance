@@ -226,13 +226,13 @@
 			<wxsmith version="1">
 				<gui name="wxWidgets" src="src/PCADViewerApp.cpp" main="PCADViewerFrame" init_handlers="necessary" language="CPP" />
 				<resources>
-					<wxFrame wxs="wxsmith/PCADViewerframe.wxs" src="PCADViewerMain.cpp" hdr="PCADViewerMain.h" fwddecl="0" i18n="1" name="PCADViewerFrame" language="CPP" />
-					<wxDialog wxs="wxsmith/FileInfoDialog.wxs" src="FileInfoDialog.cpp" hdr="FileInfoDialog.h" fwddecl="0" i18n="1" name="FileInfoDialog" language="CPP" />
-					<wxDialog wxs="wxsmith/SetCanvasSize.wxs" src="SetCanvasSize.cpp" hdr="SetCanvasSize.h" fwddecl="0" i18n="1" name="SetCanvasSize" language="CPP" />
-					<wxDialog wxs="wxsmith/OptionsDialog.wxs" src="OptionsDialog.cpp" hdr="OptionsDialog.h" fwddecl="0" i18n="1" name="OptionsDialog" language="CPP" />
-					<wxDialog wxs="wxsmith/EditDrillBitsProperties.wxs" src="EditDrillBitsProperties.cpp" hdr="EditDrillBitsProperties.h" fwddecl="0" i18n="1" name="EditDrillBitsProperties" language="CPP" />
-					<wxDialog wxs="wxsmith/DrillDatabaseProperties.wxs" src="DrillDatabaseProperties.cpp" hdr="DrillDatabaseProperties.h" fwddecl="0" i18n="1" name="DrillDatabaseProperties" language="CPP" />
-					<wxDialog wxs="wxsmith/DatabaseResBrowser.wxs" src="DatabaseResBrowser.cpp" hdr="DatabaseResBrowser.h" fwddecl="0" i18n="1" name="DatabaseResBrowser" language="CPP" />
+					<wxFrame wxs="wxsmith/PCADViewerframe.wxs" src="src/PCADViewerMain.cpp" hdr="include/PCADViewerMain.h" fwddecl="0" i18n="1" name="PCADViewerFrame" language="CPP" />
+					<wxDialog wxs="wxsmith/FileInfoDialog.wxs" src="src/FileInfoDialog.cpp" hdr="include/FileInfoDialog.h" fwddecl="0" i18n="1" name="FileInfoDialog" language="CPP" />
+					<wxDialog wxs="wxsmith/SetCanvasSize.wxs" src="src/SetCanvasSize.cpp" hdr="include/SetCanvasSize.h" fwddecl="0" i18n="1" name="SetCanvasSize" language="CPP" />
+					<wxDialog wxs="wxsmith/OptionsDialog.wxs" src="src/OptionsDialog.cpp" hdr="include/OptionsDialog.h" fwddecl="0" i18n="1" name="OptionsDialog" language="CPP" />
+					<wxDialog wxs="wxsmith/EditDrillBitsProperties.wxs" src="src/EditDrillBitsProperties.cpp" hdr="include/EditDrillBitsProperties.h" fwddecl="0" i18n="1" name="EditDrillBitsProperties" language="CPP" />
+					<wxDialog wxs="wxsmith/DrillDatabaseProperties.wxs" src="src/DrillDatabaseProperties.cpp" hdr="include/DrillDatabaseProperties.h" fwddecl="0" i18n="1" name="DrillDatabaseProperties" language="CPP" />
+					<wxDialog wxs="wxsmith/DatabaseResBrowser.wxs" src="src/DatabaseResBrowser.cpp" hdr="include/DatabaseResBrowser.h" fwddecl="0" i18n="1" name="DatabaseResBrowser" language="CPP" />
 				</resources>
 			</wxsmith>
 		</Extensions>

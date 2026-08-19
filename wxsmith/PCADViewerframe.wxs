@@ -652,6 +652,14 @@
 					<handler function="OnMenuItemSetCanvasSizeSelected" entry="EVT_MENU" />
 				</object>
 			</object>
+			<object class="wxMenu" variable="Menu1" member="yes">
+				<label>Документ</label>
+				<object class="wxMenuItem" name="IdMenuDatabaseBrowse" variable="MenuItemDatabaseBrowse" member="yes">
+					<label>Обзор</label>
+					<help>Обзор данных загруженного документа</help>
+					<handler function="OnMenuItemDatabaseBrowseSelected" entry="EVT_MENU" />
+				</object>
+			</object>
 			<object class="wxMenu" variable="MenuParams" member="yes">
 				<label>Настройка</label>
 				<object class="wxMenuItem" name="IdMenuOptions" variable="MenuItemOptions" member="yes">
