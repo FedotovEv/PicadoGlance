@@ -5,11 +5,13 @@
 	//(*HeadersPCH(OptionsDialog)
 	#include <wx/button.h>
 	#include <wx/checkbox.h>
+	#include <wx/choice.h>
 	#include <wx/combobox.h>
 	#include <wx/dialog.h>
 	#include <wx/listbox.h>
 	#include <wx/radiobut.h>
 	#include <wx/sizer.h>
+	#include <wx/statbox.h>
 	#include <wx/stattext.h>
 	#include <wx/textctrl.h>
 	//*)
@@ -31,6 +33,7 @@ class OptionsDialog: public wxDialog
 		wxButton* ButtonOptionOk;
 		wxCheckBox* CheckBoxOwnTextEngine;
 		wxCheckBox* CheckBoxScreenSubscale;
+		wxChoice* PDIFEncodingChoice;
 		wxComboBox* ComboBoxApertureSection;
 		wxListBox* ListBoxApertures;
 		wxRadioButton* RadioAdditionalUnitScaleAny;
@@ -72,6 +75,7 @@ class OptionsDialog: public wxDialog
 		static const wxWindowID ID_TEXTCTRL_UNIT_SCALE_VALUE_Y;
 		static const wxWindowID ID_CHECKBOX_SCREEN_SUBSCALE;
 		static const wxWindowID ID_CHECKBOX_OWN_TEXT_ENGINE;
+		static const wxWindowID ID_CHOICE_PDIF_ENCODING;
 		static const wxWindowID ID_BUTTON_OPTION_OK;
 		static const wxWindowID ID_BUTTON_OPTION_CANCEL;
 		//*)

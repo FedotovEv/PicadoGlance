@@ -12,8 +12,8 @@
 			<object class="sizeritem">
 				<object class="wxBoxSizer" variable="CommonDatabaseContentSizer" member="no">
 					<object class="sizeritem">
-						<object class="wxStaticBoxSizer" variable="ComponentsBoxSizer" member="no">
-							<label>Компоненты</label>
+						<object class="wxStaticBoxSizer" variable="ComponentsBoxSizer" member="yes">
+							<label>Компонентов - 0</label>
 							<orient>wxVERTICAL</orient>
 							<object class="sizeritem">
 								<object class="wxChoice" name="ID_CHOICE_COMPONENTS_LIST" variable="ComponentsListChoice" member="yes">
@@ -489,8 +489,8 @@
 						<option>1</option>
 					</object>
 					<object class="sizeritem">
-						<object class="wxStaticBoxSizer" variable="NetsBoxSizer" member="no">
-							<label>Цепи</label>
+						<object class="wxStaticBoxSizer" variable="NetsBoxSizer" member="yes">
+							<label>Цепей - 0</label>
 							<orient>wxVERTICAL</orient>
 							<object class="sizeritem">
 								<object class="wxChoice" name="ID_CHOICE_NETS_LIST" variable="NetsListChoice" member="yes">
@@ -559,8 +559,8 @@
 						<option>1</option>
 					</object>
 					<object class="sizeritem">
-						<object class="wxStaticBoxSizer" variable="InsertionsBoxSizer" member="no">
-							<label>Вставки</label>
+						<object class="wxStaticBoxSizer" variable="InsertionsBoxSizer" member="yes">
+							<label>Вставок - 0</label>
 							<orient>wxVERTICAL</orient>
 							<object class="sizeritem">
 								<object class="wxChoice" name="ID_CHOICE_INSERTIONS_LIST" variable="InsertionsListChoice" member="yes">

@@ -17,6 +17,9 @@
 #include <wx/treectrl.h>
 //*)
 
+#include "redefine_.h"
+#include <wx/encconv.h>
+
 class PCADFile;
 class DatabaseResBrowser: public wxDialog
 {
@@ -32,7 +35,7 @@ class DatabaseResBrowser: public wxDialog
             wxString position;
         };
 
-        DatabaseResBrowser(wxWindow* parent,wxWindowID id=wxID_ANY);
+        DatabaseResBrowser(wxWindow* parent, wxWindowID id = wxID_ANY);
         virtual ~DatabaseResBrowser();
         // Получение текстового описания для ошибки с кодом code.
         static wxString DatabaseErrorToString(DatabaseErrorCode code);
@@ -67,8 +70,11 @@ class DatabaseResBrowser: public wxDialog
         wxChoice* NetsListChoice;
         wxStaticBoxSizer* ComponentPinsInfoSizer;
         wxStaticBoxSizer* ComponentSectionsInfoSizer;
+        wxStaticBoxSizer* ComponentsBoxSizer;
         wxStaticBoxSizer* InsertPinsInfoSizer;
+        wxStaticBoxSizer* InsertionsBoxSizer;
         wxStaticBoxSizer* NetObjectsInfoSizer;
+        wxStaticBoxSizer* NetsBoxSizer;
         wxStaticText* ComponentPinCoordsTitle;
         wxStaticText* ComponentPinEquivTitle;
         wxStaticText* ComponentPinLabelAlignTitle;
@@ -210,11 +216,29 @@ class DatabaseResBrowser: public wxDialog
         //*)
 
     protected:
+        static const wxString ZERO_VALUE_STR;
+        static constexpr char SECTIONS_TEXT[] = wxTRANSLATE("Секций - ");
+        static constexpr char PINS_TEXT[] = wxTRANSLATE("Выводов - ");
+        static constexpr char FRAGMENTS_TEXT[] = wxTRANSLATE("Фрагментов - ");
+        static constexpr char COMPONENTS_TEXT[] = wxTRANSLATE("Компонентов - ");
+        static constexpr char NETS_TEXT[] = wxTRANSLATE("Цепей - ");
+        static constexpr char INSERTS_TEXT[] = wxTRANSLATE("Вставок - ");
 
-        void BuildContent(wxWindow* parent,wxWindowID id);
+        void BuildContent(wxWindow* parent, wxWindowID id);
         void CloseDialogProc();
+        void ClearDialog();
+
+        // Методы (функции-члены) загрузки соответствующих групп виджетов информацией об определённых объектах
+        // базы данных обозреваемого документа.
+        void LoadNewNet(int net_index);
+        void LoadNewNet(const std::string& net_name);
+        void LoadNewComponent(int component_index);
+        void LoadNewComponent(const std::string& component_name);
+
         const PCADFile* view_pcad_database_ = nullptr;
         wxString error_message_;
+        bool block_signals_ = false;
+        wxEncodingConverter pdif_encoding_conv;
 
         DECLARE_EVENT_TABLE()
 };

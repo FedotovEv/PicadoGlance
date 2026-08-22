@@ -1,4 +1,4 @@
-﻿
+
 /***************************************************************
  * Name:      PCADViewerMain.cpp
  * Author:    Dichrograph (dichrograph@rambler.ru)
@@ -841,7 +841,7 @@ bool PCADViewerFrame::LoadPCADFileAllWorkshops(const wxString& pict_filename)
                 }
 
                 FileWorkshop::AdditionalLoadInfo additional_info
-                    {picture_path, this_app->aperture_provider, true};
+                    {picture_path, this_app->aperture_provider, true, this_app->options_data.pdif_encoding};
                 load_result = file_workshop_ptr->LoadPCADFile(pict_stream, additional_info);
                 if (load_result.second == PCADLoadError::LOAD_FILE_NO_ERROR)
                     goto LoadPictureSuccessfully;
@@ -2655,6 +2655,9 @@ void PCADViewerFrame::OnMenuItemOptionsSelected(wxCommandEvent& event)
         options_dialog.RadioUseDBU->SetValue(true);
         break;
     }
+    // Установим выбранную ранее кодировку для текста PDIF-документов.
+    options_dialog.PDIFEncodingChoice->SetSelection
+        (static_cast<int>(FindEncodingPair(this_app->options_data.pdif_encoding) - pdif_supported_encodings.begin()));
 
     options_dialog.temp_aperture_provider = this_app->aperture_provider;
 
@@ -2701,6 +2704,9 @@ void PCADViewerFrame::OnMenuItemOptionsSelected(wxCommandEvent& event)
     this_app->last_draw_context.measure_unit_type = this_app->options_data.measure_unit_type;
 
     this_app->aperture_provider = options_dialog.temp_aperture_provider;
+    // Обновим кодировку PDIF-документов на вновь выбранную пользователем.
+    if (int pdif_encoding_selection = options_dialog.PDIFEncodingChoice->GetSelection(); pdif_encoding_selection >= 0)
+        this_app->options_data.pdif_encoding = pdif_supported_encodings[pdif_encoding_selection].first;
 
     wxSizeEvent wxsz;
     OnScrolledCanvasResize(wxsz);

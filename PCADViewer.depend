@@ -2681,9 +2681,11 @@
 	<any>
 	"macroses.h"
 
-1785237072c:\users\fedotov\source\repos\picadoglance\include\macroses.h
+1787309315c:\users\fedotov\source\repos\picadoglance\include\macroses.h
 	<string>
+	<vector>
 	<wx/string.h>
+	<wx/encconv.h>
 
 1724567104source:c:\users\fedotov\source\repos\picadoglance\src\apertureprovider.cpp
 	"ApertureProvider.h"
@@ -2706,7 +2708,7 @@
 	<filesystem>
 	<unordered_map>
 
-1785056531c:\users\fedotov\source\repos\picadoglance\include\pcadviewdraw.h
+1787213623c:\users\fedotov\source\repos\picadoglance\include\pcadviewdraw.h
 	<string>
 	<vector>
 	<variant>
@@ -2791,9 +2793,10 @@
 	"wx/string.h"
 	"wx/dynarray.h"
 
-1724567104source:c:\users\fedotov\source\repos\picadoglance\src\macroses.cpp
+1787317131source:c:\users\fedotov\source\repos\picadoglance\src\macroses.cpp
 	"macroses.h"
 	<string>
+	"redefine_.h"
 
 1724567104source:c:\users\fedotov\source\repos\picadoglance\src\drawgraphicalentities.cpp
 	<cmath>
@@ -2812,7 +2815,7 @@
 	"PCADViewDraw.h"
 	"PCADViewerApp.h"
 
-1779506467c:\users\fedotov\source\repos\picadoglance\include\pcadviewerapp.h
+1787314336c:\users\fedotov\source\repos\picadoglance\include\pcadviewerapp.h
 	<fstream>
 	<filesystem>
 	<wx/app.h>
@@ -3124,7 +3127,7 @@
 	"wx/filesys.h"
 	"wx/hashmap.h"
 
-1786096352c:\users\fedotov\source\repos\picadoglance\include\pcadfile.h
+1787316614c:\users\fedotov\source\repos\picadoglance\include\pcadfile.h
 	<iostream>
 	<string>
 	<vector>
@@ -3142,14 +3145,14 @@
 	<set>
 	"PCADFile.h"
 
-1787052829source:c:\users\fedotov\source\repos\picadoglance\src\drilldatabaseproperties.cpp
+1787124379source:c:\users\fedotov\source\repos\picadoglance\src\drilldatabaseproperties.cpp
 	"DrillDatabaseProperties.h"
 	<wx/button.h>
 	<wx/intl.h>
 	<wx/string.h>
 	"redefine_.h"
 
-1787052812c:\users\fedotov\source\repos\picadoglance\include\drilldatabaseproperties.h
+1787124501c:\users\fedotov\source\repos\picadoglance\include\drilldatabaseproperties.h
 	<wx/checkbox.h>
 	<wx/combobox.h>
 	<wx/dialog.h>
@@ -3304,7 +3307,7 @@
 	"PCADViewDraw.h"
 	"ApertureFile.h"
 
-1779506467source:c:\users\fedotov\source\repos\picadoglance\src\handlerplt.cpp
+1787316952source:c:\users\fedotov\source\repos\picadoglance\src\handlerplt.cpp
 	<iostream>
 	<string>
 	<vector>
@@ -3325,7 +3328,7 @@
 	"PCADViewDraw.h"
 	"ApertureFile.h"
 
-1724567104source:c:\users\fedotov\source\repos\picadoglance\src\handlerplt8.cpp
+1787316994source:c:\users\fedotov\source\repos\picadoglance\src\handlerplt8.cpp
 	<iostream>
 	<string>
 	<vector>
@@ -3403,29 +3406,31 @@
 1772283012c:\wxwidgets_3_2_10\include\wx\colourdata.h
 	"wx/colour.h"
 
-1779506467source:c:\users\fedotov\source\repos\picadoglance\src\optionsdialog.cpp
+1787314426source:c:\users\fedotov\source\repos\picadoglance\src\optionsdialog.cpp
 	"wx_pch.h"
 	"OptionsDialog.h"
 	"ApertureProvider.h"
 	"PCADViewerApp.h"
-	<wx/intl.h>
 	<wx/string.h>
+	<wx/intl.h>
 	"redefine_.h"
 
-1779506467c:\users\fedotov\source\repos\picadoglance\include\optionsdialog.h
+1787301165c:\users\fedotov\source\repos\picadoglance\include\optionsdialog.h
 	"macroses.h"
 	"ApertureProvider.h"
 	<wx/button.h>
 	<wx/checkbox.h>
+	<wx/choice.h>
 	<wx/combobox.h>
 	<wx/dialog.h>
 	<wx/listbox.h>
 	<wx/radiobut.h>
 	<wx/sizer.h>
+	<wx/statbox.h>
 	<wx/stattext.h>
 	<wx/textctrl.h>
 
-1784400669source:c:\users\fedotov\source\repos\picadoglance\src\pcadtextexport.cpp
+1787215430source:c:\users\fedotov\source\repos\picadoglance\src\pcadtextexport.cpp
 	<iostream>
 	<string>
 	<vector>
@@ -3441,7 +3446,7 @@
 	"PCADFile.h"
 	"redefine_.h"
 
-1724567104c:\users\fedotov\source\repos\picadoglance\include\pcadtextexport.h
+1787210155c:\users\fedotov\source\repos\picadoglance\include\pcadtextexport.h
 	<string>
 	<variant>
 	<wx/colour.h>
@@ -3467,11 +3472,12 @@
 	"DrawGraphicalEntities.h"
 	"svg.h"
 
-1779506467source:c:\users\fedotov\source\repos\picadoglance\src\pcadviewerapp.cpp
+1787124181source:c:\users\fedotov\source\repos\picadoglance\src\pcadviewerapp.cpp
 	"wx_pch.h"
 	"PCADFile.h"
 	"HandlerPLT.h"
 	"HandlerPLT8.h"
+	"HandlerPDIF.h"
 	"gerber.h"
 	"PCADViewerApp.h"
 	"PCADViewDraw.h"
@@ -3519,7 +3525,7 @@
 1772283012c:\wxwidgets_3_2_10\include\wx\xrc\xh_bmp.h
 	"wx/xrc/xmlres.h"
 
-1787069661source:c:\users\fedotov\source\repos\picadoglance\src\pcadviewermain.cpp
+1787316780source:c:\users\fedotov\source\repos\picadoglance\src\pcadviewermain.cpp
 	<iostream>
 	<iomanip>
 	<fstream>
@@ -3704,7 +3710,7 @@
 	"DrawGraphicalEntities.h"
 	"ApertureProvider.h"
 
-1785644993source:c:\users\fedotov\source\repos\picadoglance\src\handlerpdif.cpp
+1787316894source:c:\users\fedotov\source\repos\picadoglance\src\handlerpdif.cpp
 	<iostream>
 	<string>
 	<string_view>
@@ -3734,7 +3740,7 @@
 	"PCADViewDraw.h"
 	"ApertureFile.h"
 
-1787116665c:\users\fedotov\source\repos\picadoglance\include\databaseresbrowser.h
+1787312697c:\users\fedotov\source\repos\picadoglance\include\databaseresbrowser.h
 	<wx/button.h>
 	<wx/checkbox.h>
 	<wx/choice.h>
@@ -3744,6 +3750,8 @@
 	<wx/stattext.h>
 	<wx/textctrl.h>
 	<wx/treectrl.h>
+	"redefine_.h"
+	<wx/encconv.h>
 
 1772283012c:\wxwidgets_3_2_10\include\wx\treectrl.h
 	"wx/defs.h"
@@ -3778,9 +3786,12 @@
 
 1772283012c:\wxwidgets_3_2_10\include\wx\qt\treectrl.h
 
-1787123883source:c:\users\fedotov\source\repos\picadoglance\src\databaseresbrowser.cpp
+1787312921source:c:\users\fedotov\source\repos\picadoglance\src\databaseresbrowser.cpp
 	"include/wx_pch.h"
 	"DatabaseResBrowser.h"
+	"PCADFile.h"
+	"PCADViewDraw.h"
+	"PCADTextExport.h"
 	<wx/string.h>
 	<wx/intl.h>
 

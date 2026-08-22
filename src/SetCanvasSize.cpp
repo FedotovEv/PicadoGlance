@@ -1,4 +1,4 @@
-﻿
+
 #include <string>
 
 #include "wx_pch.h"

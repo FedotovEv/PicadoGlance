@@ -107,6 +107,9 @@ struct FileDefValues
                                    // измерительной единице изображения (миллиметры
                                    // или дюймы, что определяется флагом FILE_FLAG_INCHES).
     std::filesystem::path picture_filepath; // Путь к файлу загруженной картинки.
+    // Кодировка текстовых частей файла (имена, названия, и. т. д.). Кодировка по умолчанию полагается чисто латинской (ASCII-7) и
+    // конверсия из неё получается тождественной.
+    wxFontEncoding pdif_encoding = wxFontEncoding::wxFONTENCODING_ISO8859_1;
 
     // Описание пользовательских окон, текущего (используемого в момент создания загруженного файла) и сохранённых.
     wxPoint current_window_center = {0, 0}; // Центр текущего окна.
@@ -394,6 +397,16 @@ public:
 
     void Clear() noexcept ; // Функция-член общей очистки данных этой структуры.
 
+    const std::string& GetName() const
+    {
+        return insertion_name_;
+    }
+
+    const std::string& GetComponentName() const
+    {
+        return comp_name_;
+    }
+
 private:
     struct PinNetConnectInfo
     {
@@ -460,7 +473,17 @@ public:
     NetDefDesc& operator=(const NetDefDesc& other) = delete;
     NetDefDesc& operator=(NetDefDesc&& other) noexcept;
 
-    void Clear() noexcept;     // Функция-член общей очистки данных этой структуры.
+    void Clear() noexcept;              // Функция-член общей очистки данных этой структуры.
+
+    const std::string& GetName() const  // Получение имени данной цепи.
+    {
+        return net_name_;
+    }
+
+    bool IsUsetNetName() const          // Возврат признака пользовательского имени цепи.
+    {
+        return is_user_net_name_;
+    }
 
     // Функции-члены обзора списка элементов цепи.
     size_t size() const
@@ -545,6 +568,8 @@ public:
     }
 
     void SetApertureType(aperture::UsingApertureType using_aperture_type) const;
+
+    // Основной итератор - перечислитель видимых (графических) объектов документа.
     size_t size() const
     {
         return graph_objects_.size();
@@ -570,6 +595,7 @@ public:
         return graph_objects_.crend();
     }
 
+    // Итератор по списку имеющихся слоёв.
     size_t layers_size() const
     {
         return layers_.size();
@@ -595,6 +621,111 @@ public:
         return layers_.crend();
     }
 
+    // Итератор по списку цепей.
+    size_t nets_size() const
+    {
+        return nets_.size();
+    }
+
+    decltype(nets_)::const_iterator nets_begin() const
+    {
+        return nets_.cbegin();
+    }
+
+    decltype(nets_)::const_iterator nets_end() const
+    {
+        return nets_.cend();
+    }
+
+    decltype(nets_)::const_reverse_iterator nets_rbegin() const
+    {
+        return nets_.crbegin();
+    }
+
+    decltype(nets_)::const_reverse_iterator nets_rend() const
+    {
+        return nets_.crend();
+    }
+
+    // Итератор перечисления радиокомпонентов.
+    size_t radio_components_size() const
+    {
+        return radio_components_.size();
+    }
+
+    decltype(radio_components_)::const_iterator radio_components_begin() const
+    {
+        return radio_components_.cbegin();
+    }
+
+    decltype(radio_components_)::const_iterator radio_components_end() const
+    {
+        return radio_components_.cend();
+    }
+
+    decltype(radio_components_)::const_reverse_iterator radio_components_rbegin() const
+    {
+        return radio_components_.crbegin();
+    }
+
+    decltype(radio_components_)::const_reverse_iterator radio_components_rend() const
+    {
+        return radio_components_.crend();
+    }
+
+    // Средства перечисления записей о переходных (межслойных) отверстиях платы.
+    size_t cross_layers_pinholes_size() const
+    {
+        return cross_layers_pinholes_.size();
+    }
+
+    decltype(cross_layers_pinholes_)::const_iterator cross_layers_pinholes_begin() const
+    {
+        return cross_layers_pinholes_.cbegin();
+    }
+
+    decltype(cross_layers_pinholes_)::const_iterator cross_layers_pinholes_end() const
+    {
+        return cross_layers_pinholes_.cend();
+    }
+
+    decltype(cross_layers_pinholes_)::const_reverse_iterator cross_layers_pinholes_rbegin() const
+    {
+        return cross_layers_pinholes_.crbegin();
+    }
+
+    decltype(cross_layers_pinholes_)::const_reverse_iterator cross_layers_pinholes_rend() const
+    {
+        return cross_layers_pinholes_.crend();
+    }
+
+    // Итератор перечисления вставок радиокомпонентов (экземпляров их библиотечных образцов).
+    size_t radio_comp_inserts_size() const
+    {
+        return radio_comp_inserts_.size();
+    }
+
+    decltype(radio_comp_inserts_)::const_iterator radio_comp_inserts_begin() const
+    {
+        return radio_comp_inserts_.cbegin();
+    }
+
+    decltype(radio_comp_inserts_)::const_iterator radio_comp_inserts_end() const
+    {
+        return radio_comp_inserts_.cend();
+    }
+
+    decltype(radio_comp_inserts_)::const_reverse_iterator radio_comp_inserts_rbegin() const
+    {
+        return radio_comp_inserts_.crbegin();
+    }
+
+    decltype(radio_comp_inserts_)::const_reverse_iterator radio_comp_inserts_rend() const
+    {
+        return radio_comp_inserts_.crend();
+    }
+
+    // Итератор по перечню апертур.
     size_t flashes_size() const;
     std::vector<aperture::FlashDesc>::const_iterator flashes_begin() const;
     std::vector<aperture::FlashDesc>::const_iterator flashes_end() const;
@@ -752,6 +883,9 @@ public:
         // если этого требует формат загружаемого файла. При значении "ложь" загрузчику запрещается каким-либо
         // образом изменять текущий набор апертур, а нужно приспособиться к его имеющемуся состоянию.
         bool is_control_aperture_data = false;
+        // Кодировка текстового содержимого открываемого файла, выбранная пользователем.
+        wxFontEncoding pdif_encoding = wxFontEncoding::wxFONTENCODING_ISO8859_1;
+
         // Список ошибок, возникших при загрузке файла.
         std::vector<ErrorInfo> load_errors;
 
@@ -845,4 +979,3 @@ public:
     }
 };
 #endif // header guard
-

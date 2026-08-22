@@ -133,6 +133,60 @@ string ObjSelColor::GetObjectShortText(DrawContext& draw_context) const
     return "Цвет:"s + ConvertColorToStringShort(set_color_);
 }
 
+string TextOrientToString(TextOrientation text_orientation)
+{
+    switch (text_orientation)
+    {
+    case TextOrientation::TEXT_LEFT_RIGHT:
+        return wxTRANSLATE("Слева-направо");
+    case TextOrientation::TEXT_DOWN_UP:
+        return wxTRANSLATE("Снизу-вверх");
+    case TextOrientation::TEXT_RIGHT_LEFT:
+        return wxTRANSLATE("Справа-налево");
+    case TextOrientation::TEXT_UP_DOWN:
+        return wxTRANSLATE("Сверху-вниз");
+    case TextOrientation::TEXT_LEFT_RIGHT_MIRROR:
+        return wxTRANSLATE("Слева-направо-зеркало");
+    case TextOrientation::TEXT_DOWN_UP_MIRROR:
+        return wxTRANSLATE("Снизу-вверх-зеркало");
+    case TextOrientation::TEXT_RIGHT_LEFT_MIRROR:
+        return wxTRANSLATE("Справа-налево-зеркало");
+    case TextOrientation::TEXT_UP_DOWN_MIRROR:
+        return wxTRANSLATE("Сверху-вниз-зеркало");
+    default:
+        break;
+    }
+    return {};
+}
+
+string TextAlignToString(TextAlign text_align)
+{
+    switch (text_align)
+    {
+    case TextAlign::TEXT_CENTER_DOWN:
+        return wxTRANSLATE("Центр-низ");
+    case TextAlign::TEXT_CENTER_UP:
+        return wxTRANSLATE("Центр-верх");
+    case TextAlign::TEXT_CENTER_CENTER:
+        return wxTRANSLATE("Центр-центр");
+    case TextAlign::TEXT_LEFT_DOWN:
+        return wxTRANSLATE("Лево-низ");
+    case TextAlign::TEXT_LEFT_UP:
+        return wxTRANSLATE("Лево-верх");
+    case TextAlign::TEXT_LEFT_CENTER:
+        return wxTRANSLATE("Лево-центр");
+    case TextAlign::TEXT_RIGHT_DOWN:
+        return wxTRANSLATE("Право-низ");
+    case TextAlign::TEXT_RIGHT_UP:
+        return wxTRANSLATE("Право-верх");
+    case TextAlign::TEXT_RIGHT_CENTER:
+        return wxTRANSLATE("Право-центр");
+    default:
+        break;
+    }
+    return {};
+}
+
 string ObjPoint::GetObjectLongText(DrawContext& draw_context) const
 {
     return "Point : "s + ConvertPointToString(point_center_, draw_context) + zpt +

@@ -5,8 +5,8 @@
 
 #ifndef WX_PRECOMP
 	//(*InternalHeadersPCH(OptionsDialog)
-	#include <wx/intl.h>
 	#include <wx/string.h>
+	#include <wx/intl.h>
 	//*)
 #endif
 //(*InternalHeaders(OptionsDialog)
@@ -37,6 +37,7 @@ const wxWindowID OptionsDialog::ID_STATICTEXT5 = wxNewId();
 const wxWindowID OptionsDialog::ID_TEXTCTRL_UNIT_SCALE_VALUE_Y = wxNewId();
 const wxWindowID OptionsDialog::ID_CHECKBOX_SCREEN_SUBSCALE = wxNewId();
 const wxWindowID OptionsDialog::ID_CHECKBOX_OWN_TEXT_ENGINE = wxNewId();
+const wxWindowID OptionsDialog::ID_CHOICE_PDIF_ENCODING = wxNewId();
 const wxWindowID OptionsDialog::ID_BUTTON_OPTION_OK = wxNewId();
 const wxWindowID OptionsDialog::ID_BUTTON_OPTION_CANCEL = wxNewId();
 //*)
@@ -46,7 +47,7 @@ BEGIN_EVENT_TABLE(OptionsDialog,wxDialog)
 	//*)
 END_EVENT_TABLE()
 
-OptionsDialog::OptionsDialog(wxWindow* parent,wxWindowID id)
+OptionsDialog::OptionsDialog(wxWindow* parent, wxWindowID id)
 {
 	//(*Initialize(OptionsDialog)
 	wxBoxSizer* BoxSizer10;
@@ -60,74 +61,76 @@ OptionsDialog::OptionsDialog(wxWindow* parent,wxWindowID id)
 	wxBoxSizer* BoxSizer8;
 	wxBoxSizer* BoxSizer9;
 	wxGridSizer* GridSizer1;
+	wxStaticBoxSizer* PDIFParamsBoxSizer;
 	wxStaticBoxSizer* StaticBoxSizer1;
 	wxStaticBoxSizer* StaticBoxSizer2;
 	wxStaticBoxSizer* StaticBoxSizer3;
+	wxStaticText* StaticText2;
 
 	Create(parent, wxID_ANY, _("Параметры программы"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE, _T("wxID_ANY"));
 	BoxSizer1 = new wxBoxSizer(wxVERTICAL);
 	StaticBoxSizer3 = new wxStaticBoxSizer(wxVERTICAL, this, _("Управление апертурами (засветками)"));
 	BoxSizer9 = new wxBoxSizer(wxHORIZONTAL);
 	BoxSizer4 = new wxBoxSizer(wxVERTICAL);
-	StaticText3 = new wxStaticText(this, ID_STATICTEXT2, _("Имя файла апертур"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT2"));
+	StaticText3 = new wxStaticText(StaticBoxSizer3->GetStaticBox(), ID_STATICTEXT2, _("Имя файла апертур"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT2"));
 	BoxSizer4->Add(StaticText3, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-	TextApertureFilename = new wxTextCtrl(this, ID_TEXTCTRL_APERTURE_FILENAME, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY, wxDefaultValidator, _T("ID_TEXTCTRL_APERTURE_FILENAME"));
-	BoxSizer4->Add(TextApertureFilename, 0, wxALL|wxEXPAND, wxDLG_UNIT(this,wxSize(5,0)).GetWidth());
+	TextApertureFilename = new wxTextCtrl(StaticBoxSizer3->GetStaticBox(), ID_TEXTCTRL_APERTURE_FILENAME, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY, wxDefaultValidator, _T("ID_TEXTCTRL_APERTURE_FILENAME"));
+	BoxSizer4->Add(TextApertureFilename, 0, wxALL|wxEXPAND, wxDLG_UNIT(StaticBoxSizer3->GetStaticBox(),wxSize(5,0)).GetWidth());
 	BoxSizer8 = new wxBoxSizer(wxHORIZONTAL);
-	ButtonLoadAperture = new wxButton(this, ID_BUTTON_LOAD_APERTURE, _("Загрузить"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_BUTTON_LOAD_APERTURE"));
+	ButtonLoadAperture = new wxButton(StaticBoxSizer3->GetStaticBox(), ID_BUTTON_LOAD_APERTURE, _("Загрузить"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_BUTTON_LOAD_APERTURE"));
 	BoxSizer8->Add(ButtonLoadAperture, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-	ButtonApertureDefault = new wxButton(this, ID_BUTTONAPERTURE_DEFAULT, _("По умолчанию"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_BUTTONAPERTURE_DEFAULT"));
+	ButtonApertureDefault = new wxButton(StaticBoxSizer3->GetStaticBox(), ID_BUTTONAPERTURE_DEFAULT, _("По умолчанию"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_BUTTONAPERTURE_DEFAULT"));
 	BoxSizer8->Add(ButtonApertureDefault, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	BoxSizer4->Add(BoxSizer8, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	BoxSizer9->Add(BoxSizer4, 1, wxALL|wxEXPAND, 5);
 	BoxSizer6 = new wxBoxSizer(wxVERTICAL);
 	BoxSizer7 = new wxBoxSizer(wxHORIZONTAL);
-	StaticText4 = new wxStaticText(this, ID_STATICTEXT3, _("Множество"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT3"));
+	StaticText4 = new wxStaticText(StaticBoxSizer3->GetStaticBox(), ID_STATICTEXT3, _("Множество"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT3"));
 	BoxSizer7->Add(StaticText4, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-	ComboBoxApertureSection = new wxComboBox(this, ID_COMBOBOX_APERTURE_SECTION, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, 0, wxCB_READONLY|wxCB_DROPDOWN, wxDefaultValidator, _T("ID_COMBOBOX_APERTURE_SECTION"));
+	ComboBoxApertureSection = new wxComboBox(StaticBoxSizer3->GetStaticBox(), ID_COMBOBOX_APERTURE_SECTION, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, 0, wxCB_READONLY|wxCB_DROPDOWN, wxDefaultValidator, _T("ID_COMBOBOX_APERTURE_SECTION"));
 	ComboBoxApertureSection->Append(_("GERBER 32"));
 	ComboBoxApertureSection->Append(_("GERBER LASER"));
 	BoxSizer7->Add(ComboBoxApertureSection, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	BoxSizer6->Add(BoxSizer7, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-	ListBoxApertures = new wxListBox(this, ID_LISTBOXAPERTURES_LIST, wxDefaultPosition, wxSize(173,70), 0, 0, 0, wxDefaultValidator, _T("ID_LISTBOXAPERTURES_LIST"));
-	BoxSizer6->Add(ListBoxApertures, 1, wxALL|wxSHAPED, 5);
+	ListBoxApertures = new wxListBox(StaticBoxSizer3->GetStaticBox(), ID_LISTBOXAPERTURES_LIST, wxDefaultPosition, wxSize(173,70), 0, 0, 0, wxDefaultValidator, _T("ID_LISTBOXAPERTURES_LIST"));
+	BoxSizer6->Add(ListBoxApertures, 1, wxALL|wxEXPAND, 5);
 	BoxSizer9->Add(BoxSizer6, 1, wxALL|wxEXPAND, 5);
 	StaticBoxSizer3->Add(BoxSizer9, 2, wxALL|wxEXPAND, 5);
-	BoxSizer1->Add(StaticBoxSizer3, 6, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	BoxSizer1->Add(StaticBoxSizer3, 4, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	StaticBoxSizer1 = new wxStaticBoxSizer(wxVERTICAL, this, _("Используемые единицы координат"));
 	BoxSizer5 = new wxBoxSizer(wxHORIZONTAL);
-	RadioUseDBU = new wxRadioButton(this, ID_RADIOBUTTON_USE_DBU, _("DBU"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP, wxDefaultValidator, _T("ID_RADIOBUTTON_USE_DBU"));
+	RadioUseDBU = new wxRadioButton(StaticBoxSizer1->GetStaticBox(), ID_RADIOBUTTON_USE_DBU, _("DBU"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP, wxDefaultValidator, _T("ID_RADIOBUTTON_USE_DBU"));
 	RadioUseDBU->SetHelpText(_("Измерение координат в DBU - единицах базы данных рисунка"));
 	BoxSizer5->Add(RadioUseDBU, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-	RadioUseMillimeter = new wxRadioButton(this, ID_RADIOBUTTON_USE_MILLIMETER, _("Миллиметр"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_RADIOBUTTON_USE_MILLIMETER"));
+	RadioUseMillimeter = new wxRadioButton(StaticBoxSizer1->GetStaticBox(), ID_RADIOBUTTON_USE_MILLIMETER, _("Миллиметр"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_RADIOBUTTON_USE_MILLIMETER"));
 	RadioUseMillimeter->SetHelpText(_("Измерение координат в миллиметрах"));
 	BoxSizer5->Add(RadioUseMillimeter, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-	RadioUseInch = new wxRadioButton(this, ID_RADIOBUTTON_USE_INCH, _("Дюйм"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_RADIOBUTTON_USE_INCH"));
+	RadioUseInch = new wxRadioButton(StaticBoxSizer1->GetStaticBox(), ID_RADIOBUTTON_USE_INCH, _("Дюйм"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_RADIOBUTTON_USE_INCH"));
 	RadioUseInch->SetHelpText(_("Измерение координат в дюймах"));
 	BoxSizer5->Add(RadioUseInch, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	StaticBoxSizer1->Add(BoxSizer5, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	BoxSizer1->Add(StaticBoxSizer1, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	StaticBoxSizer2 = new wxStaticBoxSizer(wxHORIZONTAL, this, _("Дополнительный масштабный коэффициент"));
 	BoxSizer2 = new wxBoxSizer(wxVERTICAL);
-	RadioAdditionalUnitScaleOff = new wxRadioButton(this, ID_RADIOBUTTON_ADDIT_SCALE_OFF, _("Отключить"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP, wxDefaultValidator, _T("ID_RADIOBUTTON_ADDIT_SCALE_OFF"));
+	RadioAdditionalUnitScaleOff = new wxRadioButton(StaticBoxSizer2->GetStaticBox(), ID_RADIOBUTTON_ADDIT_SCALE_OFF, _("Отключить"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP, wxDefaultValidator, _T("ID_RADIOBUTTON_ADDIT_SCALE_OFF"));
 	BoxSizer2->Add(RadioAdditionalUnitScaleOff, 1, wxALL|wxEXPAND, 5);
-	RadioAdditionalUnitScaleRussianInch = new wxRadioButton(this, ID_RADIOBUTTON_ADDIT_SCALE_RUSSIAN_INCH, _("\"Русский дюйм\""), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_RADIOBUTTON_ADDIT_SCALE_RUSSIAN_INCH"));
+	RadioAdditionalUnitScaleRussianInch = new wxRadioButton(StaticBoxSizer2->GetStaticBox(), ID_RADIOBUTTON_ADDIT_SCALE_RUSSIAN_INCH, _("\"Русский дюйм\""), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_RADIOBUTTON_ADDIT_SCALE_RUSSIAN_INCH"));
 	BoxSizer2->Add(RadioAdditionalUnitScaleRussianInch, 1, wxALL|wxEXPAND, 5);
-	RadioAdditionalUnitScaleAny = new wxRadioButton(this, ID_RADIOBUTTON_ADDIT_SCALE_ANY, _("Произвольно"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_RADIOBUTTON_ADDIT_SCALE_ANY"));
+	RadioAdditionalUnitScaleAny = new wxRadioButton(StaticBoxSizer2->GetStaticBox(), ID_RADIOBUTTON_ADDIT_SCALE_ANY, _("Произвольно"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_RADIOBUTTON_ADDIT_SCALE_ANY"));
 	BoxSizer2->Add(RadioAdditionalUnitScaleAny, 1, wxALL|wxEXPAND, 5);
 	StaticBoxSizer2->Add(BoxSizer2, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	GridSizer1 = new wxGridSizer(2, 2, 0, 0);
-	StaticText1 = new wxStaticText(this, ID_STATICTEXT4, _("По X:"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT4"));
+	StaticText1 = new wxStaticText(StaticBoxSizer2->GetStaticBox(), ID_STATICTEXT4, _("По X:"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT4"));
 	GridSizer1->Add(StaticText1, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-	TextAdditionalUnitScaleXValue = new wxTextCtrl(this, ID_TEXTCTRL_UNIT_SCALE_VALUE_X, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_TEXTCTRL_UNIT_SCALE_VALUE_X"));
+	TextAdditionalUnitScaleXValue = new wxTextCtrl(StaticBoxSizer2->GetStaticBox(), ID_TEXTCTRL_UNIT_SCALE_VALUE_X, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_TEXTCTRL_UNIT_SCALE_VALUE_X"));
 	TextAdditionalUnitScaleXValue->SetHelpText(_("Установка дополнительного масштабного коэффициента"));
-	GridSizer1->Add(TextAdditionalUnitScaleXValue, 1, wxALL|wxEXPAND, wxDLG_UNIT(this,wxSize(5,0)).GetWidth());
-	StaticText5 = new wxStaticText(this, ID_STATICTEXT5, _("По Y:"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT5"));
+	GridSizer1->Add(TextAdditionalUnitScaleXValue, 1, wxALL|wxEXPAND, wxDLG_UNIT(StaticBoxSizer2->GetStaticBox(),wxSize(5,0)).GetWidth());
+	StaticText5 = new wxStaticText(StaticBoxSizer2->GetStaticBox(), ID_STATICTEXT5, _("По Y:"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT5"));
 	GridSizer1->Add(StaticText5, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-	TextAdditionalUnitScaleYValue = new wxTextCtrl(this, ID_TEXTCTRL_UNIT_SCALE_VALUE_Y, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_TEXTCTRL_UNIT_SCALE_VALUE_Y"));
+	TextAdditionalUnitScaleYValue = new wxTextCtrl(StaticBoxSizer2->GetStaticBox(), ID_TEXTCTRL_UNIT_SCALE_VALUE_Y, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_TEXTCTRL_UNIT_SCALE_VALUE_Y"));
 	GridSizer1->Add(TextAdditionalUnitScaleYValue, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	StaticBoxSizer2->Add(GridSizer1, 2, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-	BoxSizer1->Add(StaticBoxSizer2, 4, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	BoxSizer1->Add(StaticBoxSizer2, 2, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	BoxSizer10 = new wxBoxSizer(wxHORIZONTAL);
 	CheckBoxScreenSubscale = new wxCheckBox(this, ID_CHECKBOX_SCREEN_SUBSCALE, _("Подмасштабы для экрана"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_CHECKBOX_SCREEN_SUBSCALE"));
 	CheckBoxScreenSubscale->SetValue(false);
@@ -136,7 +139,13 @@ OptionsDialog::OptionsDialog(wxWindow* parent,wxWindowID id)
 	CheckBoxOwnTextEngine = new wxCheckBox(this, ID_CHECKBOX_OWN_TEXT_ENGINE, _("Использовать собственный текстовый движок"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_CHECKBOX_OWN_TEXT_ENGINE"));
 	CheckBoxOwnTextEngine->SetValue(false);
 	BoxSizer10->Add(CheckBoxOwnTextEngine, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-	BoxSizer1->Add(BoxSizer10, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	BoxSizer1->Add(BoxSizer10, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	PDIFParamsBoxSizer = new wxStaticBoxSizer(wxHORIZONTAL, this, _("Параметры PDIF-документов"));
+	StaticText2 = new wxStaticText(PDIFParamsBoxSizer->GetStaticBox(), wxID_ANY, _("Кодировка"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
+	PDIFParamsBoxSizer->Add(StaticText2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	PDIFEncodingChoice = new wxChoice(PDIFParamsBoxSizer->GetStaticBox(), ID_CHOICE_PDIF_ENCODING, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("ID_CHOICE_PDIF_ENCODING"));
+	PDIFParamsBoxSizer->Add(PDIFEncodingChoice, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	BoxSizer1->Add(PDIFParamsBoxSizer, 1, wxALL|wxEXPAND, 5);
 	BoxSizer3 = new wxBoxSizer(wxHORIZONTAL);
 	ButtonOptionOk = new wxButton(this, ID_BUTTON_OPTION_OK, _("Принять"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_BUTTON_OPTION_OK"));
 	BoxSizer3->Add(ButtonOptionOk, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
@@ -156,6 +165,12 @@ OptionsDialog::OptionsDialog(wxWindow* parent,wxWindowID id)
 	Connect(ID_BUTTON_OPTION_CANCEL, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&OptionsDialog::OnButtonOptionCancelClick);
 	Connect(wxID_ANY, wxEVT_INIT_DIALOG, (wxObjectEventFunction)&OptionsDialog::OnInit);
 	//*)
+
+	// Заполняем список доступных кодировок, транскодирование для которых в Юникод поддерживается классом wxEncodingConverter.
+	PDIFEncodingChoice->Clear();
+	for (const auto& encoding_pair : pdif_supported_encodings)
+        PDIFEncodingChoice->Append(wxTR(encoding_pair.second));
+    PDIFEncodingChoice->SetSelection(0);
 }
 
 OptionsDialog::~OptionsDialog()

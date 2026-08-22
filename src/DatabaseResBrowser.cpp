@@ -1,5 +1,8 @@
 #include "include/wx_pch.h"
 #include "DatabaseResBrowser.h"
+#include "PCADFile.h"
+#include "PCADViewDraw.h"
+#include "PCADTextExport.h"
 
 #ifndef WX_PRECOMP
     //(*InternalHeadersPCH(DatabaseResBrowser)
@@ -9,6 +12,8 @@
 #endif
 //(*InternalHeaders(DatabaseResBrowser)
 //*)
+
+using namespace std;
 
 //(*IdInit(DatabaseResBrowser)
 const wxWindowID DatabaseResBrowser::ID_CHOICE_COMPONENTS_LIST = wxNewId();
@@ -88,12 +93,14 @@ BEGIN_EVENT_TABLE(DatabaseResBrowser,wxDialog)
     //*)
 END_EVENT_TABLE()
 
-DatabaseResBrowser::DatabaseResBrowser(wxWindow* parent,wxWindowID id)
+const wxString DatabaseResBrowser::ZERO_VALUE_STR = wxF8("0");
+
+DatabaseResBrowser::DatabaseResBrowser(wxWindow* parent, wxWindowID id)
 {
-    BuildContent(parent,id);
+    BuildContent(parent, id);
 }
 
-void DatabaseResBrowser::BuildContent(wxWindow* parent,wxWindowID id)
+void DatabaseResBrowser::BuildContent(wxWindow* parent, wxWindowID id)
 {
     //(*Initialize(DatabaseResBrowser)
     wxBoxSizer* CommonDatabaseContentSizer;
@@ -117,14 +124,11 @@ void DatabaseResBrowser::BuildContent(wxWindow* parent,wxWindowID id)
     wxStaticBoxSizer* ComponentPropertiesSizer;
     wxStaticBoxSizer* ComponentRefDesPropertiesSizer;
     wxStaticBoxSizer* ComponentRefDesTextPropertiesSizer;
-    wxStaticBoxSizer* ComponentsBoxSizer;
     wxStaticBoxSizer* InsertPinLabelPropertiesSizer;
     wxStaticBoxSizer* InsertPinLabelTextParamsSizer;
     wxStaticBoxSizer* InsertPropertiesSizer;
     wxStaticBoxSizer* InsertRefDesSizer;
     wxStaticBoxSizer* InsertRefDesTextParamsSizer;
-    wxStaticBoxSizer* InsertionsBoxSizer;
-    wxStaticBoxSizer* NetsBoxSizer;
     wxStaticBoxSizer* StaticBoxSizer2ComponentPinLabelTextParamsSizer;
     wxStaticText* ComponentNameTitle;
     wxStaticText* ComponentOrgCoordsTitle;
@@ -164,7 +168,7 @@ void DatabaseResBrowser::BuildContent(wxWindow* parent,wxWindowID id)
     SetClientSize(wxSize(1195,506));
     MainDialogSizer = new wxBoxSizer(wxVERTICAL);
     CommonDatabaseContentSizer = new wxBoxSizer(wxHORIZONTAL);
-    ComponentsBoxSizer = new wxStaticBoxSizer(wxVERTICAL, this, _("Компоненты"));
+    ComponentsBoxSizer = new wxStaticBoxSizer(wxVERTICAL, this, _("Компонентов - 0"));
     ComponentsListChoice = new wxChoice(ComponentsBoxSizer->GetStaticBox(), ID_CHOICE_COMPONENTS_LIST, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("ID_CHOICE_COMPONENTS_LIST"));
     ComponentsListChoice->SetToolTip(_("Список компонентов базы данных"));
     ComponentsBoxSizer->Add(ComponentsListChoice, 0, wxEXPAND, 5);
@@ -294,7 +298,7 @@ void DatabaseResBrowser::BuildContent(wxWindow* parent,wxWindowID id)
     ComponentPinsInfoSizer->Add(ComponentPinLabelPropertiesSizer, 2, wxEXPAND, 5);
     ComponentsBoxSizer->Add(ComponentPinsInfoSizer, 2, wxTOP|wxEXPAND, 5);
     CommonDatabaseContentSizer->Add(ComponentsBoxSizer, 1, wxALL|wxEXPAND, 5);
-    NetsBoxSizer = new wxStaticBoxSizer(wxVERTICAL, this, _("Цепи"));
+    NetsBoxSizer = new wxStaticBoxSizer(wxVERTICAL, this, _("Цепей - 0"));
     NetsListChoice = new wxChoice(NetsBoxSizer->GetStaticBox(), ID_CHOICE_NETS_LIST, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("ID_CHOICE_NETS_LIST"));
     NetsBoxSizer->Add(NetsListChoice, 0, wxBOTTOM|wxEXPAND, 5);
     NetNameSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -314,7 +318,7 @@ void DatabaseResBrowser::BuildContent(wxWindow* parent,wxWindowID id)
     NetObjectsInfoSizer->Add(NetObjectDescriptionText, 1, wxTOP|wxEXPAND, 5);
     NetsBoxSizer->Add(NetObjectsInfoSizer, 1, wxALL|wxEXPAND, 5);
     CommonDatabaseContentSizer->Add(NetsBoxSizer, 1, wxALL|wxEXPAND, 5);
-    InsertionsBoxSizer = new wxStaticBoxSizer(wxVERTICAL, this, _("Вставки"));
+    InsertionsBoxSizer = new wxStaticBoxSizer(wxVERTICAL, this, _("Вставок - 0"));
     InsertionsListChoice = new wxChoice(InsertionsBoxSizer->GetStaticBox(), ID_CHOICE_INSERTIONS_LIST, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("ID_CHOICE_INSERTIONS_LIST"));
     InsertionsBoxSizer->Add(InsertionsListChoice, 0, wxBOTTOM|wxEXPAND, 5);
     InsertPropertiesSizer = new wxStaticBoxSizer(wxVERTICAL, InsertionsBoxSizer->GetStaticBox(), _("Свойства вставки"));
@@ -474,6 +478,27 @@ void DatabaseResBrowser::BuildContent(wxWindow* parent,wxWindowID id)
     Connect(wxID_ANY, wxEVT_CLOSE_WINDOW, (wxObjectEventFunction)&DatabaseResBrowser::OnClose);
     //*)
 
+    // Установим постоянное содержимое списков ориентации и выравнивания текстов.
+    for (int scan_text_orient = static_cast<int>(TextOrientation::TEXT_ORIENT_MIN);
+         scan_text_orient <= static_cast<int>(TextOrientation::TEXT_ORIENT_MAX); ++scan_text_orient)
+    {
+        wxString text_orient_string = wxTR(TextOrientToString(static_cast<TextOrientation>(scan_text_orient)));
+        ComponentRefDesOrientChoice->Append(text_orient_string);
+        ComponentPinLabelOrientChoice->Append(text_orient_string);
+        InsertRefDesOrientChoice->Append(text_orient_string);
+        InsertPinLabelOrientChoice->Append(text_orient_string);
+    }
+
+    for (int scan_text_align = static_cast<int>(TextAlign::TEXT_ALIGN_MIN);
+         scan_text_align <= static_cast<int>(TextAlign::TEXT_ALIGN_MAX); ++scan_text_align)
+    {
+        wxString text_align_string = wxTR(TextAlignToString(static_cast<TextAlign>(scan_text_align)));
+        ComponentRefDesAlignChoice->Append(text_align_string);
+        ComponentPinLabelAlignChoice->Append(text_align_string);
+        InsertRefDesAlignChoice->Append(text_align_string);
+        InsertPinLabelAlignChoice->Append(text_align_string);
+    }
+    // Установка минимального и оптимального (текущего) размеров окна диалога средствами его главного разместителя.
     MainDialogSizer->SetSizeHints(this);
 }
 
@@ -496,10 +521,203 @@ wxString DatabaseResBrowser::DatabaseErrorToString(DatabaseErrorCode code)
     return {};
 }
 
+void DatabaseResBrowser::LoadNewNet(int net_index)
+{
+    bool old_block_signals = block_signals_;
+    block_signals_ = true;
+
+    if (!view_pcad_database_ || net_index < 0 || net_index >= static_cast<int>(view_pcad_database_->nets_size()))
+    { // Индекс net_index не соответствует какой-либо реальной цепи - выполняем очистку этой группы информационных виджетов.
+        NetNameText->Clear();
+        IsNetUserNameCheck->SetValue(false);
+        // ----------
+        NetObjectsInfoSizer->GetStaticBox()->SetLabel(wxTR(FRAGMENTS_TEXT) + ZERO_VALUE_STR);
+        NetObjectsListChoice->Clear();
+        NetObjectDescriptionText->Clear();
+        // ----------
+        block_signals_ = old_block_signals;
+        return;
+    }
+
+    auto use_net_it = view_pcad_database_->nets_begin() + static_cast<size_t>(net_index);
+    NetNameText->SetValue(use_net_it->GetName());
+    IsNetUserNameCheck->SetValue(false);
+    // ----------
+    NetObjectsInfoSizer->GetStaticBox()->SetLabel(wxTR(FRAGMENTS_TEXT) + ZERO_VALUE_STR);
+    NetObjectsListChoice->Clear();
+
+    block_signals_ = old_block_signals;
+}
+
+void DatabaseResBrowser::LoadNewNet(const string& net_name)
+{
+    if (!view_pcad_database_)
+    {
+        LoadNewNet(-1);
+        return;
+    }
+
+    auto database_nets_it = view_pcad_database_->nets_begin();
+    for (; database_nets_it != view_pcad_database_->nets_end(); ++database_nets_it)
+    {
+        if (database_nets_it->GetName() == net_name)
+            break;
+    }
+    if (database_nets_it != view_pcad_database_->nets_end())
+        LoadNewNet(database_nets_it - view_pcad_database_->nets_begin());
+    else
+        LoadNewNet(-1);
+}
+
+void DatabaseResBrowser::LoadNewComponent(int component_index)
+{
+    if (!view_pcad_database_ || component_index < 0 || component_index >= static_cast<int>(view_pcad_database_->radio_components_size()))
+    { // Индекс component_index не соответствует какому-либо существующему радиокомпоненту - выполняем очистку этой
+      // группы информационных виджетов.
+        ComponentNameText->Clear();
+        ComponentPackageIDText->Clear();
+        ComponentTyIDText->Clear();
+        ComponentOrgCoordsText->Clear();
+        IsComponentJumper->SetValue(false);
+        IsComponentPlanar->SetValue(false);
+        // ----------
+        ComponentSectionsInfoSizer->GetStaticBox()->SetLabel(wxTR(SECTIONS_TEXT) + ZERO_VALUE_STR);
+        ComponentSectInfoTree->DeleteAllItems();
+        // ----------
+        ComponentRefDesCoordsText->Clear();
+        ComponentRefDesLayerText->Clear();
+        ComponentRefDesHeightText->SetValue(ZERO_VALUE_STR);
+        ComponentRefDesAlignChoice->SetSelection(0);
+        ComponentRefDesOrientChoice->SetSelection(0);
+        // ----------
+        ComponentPinsListChoice->Clear();
+        ComponentPinsListChoice->SetSelection(wxNOT_FOUND);
+        // ----------
+        ComponentPinsInfoSizer->GetStaticBox()->SetLabel(wxTR(PINS_TEXT) + ZERO_VALUE_STR);
+        ComponentPinAlNumText->Clear();
+        ComponentPinNameText->Clear();
+        ComponentPinLayerText->Clear();
+        ComponentPinCoordsText->Clear();
+        ComponentPinTypeText->Clear();
+        ComponentPinEquivText->Clear();
+        // ----------
+        ComponentPinLabelCoordsText->Clear();
+        ComponentPinLabelLayerText->Clear();
+        ComponentPinLabelHeightText->SetValue(ZERO_VALUE_STR);
+        ComponentPinLabelAlignChoice->SetSelection(0);
+        ComponentPinLabelOrientChoice->SetSelection(0);
+        return;
+    }
+
+
+}
+
+void DatabaseResBrowser::LoadNewComponent(const string& component_name)
+{
+    if (!view_pcad_database_)
+    {
+        LoadNewComponent(-1);
+        return;
+    }
+
+    auto radio_components_it = view_pcad_database_->radio_components_begin();
+    for (; radio_components_it != view_pcad_database_->radio_components_end(); ++radio_components_it)
+    {
+        if (radio_components_it->GetName() == component_name)
+            break;
+    }
+    if (radio_components_it != view_pcad_database_->radio_components_end())
+        LoadNewComponent(radio_components_it - view_pcad_database_->radio_components_begin());
+    else
+        LoadNewComponent(-1);
+}
+
+void DatabaseResBrowser::ClearDialog()
+{
+    block_signals_ = true;
+    // ---- Очистка и инициализация виджетов с информацией об отдельном библиотечном радиокомпоненте. -----
+    ComponentsBoxSizer->GetStaticBox()->SetLabel(wxTR(COMPONENTS_TEXT) + ZERO_VALUE_STR);
+    ComponentsListChoice->Clear();
+    ComponentsListChoice->SetSelection(wxNOT_FOUND);
+    LoadNewComponent(-1);
+
+    // ----- Очистка и инициализация виджетов с информацией о токопроводящей цепи. -----
+    NetsBoxSizer->GetStaticBox()->SetLabel(wxTR(NETS_TEXT) + ZERO_VALUE_STR);
+    NetsListChoice->Clear();
+    NetsListChoice->SetSelection(wxNOT_FOUND);
+    LoadNewNet(-1);
+
+    // ---- Очистка и инициализация группы виджетов с информацией о вставке экземпляра радиокомпонента. ----
+    InsertionsBoxSizer->GetStaticBox()->SetLabel(wxTR(INSERTS_TEXT) + ZERO_VALUE_STR);
+    InsertionsListChoice->Clear();
+    InsertionsListChoice->SetSelection(wxNOT_FOUND);
+    // ----------
+    InsertNameText->Clear();
+    InsertNameCoordsText->Clear();
+    IsInsertUserNameCheck->SetValue(false);
+    InsertComponentNameText->Clear();
+    // ----------
+    InsertCoordsText->Clear();
+    IsInsertMirroring->SetValue(false);
+    IsInsertOnTop->SetValue(false);
+    // ----------
+    InsertRotateFactorText->SetValue(ZERO_VALUE_STR);
+    InsertScaleXText->SetValue(wxFSC(1.0));
+    InsertScaleYText->SetValue(wxFSC(1.0));
+    InsertSetAngleText->SetValue(ZERO_VALUE_STR);
+    // ----------
+    InsertRefDesCoordsText->Clear();
+    InsertRefDesLayerText->Clear();
+    InsertRefDesHeightText->SetValue(ZERO_VALUE_STR);
+    InsertRefDesAlignChoice->SetSelection(0);
+    InsertRefDesOrientChoice->SetSelection(0);
+    // ----------
+    InsertPinsInfoSizer->GetStaticBox()->SetLabel(wxTR(PINS_TEXT) + ZERO_VALUE_STR);
+    InsertPinNamesListChoice->Clear();
+    InsertPinNamesListChoice->SetSelection(wxNOT_FOUND);
+    // ----------
+    InsertPinAlNumText->Clear();
+    InsertPinNameText->Clear();
+    InsertPinTypeText->Clear();
+    InsertPinNetNameConnectText->Clear();
+    // ----------
+    InsertPinLabelCoordsText->Clear();
+    InsertPinLabelLayerText->Clear();
+    InsertPinLabelHeightText->SetValue(ZERO_VALUE_STR);
+    InsertPinLabelAlignChoice->SetSelection(0);
+    InsertPinLabelOrientChoice->SetSelection(0);
+    // ----------
+    block_signals_ = false;
+}
+
 std::vector<DatabaseResBrowser::LoadDatabaseError> DatabaseResBrowser::LoadPCADFileData(const PCADFile* pcad_database)
 {
+    ClearDialog();
     view_pcad_database_ = pcad_database;
+    if (!view_pcad_database_)
+        return {};
 
+    block_signals_ = true;
+    // Настраиваем перекодировщик в соответствии с кодировкой просматриваемого документа.
+    pdif_encoding_conv.Init(pcad_database->GetFileDefValues().pdif_encoding, wxFONTENCODING_UNICODE, wxCONVERT_SUBSTITUTE);
+
+    // Составляем и загружаем в виджет выбора список доступных библиотечных радиокомпонентов документа.
+    ComponentSectionsInfoSizer->GetStaticBox()->SetLabel(wxTR(SECTIONS_TEXT) + wxFI(view_pcad_database_->radio_components_size()));
+    for (auto radio_components_it = view_pcad_database_->radio_components_begin();
+         radio_components_it != view_pcad_database_->radio_components_end(); ++radio_components_it)
+        ComponentsListChoice->Append(radio_components_it->GetName());
+    // Формируем полный список имеющихся токопроводящих цепей.
+    NetsBoxSizer->GetStaticBox()->SetLabel(wxTR(NETS_TEXT) + wxFI(view_pcad_database_->nets_size()));
+    for (auto database_nets_it = view_pcad_database_->nets_begin();
+         database_nets_it != view_pcad_database_->nets_end(); ++database_nets_it)
+        NetsListChoice->Append(database_nets_it->GetName());
+    // Наконец, занесём в соответствующий виджет список имеющихся в базе данных вставок копий радиокомпонентов из библиотеки.
+    InsertionsBoxSizer->GetStaticBox()->SetLabel(wxTR(INSERTS_TEXT) + wxFI(view_pcad_database_->radio_comp_inserts_size()));
+    for (auto radio_comp_inserts_it = view_pcad_database_->radio_comp_inserts_begin();
+         radio_comp_inserts_it != view_pcad_database_->radio_comp_inserts_end(); ++radio_comp_inserts_it)
+        InsertionsListChoice->Append(radio_comp_inserts_it->GetName());
+
+    block_signals_ = false;
     return {};
 }
 
@@ -511,26 +729,42 @@ wxString DatabaseResBrowser::GetErrorMessage() const
 
 void DatabaseResBrowser::OnComponentsListChoiceSelect(wxCommandEvent& event)
 {
+    if (block_signals_)
+        return;
 }
 
 void DatabaseResBrowser::OnComponentPinsListChoiceSelect(wxCommandEvent& event)
 {
+    if (block_signals_)
+        return;
 }
 
 void DatabaseResBrowser::OnNetsListChoiceSelect(wxCommandEvent& event)
 {
+    if (block_signals_)
+        return;
+
 }
 
 void DatabaseResBrowser::OnNetObjectsListChoiceSelect(wxCommandEvent& event)
 {
+    if (block_signals_)
+        return;
+
 }
 
 void DatabaseResBrowser::OnInsertionsListChoiceSelect(wxCommandEvent& event)
 {
+    if (block_signals_)
+        return;
+
 }
 
 void DatabaseResBrowser::OnInsertPinNamesListChoiceSelect(wxCommandEvent& event)
 {
+    if (block_signals_)
+        return;
+
 }
 
 void DatabaseResBrowser::OnExportAsTextButtonClick(wxCommandEvent& event)

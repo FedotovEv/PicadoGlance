@@ -49,6 +49,7 @@ namespace HandlerPLT8
     {
         fdv.file_signature = wxT("PLT8");
         fdv.file_workshop = this;
+        fdv.pdif_encoding = additional_load_info.pdif_encoding;  // Кодировка загружаемого файла.
         fdv.file_flags = 0;
         fdv.picture_filepath = additional_load_info.picture_file_path;
         // fix_plt_head_.measure_unit кодирует единицы измерения длины в чертеже (8 - дюймы, 9 - миллиметры)

@@ -35,14 +35,16 @@ enum class FillType
 
 enum class TextOrientation
 {
-    TEXT_LEFT_RIGHT = 0,
-    TEXT_DOWN_UP,
-    TEXT_RIGHT_LEFT,
-    TEXT_UP_DOWN,
-    TEXT_LEFT_RIGHT_MIRROR,
-    TEXT_DOWN_UP_MIRROR,
-    TEXT_RIGHT_LEFT_MIRROR,
-    TEXT_UP_DOWN_MIRROR,
+    TEXT_LEFT_RIGHT = 0,    // Нормальная ориентация текста - слева направо.
+    TEXT_DOWN_UP,           // Направление текста снизу вверх.
+    TEXT_RIGHT_LEFT,        // Справа налево.
+    TEXT_UP_DOWN,           // Сверху вниз.
+    TEXT_LEFT_RIGHT_MIRROR, // Слева направо отражённый текст.
+    TEXT_DOWN_UP_MIRROR,    // Снизу вверх отражённый.
+    TEXT_RIGHT_LEFT_MIRROR, // Справа налево отражённый.
+    TEXT_UP_DOWN_MIRROR,    // Сверху вниз отражённый.
+    TEXT_ORIENT_MIN = TEXT_LEFT_RIGHT,
+    TEXT_ORIENT_MAX = TEXT_UP_DOWN_MIRROR
 };
 
 enum class TextAlign
@@ -50,15 +52,17 @@ enum class TextAlign
     // Имя константы состоит из двух ключей расположения точки привязки
     // относительно текста. Первый ключ определяет выравнивание текста по
     // горизонтали, а второй - по вертикали.
-    TEXT_CENTER_DOWN = 0, // Точка привязки текста по центру снизу
-    TEXT_CENTER_UP,
-    TEXT_CENTER_CENTER,
-    TEXT_LEFT_DOWN,
-    TEXT_LEFT_UP,
-    TEXT_LEFT_CENTER,
-    TEXT_RIGHT_DOWN,
-    TEXT_RIGHT_UP,
-    TEXT_RIGHT_CENTER     // Точка привязки текста справа по центру
+    TEXT_CENTER_DOWN = 0,   // Точка привязки текста по центру снизу.
+    TEXT_CENTER_UP,         // Центр (по горизонтали) - верх (по вертикали).
+    TEXT_CENTER_CENTER,     // Центр-центр.
+    TEXT_LEFT_DOWN,         // Лево-низ.
+    TEXT_LEFT_UP,           // Лево-верх.
+    TEXT_LEFT_CENTER,       // Лево-центр.
+    TEXT_RIGHT_DOWN,        // Право-низ.
+    TEXT_RIGHT_UP,          // Право-верх.
+    TEXT_RIGHT_CENTER,      // Точка привязки текста справа по центру.
+    TEXT_ALIGN_MIN = TEXT_CENTER_DOWN,
+    TEXT_ALIGN_MAX = TEXT_RIGHT_CENTER
 };
 
 enum class TextCoordAlign

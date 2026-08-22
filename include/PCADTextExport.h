@@ -12,3 +12,5 @@ std::string ConvertColorToString(const SelColorType& col);
 std::string ConvertRectToStringShort(const wxRect& rect, DrawContext& draw_context);
 std::string ConvertRectToStringShortEx(const wxRect& rect, DrawContext& draw_context);
 std::string ConvertColorToStringShort(const SelColorType& col);
+std::string TextOrientToString(TextOrientation text_orientation);
+std::string TextAlignToString(TextAlign text_align);

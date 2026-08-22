@@ -2111,8 +2111,9 @@ namespace HandlerPDIF
         additional_load_info.load_errors.clear();
 
         // Заполним поля файлового описания file_values, зависящие только от типа загружаемого файла.
-        load_file_data.file_values.file_signature = "PDIF"; // Строка, кратко описывающая тип и содержание файла
-        load_file_data.file_values.file_workshop = this; // Указатель на "цех файловой фабрики", открывший данный файл
+        load_file_data.file_values.file_signature = "PDIF"; // Строка, кратко описывающая тип и содержание файла.
+        load_file_data.file_values.file_workshop = this;    // Указатель на "цех файловой фабрики", открывший данный файл.
+        load_file_data.file_values.pdif_encoding = additional_load_info.pdif_encoding;  // Кодировка загружаемого файла.
 
         // Основной цикл разбора входного потока PDIF-данных.
         int skip_node_level = -1;  // Параметр режима пропуска неподдерживаемых узлов PDIF-дерева.
