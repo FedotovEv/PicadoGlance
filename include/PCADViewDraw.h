@@ -422,7 +422,7 @@ protected:
     mutable GraphObjAttributes graph_obj_attributes_; // Некоторая дополнительная информация,
                                                       // хранящаяся вместе с примитивом.
     inline static GraphObjGlobalConfig glob_cfg_; // Коллекция указателей на различные структуры,
-                                           // описывающие нужные нам настройки глобальной конфигурации.
+                                                  // описывающие нужные нам настройки глобальной конфигурации.
 
 private:
     inline static uint32_t last_graph_object_ordinal_ = 0;
@@ -613,6 +613,21 @@ public:
     wxPoint GetTextPoint() const
     {
         return text_point_;
+    }
+
+    TextOrientation GetTextOrientation() const
+    {
+        return text_orientation_;
+    }
+
+    TextAlign GetTextAlign() const
+    {
+        return text_align_;
+    }
+
+    int GetTextHeight() const
+    {
+        return text_height_;
     }
 
 private:

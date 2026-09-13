@@ -85,7 +85,7 @@
 										<object class="wxBoxSizer" variable="ComponentOrgPropertiesSizer" member="no">
 											<object class="sizeritem">
 												<object class="wxStaticText" name="wxID_ANY" variable="ComponentOrgCoordsTitle" member="no">
-													<label>Координаты</label>
+													<label>Координаты привязки</label>
 												</object>
 												<flag>wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
 												<border>5</border>

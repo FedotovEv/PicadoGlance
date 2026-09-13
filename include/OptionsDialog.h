@@ -17,6 +17,7 @@
 	//*)
 #endif
 //(*Headers(OptionsDialog)
+#include <wx/spinctrl.h>
 //*)
 
 class OptionsDialog: public wxDialog
@@ -33,6 +34,7 @@ class OptionsDialog: public wxDialog
 		wxButton* ButtonOptionOk;
 		wxCheckBox* CheckBoxOwnTextEngine;
 		wxCheckBox* CheckBoxScreenSubscale;
+		wxCheckBox* DrillGenIsSortCheck;
 		wxChoice* PDIFEncodingChoice;
 		wxComboBox* ComboBoxApertureSection;
 		wxListBox* ListBoxApertures;
@@ -42,6 +44,7 @@ class OptionsDialog: public wxDialog
 		wxRadioButton* RadioUseDBU;
 		wxRadioButton* RadioUseInch;
 		wxRadioButton* RadioUseMillimeter;
+		wxSpinCtrl* DrillGenClusterSizeSpin;
 		wxStaticText* StaticText1;
 		wxStaticText* StaticText3;
 		wxStaticText* StaticText4;
@@ -76,6 +79,8 @@ class OptionsDialog: public wxDialog
 		static const wxWindowID ID_CHECKBOX_SCREEN_SUBSCALE;
 		static const wxWindowID ID_CHECKBOX_OWN_TEXT_ENGINE;
 		static const wxWindowID ID_CHOICE_PDIF_ENCODING;
+		static const wxWindowID ID_CHECKBOX_DRILL_GEN_IS_SORT;
+		static const wxWindowID ID_SPIN_DRILL_GEN_CLUSTER_SIZE;
 		static const wxWindowID ID_BUTTON_OPTION_OK;
 		static const wxWindowID ID_BUTTON_OPTION_CANCEL;
 		//*)

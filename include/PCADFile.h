@@ -50,8 +50,6 @@ struct LayerAttributes
 
 struct LayerDesc : public ExAttrsCollection
 {
-    static const LayerDesc LAYER_DESC_INVALID;
-
     std::string layer_name;     // Имя (название) слоя.
     int layer_number;           // Номер слоя в списке VLYR (отсчитывается от нуля).
     int layer_color = 0;        // Индекс в палитре, которым должна выводиться графика слоя.
@@ -201,11 +199,22 @@ struct ComponentSPKGSectDef
     }
 };
 
-using ComponentSectDefVar = std::variant<ComponentPKGSectDef, ComponentSPKGSectDef>;
+using ComponentSectDefVar = std::variant<std::monostate, ComponentPKGSectDef, ComponentSPKGSectDef>;
 
 struct ComponentSectDef : public ComponentSectDefVar
 {
+    // Очистка структуры.
     void Clear() noexcept;
+    // Вычисление общего количества секций компонента.
+    int GetCount() const noexcept;
+    // Возвращает "ИСТИНУ", если объект содержит состоятельную информацию о секциях компонента.
+    bool IsValid() const noexcept;
+    // Тип хранящейся в данной структуре информации.
+    bool IsSPKG() const noexcept;
+    // Возврат ссылки на поле типа ComponentPKGSectDef, если оно содержится в структуре.
+    const ComponentPKGSectDef& GetPKGSectDef() const;
+    // Возврат ссылки на поле типа ComponentSPKGSectDef, если оно содержится в структуре.
+    const ComponentSPKGSectDef& GetSPKGSectDef() const;
 };
 
 struct RefDesDef
@@ -243,6 +252,7 @@ private:
     int ty_id_ = 0;                             // Идентификационный код типа компонента (ID).
     bool is_smd_ = false;                       // Признак планарного радиокомпонента.
     bool is_jumper_ = false;                    // Признак радиокомпонента-перемычки.
+    const PCADFile* pcad_document_ = nullptr;   // Указатель на полный PDIF-документ, в который мы входим.
 
 public:
     struct SourceData
@@ -273,6 +283,8 @@ public:
     RadioComponentDesc& operator=(RadioComponentDesc&& other) noexcept;
 
     void Clear() noexcept;              // Функция-член общей очистки данных этой структуры.
+    // Постобработка компонента после полного формирования первоначального всего документа, в состав которого компонент входит.
+    void ComponentPostProcess(const PCADFile* pcad_document);
 
     const std::string GetName() const   // Извлечение имени радиокомпонента.
     {
@@ -290,10 +302,39 @@ public:
         return ty_id_;
     }
 
+    wxPoint GetOrgPos() const  // Получение координат точки привязки радиокомпонента.
+    {
+        return org_pos_;
+    }
+
+    const ComponentSectDef& GetSectionsDefData() const  // Ссылка на описание секционирования компонента.
+    {
+        return sections_def_;
+    }
+
+    size_t FindPinByName(const std::string& pin_name) const;
+    size_t FindPinByAlNumber(const std::string& pin_al_number) const;
+
     // Функции-члены обзора списка графических элементов радиокомпонента.
     size_t size() const
     {
         return graph_objects_.size();
+    }
+
+    bool IsSMD() const      // Признак планарного компонента.
+    {
+        return is_smd_;
+    }
+
+    bool IsJumper() const   // Признак компонента-перемычки.
+    {
+        return is_jumper_;
+    }
+
+    // Возврат ссылки на "справочное" (предварительное) описание свойств конструкторского обозначения компонента.
+    const RefDesDef& GetRefDes() const
+    {
+        return refdes_;
     }
 
     decltype(graph_objects_)::const_iterator begin() const
@@ -386,6 +427,14 @@ public:
         ExAttrsCollection ex_attr_collection;   // Промежуточное хранилище набора "внешних" атрибутов операции вставки.
     };
 
+    struct PinNetConnectInfo
+    {
+        std::string pin_name;
+        int pin_index = -1;         // Порядковый номер подсоединённого вывода (индекс вывода в базе данных документа).
+        std::string net_name;
+        int net_index = -1;         // Порядковый номер подсоединяющей цепи (индекс цепи в базе данных документа).
+    };
+
     RadioComponentInsertion() = default;
     RadioComponentInsertion(SourceData&& component_insert_data);
     RadioComponentInsertion(const RadioComponentInsertion& other) = delete;
@@ -395,7 +444,9 @@ public:
     RadioComponentInsertion& operator=(const RadioComponentInsertion& other) = delete;
     RadioComponentInsertion& operator=(RadioComponentInsertion&& other) noexcept;
 
-    void Clear() noexcept ; // Функция-член общей очистки данных этой структуры.
+    void Clear() noexcept;         // Функция-член общей очистки данных этой структуры.
+    // Функция-член постобработки этой записи, производимой после полного первоначального заполнения всех массивов общего PDIF-документа.
+    void InsertPostProcess(const PCADFile* pcad_document);
 
     const std::string& GetName() const
     {
@@ -407,15 +458,138 @@ public:
         return comp_name_;
     }
 
-private:
-    struct PinNetConnectInfo
+    // Получение библиотечного номера (индекса в библиотеке, отсчитываемого от нуля) вставленного радиоэлемента.
+    int GetComponentNumber() const
     {
-        std::string pin_name;
-        int pin_index = -1;
-        std::string net_name;
-        int net_index = -1;
-    };
+        return comp_number_;
+    }
 
+    const GraphObj* GetRefDes() const
+    {
+        return refdes_obj_;
+    }
+
+    // Функции-члены обзора списка этикеток (подписей) выводов вставки.
+    size_t pin_labels_size() const
+    {
+        return pin_labels_.size();
+    }
+
+    decltype(pin_labels_)::const_iterator pin_labels_begin() const
+    {
+        return pin_labels_.cbegin();
+    }
+
+    decltype(pin_labels_)::const_iterator pin_labels_end() const
+    {
+        return pin_labels_.cend();
+    }
+
+    decltype(pin_labels_)::const_reverse_iterator pin_labels_rbegin() const
+    {
+        return pin_labels_.crbegin();
+    }
+
+    decltype(pin_labels_)::const_reverse_iterator pin_labels_rend() const
+    {
+        return pin_labels_.crend();
+    }
+
+    // Функции-члены обзора списка соединений выводов вставки в токопроводящими цепями системы.
+    size_t connect_info_size() const
+    {
+        return connect_info_.size();
+    }
+
+    decltype(connect_info_)::const_iterator connect_info_begin() const
+    {
+        return connect_info_.cbegin();
+    }
+
+    decltype(connect_info_)::const_iterator connect_info_end() const
+    {
+        return connect_info_.cend();
+    }
+
+    decltype(connect_info_)::const_reverse_iterator connect_info_rbegin() const
+    {
+        return connect_info_.crbegin();
+    }
+
+    decltype(connect_info_)::const_reverse_iterator connect_info_rend() const
+    {
+        return connect_info_.crend();
+    }
+
+    // Функции-члены обзора списка переназначений типов ножек или выводов (IPT-данных).
+    size_t pin_type_info_size() const
+    {
+        return pin_type_info_.size();
+    }
+
+    decltype(pin_type_info_)::const_iterator pin_type_info_begin() const
+    {
+        return pin_type_info_.cbegin();
+    }
+
+    decltype(pin_type_info_)::const_iterator pin_type_info_end() const
+    {
+        return pin_type_info_.cend();
+    }
+
+    decltype(pin_type_info_)::const_reverse_iterator pin_type_info_rbegin() const
+    {
+        return pin_type_info_.crbegin();
+    }
+
+    decltype(pin_type_info_)::const_reverse_iterator pin_type_info_rend() const
+    {
+        return pin_type_info_.crend();
+    }
+
+    // Методы получения прочих (весьма многочисленных) сведений о данной вставке.
+    bool IsMirror() const       // Признак зеркальности вставленного экземпляра.
+    {
+        return is_mirror_;
+    }
+
+    bool OnTopSize() const      // Признак размещения экземпляра на стороне деталей.
+    {
+        return on_top_side_;
+    }
+
+    std::optional<wxPoint> GetInsNamePos() const    // Положение якорной точки частного имени копии компонента.
+    {
+        return ins_name_pos_;
+    }
+
+    bool IsUserInsName() const                      // Флаг присвоения экземпляру компонента пользовательского имени.
+    {
+        return is_user_ins_name_;
+    }
+
+    wxPoint GetPlacePos() const                     // Точка местоположения данной вставки.
+    {
+        return place_pos_;
+    }
+
+    // Получение горизонтального (первый член пары) и вертикального (второй член пары) масштабов вставленной копии.
+    std::pair<double, double> GetScalesXY() const
+    {
+        return {scale_x_, scale_y_};
+    }
+
+    int GetRotateFactor() const     // Фактор нормального поворота вставленной копии компонента.
+    {
+        return rotate_factor_;
+    }
+
+    double GetSetAngle() const      // Угол установки копии компонента в целых градусах.
+    {
+        return set_angle_;
+    }
+
+private:
     std::string comp_name_;              // Имя библиотечного образца вставленного радиокомпонента.
     std::string insertion_name_;         // Собственное имя вставленной копии.
     int comp_number_ = -1;               // Номер (индекс, отсчитываемый от нуля) вставленного радиоэлемента, к которому
@@ -441,6 +615,10 @@ private:
     int rotate_factor_ = 0;                 // Фактор нормального поворота вставленной копии компонента.
     double set_angle_ = 0.0;                // Угол установки копии компонента в целых градусах в диапазоне от 0 до 89 градусов.
                                             // При вычислении действительной ориентации копии комбинируется с rotate_factor_.
+    // Поля внешних связей, позволяющих связать данную вставку с документом, в который включён этот объект, а также с конкретным библиотечным
+    // компонентом, копию которого она описывает.
+    const PCADFile* pcad_document_ = nullptr;           // Указатель на полный PDIF-документ, в который мы входим.
+    const RadioComponentDesc* lib_component_ = nullptr; // Указатель на вставляемый библиотечный радиокомпонент.
 };
 
 struct NetDefDesc : public ExAttrsCollection
@@ -451,6 +629,7 @@ private:
                                             // (переходные отверстия и межсоединения), ломаные многосегментные линии и полигоны.
     // --------- Параметры цепи, назначаемые её внутренними атрибутами (в подсекции ATR/IN).
     bool is_user_net_name_ = false;         // Флаг присвоения данной цепи пользовательского имени.
+    const PCADFile* pcad_document_ = nullptr;   // Указатель на полный PDIF-документ, в который мы входим.
 
 public:
     struct SourceData
@@ -473,7 +652,8 @@ public:
     NetDefDesc& operator=(const NetDefDesc& other) = delete;
     NetDefDesc& operator=(NetDefDesc&& other) noexcept;
 
-    void Clear() noexcept;              // Функция-член общей очистки данных этой структуры.
+    void Clear() noexcept;                              // Функция-член общей очистки данных этой структуры.
+    void NetPostProcess(const PCADFile* pcad_document); // Функция-член послезагрузочной обработки данных объекта.
 
     const std::string& GetName() const  // Получение имени данной цепи.
     {
@@ -531,6 +711,22 @@ struct PCADFileSource
 
 class PCADFile
 {
+public:
+    // Набор несостоятельных зарезервированных переменных разных типов, на которые будут возвращаться ссылки при
+    // отсутствии соответствующих валидных объектов.
+    static const LayerDesc LAYER_DESC_INVALID;
+    static const CrossLayerPinhole CROSS_LAYER_PINHOLE_INVALID;
+    static const RadioComponentDesc RADIO_COMPONENT_INVALID;
+    static const RadioComponentInsertion COMPONENT_INSERTION_INVALID;
+    static const NetDefDesc NET_INVALID;
+    static const RefDesDef REFDES_INVALID;
+    static const ComponentPinDef COMPONENT_PIN_INVALID;
+    static const PinLabelDef PIN_LABEL_INVALID;
+    // ----- Различные невалидные объекты с упаковочными данными компонентов.
+    static const ComponentSectDef COMPONENT_SECT_INVALID;
+    static const ComponentPKGSectDef COMPONENT_PKG_INVALID;
+    static const ComponentSPKGSectDef COMPONENT_SPKG_INVALID;
+
 private:
     void PCADFileClear();
     void InitLayersColor();
@@ -568,6 +764,8 @@ public:
     }
 
     void SetApertureType(aperture::UsingApertureType using_aperture_type) const;
+    // Метод постобработки загруженного документа после его полного "чернового" заполнения.
+    void PCADPostProcess();
 
     // Основной итератор - перечислитель видимых (графических) объектов документа.
     size_t size() const
@@ -762,27 +960,15 @@ public:
         return file_values_;
     }
 
-    LayerDesc GetLayerDesc(int layer_num) const
-    {
-        if (layer_num >= 0 && layer_num < static_cast<int>(layers_.size()))
-            return layers_[layer_num];
-        else //  Слой по умолчанию с невозможными параметрами
-            return LayerDesc::LAYER_DESC_INVALID;
-    }
-
-    void SetLayerAttributes(int layer_num, LayerAttributes layer_attributes) const
-    {
-        if (layer_num >= 0 && layer_num < static_cast<int>(layers_.size()))
-            layers_[layer_num].layer_attributes = layer_attributes;
-    }
-
-    LayerAttributes GetLayerAttributes(int layer_num) const
-    {
-        if (layer_num >= 0 && layer_num < static_cast<int>(layers_.size()))
-            return layers_[layer_num].layer_attributes;
-        else
-            return LayerAttributes{0};
-    }
+    // Операции со слоями документа.
+    // Возврат описателя слоя по его порядковому индексу.
+    LayerDesc GetLayerDesc(int layer_num) const;
+    // Поиск слоя по его имени.
+    int FindLayerDesc(const std::string& find_layer_name) const;
+    // Установка атрибутов слоя.
+    void SetLayerAttributes(int layer_num, LayerAttributes layer_attributes) const;
+    // Считывание текущих атрибутов слоя.
+    LayerAttributes GetLayerAttributes(int layer_num) const;
 
     wxString GetPictureFileName() const
     {

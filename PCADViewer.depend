@@ -2681,7 +2681,7 @@
 	<any>
 	"macroses.h"
 
-1787309315c:\users\fedotov\source\repos\picadoglance\include\macroses.h
+1787384728c:\users\fedotov\source\repos\picadoglance\include\macroses.h
 	<string>
 	<vector>
 	<wx/string.h>
@@ -2708,7 +2708,7 @@
 	<filesystem>
 	<unordered_map>
 
-1787213623c:\users\fedotov\source\repos\picadoglance\include\pcadviewdraw.h
+1787745286c:\users\fedotov\source\repos\picadoglance\include\pcadviewdraw.h
 	<string>
 	<vector>
 	<variant>
@@ -2793,7 +2793,7 @@
 	"wx/string.h"
 	"wx/dynarray.h"
 
-1787317131source:c:\users\fedotov\source\repos\picadoglance\src\macroses.cpp
+1787384506source:c:\users\fedotov\source\repos\picadoglance\src\macroses.cpp
 	"macroses.h"
 	<string>
 	"redefine_.h"
@@ -3127,7 +3127,7 @@
 	"wx/filesys.h"
 	"wx/hashmap.h"
 
-1787316614c:\users\fedotov\source\repos\picadoglance\include\pcadfile.h
+1787743739c:\users\fedotov\source\repos\picadoglance\include\pcadfile.h
 	<iostream>
 	<string>
 	<vector>
@@ -3161,7 +3161,7 @@
 	"TBLFileServer.h"
 	"redefine_.h"
 
-1782374233c:\users\fedotov\source\repos\picadoglance\include\redefine_.h
+1787384782c:\users\fedotov\source\repos\picadoglance\include\redefine_.h
 
 1787052746source:c:\users\fedotov\source\repos\picadoglance\src\editdrillbitsproperties.cpp
 	"wx_pch.h"
@@ -3472,7 +3472,7 @@
 	"DrawGraphicalEntities.h"
 	"svg.h"
 
-1787124181source:c:\users\fedotov\source\repos\picadoglance\src\pcadviewerapp.cpp
+1787384584source:c:\users\fedotov\source\repos\picadoglance\src\pcadviewerapp.cpp
 	"wx_pch.h"
 	"PCADFile.h"
 	"HandlerPLT.h"
@@ -3525,7 +3525,7 @@
 1772283012c:\wxwidgets_3_2_10\include\wx\xrc\xh_bmp.h
 	"wx/xrc/xmlres.h"
 
-1787316780source:c:\users\fedotov\source\repos\picadoglance\src\pcadviewermain.cpp
+1787384611source:c:\users\fedotov\source\repos\picadoglance\src\pcadviewermain.cpp
 	<iostream>
 	<iomanip>
 	<fstream>
@@ -3675,7 +3675,7 @@
 	"wx/dynarray.h"
 	"wx/vidmode.h"
 
-1779506467source:c:\users\fedotov\source\repos\picadoglance\src\setcanvassize.cpp
+1787384639source:c:\users\fedotov\source\repos\picadoglance\src\setcanvassize.cpp
 	<string>
 	"wx_pch.h"
 	"SetCanvasSize.h"
@@ -3740,7 +3740,7 @@
 	"PCADViewDraw.h"
 	"ApertureFile.h"
 
-1787312697c:\users\fedotov\source\repos\picadoglance\include\databaseresbrowser.h
+1787748453c:\users\fedotov\source\repos\picadoglance\include\databaseresbrowser.h
 	<wx/button.h>
 	<wx/checkbox.h>
 	<wx/choice.h>
@@ -3750,6 +3750,7 @@
 	<wx/stattext.h>
 	<wx/textctrl.h>
 	<wx/treectrl.h>
+	"PCADTextExport.h"
 	"redefine_.h"
 	<wx/encconv.h>
 

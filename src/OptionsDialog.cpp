@@ -38,6 +38,8 @@ const wxWindowID OptionsDialog::ID_TEXTCTRL_UNIT_SCALE_VALUE_Y = wxNewId();
 const wxWindowID OptionsDialog::ID_CHECKBOX_SCREEN_SUBSCALE = wxNewId();
 const wxWindowID OptionsDialog::ID_CHECKBOX_OWN_TEXT_ENGINE = wxNewId();
 const wxWindowID OptionsDialog::ID_CHOICE_PDIF_ENCODING = wxNewId();
+const wxWindowID OptionsDialog::ID_CHECKBOX_DRILL_GEN_IS_SORT = wxNewId();
+const wxWindowID OptionsDialog::ID_SPIN_DRILL_GEN_CLUSTER_SIZE = wxNewId();
 const wxWindowID OptionsDialog::ID_BUTTON_OPTION_OK = wxNewId();
 const wxWindowID OptionsDialog::ID_BUTTON_OPTION_CANCEL = wxNewId();
 //*)
@@ -50,21 +52,24 @@ END_EVENT_TABLE()
 OptionsDialog::OptionsDialog(wxWindow* parent, wxWindowID id)
 {
 	//(*Initialize(OptionsDialog)
-	wxBoxSizer* BoxSizer10;
 	wxBoxSizer* BoxSizer1;
 	wxBoxSizer* BoxSizer2;
-	wxBoxSizer* BoxSizer3;
 	wxBoxSizer* BoxSizer4;
 	wxBoxSizer* BoxSizer5;
 	wxBoxSizer* BoxSizer6;
 	wxBoxSizer* BoxSizer7;
 	wxBoxSizer* BoxSizer8;
 	wxBoxSizer* BoxSizer9;
+	wxBoxSizer* DrawAddParamsSizer;
+	wxBoxSizer* DrillGenSortParamsSizer;
+	wxBoxSizer* OptionsMainButtonsSizer;
 	wxGridSizer* GridSizer1;
+	wxStaticBoxSizer* DrillGenConfSizer;
 	wxStaticBoxSizer* PDIFParamsBoxSizer;
 	wxStaticBoxSizer* StaticBoxSizer1;
 	wxStaticBoxSizer* StaticBoxSizer2;
 	wxStaticBoxSizer* StaticBoxSizer3;
+	wxStaticText* DrillGenClusterSizeStatic;
 	wxStaticText* StaticText2;
 
 	Create(parent, wxID_ANY, _("Параметры программы"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE, _T("wxID_ANY"));
@@ -81,7 +86,7 @@ OptionsDialog::OptionsDialog(wxWindow* parent, wxWindowID id)
 	BoxSizer8->Add(ButtonLoadAperture, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	ButtonApertureDefault = new wxButton(StaticBoxSizer3->GetStaticBox(), ID_BUTTONAPERTURE_DEFAULT, _("По умолчанию"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_BUTTONAPERTURE_DEFAULT"));
 	BoxSizer8->Add(ButtonApertureDefault, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-	BoxSizer4->Add(BoxSizer8, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	BoxSizer4->Add(BoxSizer8, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	BoxSizer9->Add(BoxSizer4, 1, wxALL|wxEXPAND, 5);
 	BoxSizer6 = new wxBoxSizer(wxVERTICAL);
 	BoxSizer7 = new wxBoxSizer(wxHORIZONTAL);
@@ -131,27 +136,38 @@ OptionsDialog::OptionsDialog(wxWindow* parent, wxWindowID id)
 	GridSizer1->Add(TextAdditionalUnitScaleYValue, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	StaticBoxSizer2->Add(GridSizer1, 2, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	BoxSizer1->Add(StaticBoxSizer2, 2, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-	BoxSizer10 = new wxBoxSizer(wxHORIZONTAL);
+	DrawAddParamsSizer = new wxBoxSizer(wxHORIZONTAL);
 	CheckBoxScreenSubscale = new wxCheckBox(this, ID_CHECKBOX_SCREEN_SUBSCALE, _("Подмасштабы для экрана"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_CHECKBOX_SCREEN_SUBSCALE"));
 	CheckBoxScreenSubscale->SetValue(false);
 	CheckBoxScreenSubscale->SetHelpText(_("Выводить изображение на экран с учётом его физического разрешения"));
-	BoxSizer10->Add(CheckBoxScreenSubscale, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	DrawAddParamsSizer->Add(CheckBoxScreenSubscale, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	CheckBoxOwnTextEngine = new wxCheckBox(this, ID_CHECKBOX_OWN_TEXT_ENGINE, _("Использовать собственный текстовый движок"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_CHECKBOX_OWN_TEXT_ENGINE"));
 	CheckBoxOwnTextEngine->SetValue(false);
-	BoxSizer10->Add(CheckBoxOwnTextEngine, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-	BoxSizer1->Add(BoxSizer10, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	DrawAddParamsSizer->Add(CheckBoxOwnTextEngine, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	BoxSizer1->Add(DrawAddParamsSizer, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	PDIFParamsBoxSizer = new wxStaticBoxSizer(wxHORIZONTAL, this, _("Параметры PDIF-документов"));
 	StaticText2 = new wxStaticText(PDIFParamsBoxSizer->GetStaticBox(), wxID_ANY, _("Кодировка"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
 	PDIFParamsBoxSizer->Add(StaticText2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	PDIFEncodingChoice = new wxChoice(PDIFParamsBoxSizer->GetStaticBox(), ID_CHOICE_PDIF_ENCODING, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("ID_CHOICE_PDIF_ENCODING"));
 	PDIFParamsBoxSizer->Add(PDIFEncodingChoice, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	BoxSizer1->Add(PDIFParamsBoxSizer, 1, wxALL|wxEXPAND, 5);
-	BoxSizer3 = new wxBoxSizer(wxHORIZONTAL);
+	DrillGenConfSizer = new wxStaticBoxSizer(wxVERTICAL, this, _("Генератор данных сверловки"));
+	DrillGenSortParamsSizer = new wxBoxSizer(wxHORIZONTAL);
+	DrillGenIsSortCheck = new wxCheckBox(DrillGenConfSizer->GetStaticBox(), ID_CHECKBOX_DRILL_GEN_IS_SORT, _("Сортировать отверстия"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_CHECKBOX_DRILL_GEN_IS_SORT"));
+	DrillGenIsSortCheck->SetValue(false);
+	DrillGenSortParamsSizer->Add(DrillGenIsSortCheck, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	DrillGenClusterSizeStatic = new wxStaticText(DrillGenConfSizer->GetStaticBox(), wxID_ANY, _("Количество отверстий в кластере"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
+	DrillGenSortParamsSizer->Add(DrillGenClusterSizeStatic, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	DrillGenClusterSizeSpin = new wxSpinCtrl(DrillGenConfSizer->GetStaticBox(), ID_SPIN_DRILL_GEN_CLUSTER_SIZE, _T("1"), wxDefaultPosition, wxDefaultSize, 0, 1, 1000, 1, _T("ID_SPIN_DRILL_GEN_CLUSTER_SIZE"));
+	DrillGenSortParamsSizer->Add(DrillGenClusterSizeSpin, 1, wxTOP|wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5);
+	DrillGenConfSizer->Add(DrillGenSortParamsSizer, 1, wxEXPAND, 5);
+	BoxSizer1->Add(DrillGenConfSizer, 0, wxBOTTOM|wxLEFT|wxRIGHT|wxEXPAND, 5);
+	OptionsMainButtonsSizer = new wxBoxSizer(wxHORIZONTAL);
 	ButtonOptionOk = new wxButton(this, ID_BUTTON_OPTION_OK, _("Принять"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_BUTTON_OPTION_OK"));
-	BoxSizer3->Add(ButtonOptionOk, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	OptionsMainButtonsSizer->Add(ButtonOptionOk, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	ButtonOptionCancel = new wxButton(this, ID_BUTTON_OPTION_CANCEL, _("Отменить"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_BUTTON_OPTION_CANCEL"));
-	BoxSizer3->Add(ButtonOptionCancel, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-	BoxSizer1->Add(BoxSizer3, 0, wxALL|wxEXPAND, 5);
+	OptionsMainButtonsSizer->Add(ButtonOptionCancel, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	BoxSizer1->Add(OptionsMainButtonsSizer, 0, wxALL|wxEXPAND, 5);
 	SetSizer(BoxSizer1);
 	BoxSizer1->SetSizeHints(this);
 

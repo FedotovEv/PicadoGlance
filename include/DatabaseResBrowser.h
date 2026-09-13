@@ -17,6 +17,7 @@
 #include <wx/treectrl.h>
 //*)
 
+#include "PCADTextExport.h"
 #include "redefine_.h"
 #include <wx/encconv.h>
 
@@ -215,6 +216,35 @@ class DatabaseResBrowser: public wxDialog
         void OnInit(wxInitDialogEvent& event);
         //*)
 
+        struct TextParamWidgets
+        {
+            wxTextCtrl* CoordsText = nullptr;
+            wxTextCtrl* LayerText = nullptr;
+            wxTextCtrl* HeightText = nullptr;
+            wxChoice* AlignChoice = nullptr;
+            wxChoice* OrientChoice = nullptr;
+        };
+
+        enum class TextParamGroup
+        {
+            TEXT_GROUP_COMPONENT_REFDES = 1,
+            TEXT_GROUP_COMPONENT_PIN_LABEL,
+            TEXT_GROUP_INSERT_REFDES,
+            TEXT_GROUP_INSERT_PIN_LABEL
+        };
+
+        struct TextParamValues
+        {
+            wxPoint pos;
+            int layer_number = -1;
+            int text_height = 1;
+            text_align = TextAlign::TEXT_CENTER_DOWN;
+            text_orient = TextOrientation::TEXT_LEFT_RIGHT;
+        };
+
+        static const std::unordered_map<TextParamGroup, TextParamWidgets> text_groups_map_;
+        static const TextParamValues CLEAR_TEXT_PARAMS_;
+
     protected:
         static const wxString ZERO_VALUE_STR;
         static constexpr char SECTIONS_TEXT[] = wxTRANSLATE("Секций - ");
@@ -223,6 +253,7 @@ class DatabaseResBrowser: public wxDialog
         static constexpr char COMPONENTS_TEXT[] = wxTRANSLATE("Компонентов - ");
         static constexpr char NETS_TEXT[] = wxTRANSLATE("Цепей - ");
         static constexpr char INSERTS_TEXT[] = wxTRANSLATE("Вставок - ");
+        static constexpr size_t CONVERT_UNICODE_BUFFER_LEN = 1024;
 
         void BuildContent(wxWindow* parent, wxWindowID id);
         void CloseDialogProc();
@@ -234,11 +265,34 @@ class DatabaseResBrowser: public wxDialog
         void LoadNewNet(const std::string& net_name);
         void LoadNewComponent(int component_index);
         void LoadNewComponent(const std::string& component_name);
+        // --- Загрузка информационных подгрупп (подблоков).
+        // Перегрузки функций-членов загрузки в группу виджетов параметров некоторой текстовой надписи.
+        void LoadTextParams(const TextParamWidgets& param_widgets, const ObjText* text_object);
+        void LoadTextParams(const TextParamWidgets& param_widgets, const TextParamValues& param_values);
+        //
+        void LoadPKGData(int component_index, const ComponentPKGSectDef& pkg_sect_def);
+        //
+        void LoadSPKGData(int component_index, const ComponentSPKGSectDef& spkg_sect_def);
+        //
+        void LoadCompPinDescription(int component_index, int pin_index);
+        //
+        void LoadInsertPinDescription(int component_index, GraphObj* pin_label, const PinNetConnectInfo& connected_pin_info);
+        // Функция-член загрузки в указанную ветвь информационного дерева данных об упаковке единичной секции УГО.
+        void LoadSectPackInfoToTree
+            (int component_index, int group_index, const string& sect_name, const PinNameToALNumber& one_sect_pack_info,
+             wxTreeItemId& root_section_item);
+        // Функция-член загрузки в назначенную ветвь информационного дерева данных о некоторой группе секций.
+        void LoadSectGroupPackInfoToTree
+            (int component_index, int group_index, const SectNameToPackInfo& sect_group_pack_info, wxTreeItemId& root_section_group);
+        // ---
+        wxString ConvertToUnicode(const std::string& narrow_string) const;
+        void SetPinTypeToText(const PinType& pin_type, wxTextCtrl* pin_type_text_field);
 
         const PCADFile* view_pcad_database_ = nullptr;
+        DrawContext view_draw_context_;
         wxString error_message_;
         bool block_signals_ = false;
-        wxEncodingConverter pdif_encoding_conv;
+        wxEncodingConverter pdif_encoding_conv_;
 
         DECLARE_EVENT_TABLE()
 };

@@ -29,10 +29,70 @@ static const GraphObj* ScanForGraphObject(wxColor graph_obj_ord_as_color, const 
 void ComponentSectDef::Clear() noexcept
 {
     ComponentSectDefVar* sect_def_var = static_cast<ComponentSectDefVar*>(this);
-    if (std::holds_alternative<ComponentPKGSectDef>(*sect_def_var))
-        std::get<ComponentPKGSectDef>(*sect_def_var).Clear();
-    else if (std::holds_alternative<ComponentSPKGSectDef>(*sect_def_var))
-        std::get<ComponentSPKGSectDef>(*sect_def_var).Clear();
+    if (holds_alternative<ComponentPKGSectDef>(*sect_def_var))
+        get<ComponentPKGSectDef>(*sect_def_var).Clear();
+    else if (holds_alternative<ComponentSPKGSectDef>(*sect_def_var))
+        get<ComponentSPKGSectDef>(*sect_def_var).Clear();
+
+    *sect_def_var = monostate;
+}
+
+// Подсчёт полного количества секций в компоненте.
+int ComponentSectDef::GetCount() const noexcept
+{
+    ComponentSectDefVar* sect_def_var = static_cast<ComponentSectDefVar*>(this);
+    if (holds_alternative<ComponentPKGSectDef>(*sect_def_var))
+    {
+        const ComponentPKGSectDef& pkg_sect_def = get<ComponentPKGSectDef>(*sect_def_var);
+        return static_cast<int>(pkg_sect_def.pin_pkg_data.size());
+    }
+    else if (holds_alternative<ComponentSPKGSectDef>(*sect_def_var))
+    {
+        const ComponentSPKGSectDef& spkg_sect_def = get<ComponentSPKGSectDef>(*sect_def_var);
+        size_t sect_count = 0;
+        for (const SectNameToPackInfo& group_pin_pkg_data : spkg_sect_def.sect_spkg_data)
+            sect_count += group_pin_pkg_data.size();
+
+        return static_cast<int>(sect_count);
+    }
+    else
+    {
+        return -1;
+    }
+}
+
+// Возвращает "ИСТИНУ", если объект содержит состоятельную информацию о секциях компонента.
+bool ComponentSectDef::IsValid() const noexcept
+{
+    ComponentSectDefVar* sect_def_var = static_cast<ComponentSectDefVar*>(this);
+    return !holds_alternative<monostate_t>(*sect_def_var);
+}
+
+// Тип хранящейся в данной структуре информации.
+bool ComponentSectDef::IsSPKG() const noexcept
+{
+    ComponentSectDefVar* sect_def_var = static_cast<ComponentSectDefVar*>(this);
+    return holds_alternative<ComponentSPKGSectDef>(*sect_def_var);
+}
+
+// Возврат ссылки на поле типа ComponentPKGSectDef, если оно содержится в структуре.
+const ComponentPKGSectDef& ComponentSectDef::GetPKGSectDef() const
+{
+    ComponentSectDefVar* sect_def_var = static_cast<ComponentSectDefVar*>(this);
+    if (holds_alternative<ComponentPKGSectDef>(*sect_def_var))
+        return get<ComponentPKGSectDef>(*sect_def_var);
+    else
+        throw runtime_error("Секционирование не соответствует модели ComponentPKGSectDef");
+}
+
+// Возврат ссылки на поле типа ComponentSPKGSectDef, если оно содержится в структуре.
+const ComponentSPKGSectDef& ComponentSectDef::GetSPKGSectDef() const
+{
+    ComponentSectDefVar* sect_def_var = static_cast<ComponentSectDefVar*>(this);
+    if (holds_alternative<ComponentSPKGSectDef>(*sect_def_var))
+        return get<ComponentSPKGSectDef>(*sect_def_var);
+    else
+        throw runtime_error("Секционирование не соответствует модели ComponentSPKGSectDef");
 }
 
 void RadioComponentDesc::Clear() noexcept
@@ -107,6 +167,35 @@ RadioComponentDesc& RadioComponentDesc::operator=(RadioComponentDesc&& other) no
     return *this;
 }
 
+// Постобработка компонента - вызвается после полного первоначального заполнения всех исходных данных PDIF-базы.
+void RadioComponentDesc::ComponentPostProcess(const PCADFile* pcad_document)
+{
+    pcad_document_ = pcad_document;
+
+}
+
+// Функция возвращает индекс вывода с именем pin_name.
+size_t RadioComponentDesc::FindPinByName(const string& pin_name) const
+{
+    for (auto pin_it = pins_.begin(); pin_it != pins_.end(); ++pin_it)
+        // pin_it - итератор, указывающий на переменную типа ComponentPinDef.
+        if (pin_it->pin_name == pin_name)
+            return pin_it - pins_.begin();
+    // Вывод с именем pin_name не обнаружен.
+    return string::npos;
+}
+
+// Функция возвращает индекс ножки с "алфавитно-цифровым номером" pin_al_number.
+size_t RadioComponentDesc::FindPinByAlNumber(const string& pin_al_number) const
+{
+    for (auto pin_it = pins_.begin(); pin_it != pins_.end(); ++pin_it)
+        // pin_it - итератор, указывающий на переменную типа ComponentPinDef.
+        if (pin_it->pin_al_number == pin_al_number)
+            return pin_it - pins_.begin();
+    // Вывод с именем pin_name не обнаружен.
+    return string::npos;
+}
+
 const GraphObj* RadioComponentDesc::ScanForGraphObject(uint32_t graph_object_ordinal) const
 {
     return ::ScanForGraphObject(graph_object_ordinal, graph_objects_);
@@ -125,6 +214,14 @@ void RadioComponentInsertion::Clear() noexcept
     for (GraphObj* graph_obj_ptr : pin_labels_)
         delete graph_obj_ptr;
     (*this) = {};
+}
+
+// Функция-член постобработки записи о вставке экземпляра радиокомпонента, производимой после полного первоначального заполнения
+// всех массивов общего PDIF-документа.
+void RadioComponentInsertion::InsertPostProcess(const PCADFile* pcad_document)
+{
+    pcad_document_ = pcad_document;
+
 }
 
 RadioComponentInsertion::RadioComponentInsertion(SourceData&& component_insert_data) :
@@ -234,6 +331,13 @@ void NetDefDesc::Clear() noexcept
     for (GraphObj* graph_obj_ptr : net_parts_)
         delete graph_obj_ptr;
     (*this) = {};
+}
+
+// Постобработка цепи - вызвается после полного первоначального заполнения всех исходных данных PDIF-базы.
+void NetDefDesc::NetPostProcess(const PCADFile* pcad_document)
+{
+    pcad_document_ = pcad_document;
+
 }
 
 NetDefDesc::NetDefDesc(SourceData&& net_def_data) :
@@ -437,6 +541,7 @@ PCADFile::PCADFile(PCADFileSource&& data_source, aperture::ApertureProvider& ape
     file_values_(data_source.file_values), aperture_provider_(aperture_provider)
 {
     InitLayersColor();
+    PCADPostProcess();
 }
 
 PCADFile::~PCADFile()
@@ -498,11 +603,60 @@ void PCADFile::SetApertureType(UsingApertureType using_aperture_type) const
     }
 }
 
+// Постобработка документа после загрузки его внешних данных. Рассчитывает значения некоторых полей, вычисляемых на основе
+// загруженных данных, а также вырабатывает визуальное (видимое) представление всех его элементов, помимо прямо иллюстративных
+// (которые загружаются непосредственно из файла базы данных).
+void PCADFile::PCADPostProcess()
+{
+    for (RadioComponentDesc& radio_component : radio_components_)
+        radio_component.ComponentPostProcess(this);
+    for (RadioComponentInsertion& insertion : radio_comp_inserts_)
+        insertion.InsertPostProcess(this);
+    for (NetDefDesc& net : nets_)
+        net.NetPostProcess(this);
+}
+
 FlashDesc PCADFile::GetFlashDesc(int flash_num) const
 { // Номер апертуры flash_num должен лежать в диапазоне от 1 до максимального номера среди загруженных апертур.
   // Для Gerber 32, как правило, доступны 24 диафрагмы с номерами от 1 до 24, а для Gerber Laser - 255 апертур
   // с номерами от 1 до 255.
     return aperture_provider_.GetFlashDesc(flash_num);
+}
+
+// Возврат описателя слоя по его порядковому индексу.
+LayerDesc PCADFile::GetLayerDesc(int layer_num) const
+{
+    if (layer_num >= 0 && layer_num < static_cast<int>(layers_.size()))
+        return layers_[layer_num];
+    else //  Слой по умолчанию с невозможными параметрами
+        return LAYER_DESC_INVALID;
+}
+
+// Поиск слоя по его имени.
+int PCADFile::FindLayerDesc(const std::string& find_layer_name) const
+{
+    for (int scan_layer_num = 0; scan_layer_num < static_cast<int>(layers_.size()); ++scan_layer_num)
+    {
+        if (layers_[scan_layer_num].layer_name == find_layer_name)
+            return scan_layer_num;
+    }
+    return -1;
+}
+
+// Установка вспомогательных атрибутов слоя.
+void PCADFile::SetLayerAttributes(int layer_num, LayerAttributes layer_attributes) const
+{
+    if (layer_num >= 0 && layer_num < static_cast<int>(layers_.size()))
+        layers_[layer_num].layer_attributes = layer_attributes;
+}
+
+// Получение текущего значения вспомогательных атрибутов слоя.
+LayerAttributes PCADFile::GetLayerAttributes(int layer_num) const
+{
+    if (layer_num >= 0 && layer_num < static_cast<int>(layers_.size()))
+        return layers_[layer_num].layer_attributes;
+    else
+        return LayerAttributes{0};
 }
 
 const GraphObj* PCADFile::ScanForGraphObject(uint32_t graph_object_ordinal) const

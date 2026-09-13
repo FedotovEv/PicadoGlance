@@ -1,5 +1,6 @@
 #include "include/wx_pch.h"
 #include "DatabaseResBrowser.h"
+#include "PCADViewerApp.h"
 #include "PCADFile.h"
 #include "PCADViewDraw.h"
 #include "PCADTextExport.h"
@@ -94,6 +95,58 @@ BEGIN_EVENT_TABLE(DatabaseResBrowser,wxDialog)
 END_EVENT_TABLE()
 
 const wxString DatabaseResBrowser::ZERO_VALUE_STR = wxF8("0");
+const std::unordered_map<DatabaseResBrowser::TextParamGroup, DatabaseResBrowser::TextParamWidgets> DatabaseResBrowser::text_groups_map_
+{
+    {
+        DatabaseResBrowser::TextParamGroup::TEXT_GROUP_COMPONENT_REFDES,
+        {.CoordsText = ComponentRefDesCoordsText, .LayerText = ComponentRefDesLayerText, .HeightText = ComponentRefDesHeightText,
+         .AlignChoice = ComponentRefDesOrientChoice, .OrientChoice = ComponentRefDesAlignChoice}
+    },
+    {
+        DatabaseResBrowser::TextParamGroup::TEXT_GROUP_COMPONENT_PIN_LABEL,
+        {.CoordsText = ComponentPinLabelCoordsText, .LayerText = ComponentPinLabelLayerText, .HeightText = ComponentPinLabelHeightText,
+         .AlignChoice = ComponentPinLabelOrientChoice, .OrientChoice = ComponentPinLabelAlignChoice}
+    },
+    {
+        DatabaseResBrowser::TextParamGroup::TEXT_GROUP_INSERT_REFDES,
+        {.CoordsText = InsertRefDesCoordsText, .LayerText = InsertRefDesLayerText, .HeightText = InsertRefDesHeightText,
+         .AlignChoice = InsertRefDesOrientChoice, .OrientChoice = InsertRefDesAlignChoice}
+    },
+    {
+        DatabaseResBrowser::TextParamGroup::TEXT_GROUP_INSERT_PIN_LABEL,
+        {.CoordsText = InsertPinLabelCoordsText, .LayerText = InsertPinLabelLayerText, .HeightText = InsertPinLabelHeightText,
+         .AlignChoice = InsertPinLabelOrientChoice, .OrientChoice = InsertPinLabelAlignChoice}
+    }
+};
+
+const DatabaseResBrowser::TextParamValues DatabaseResBrowser::CLEAR_TEXT_PARAMS_
+{
+    .text_height = INT_MIN
+};
+
+// Класс дополнительной информации, сопровождающий соответствующую ячейку древовидного виджета ComponentSectInfoTree.
+// Может характеризовать группу однородных секций (в этом случае section_name и pin_name пусты, а pin_index == -1),
+// саму секцию (section_name не пуст и содержит имя секции, а pin_name пуст и pin_index == -1),
+// а также отдельный вывод и его упаковочное соответствие (все поля имеют значащее содержимое).
+class SectDefTreeItemData : public wxTreeItemData
+{
+public:
+    int component_index = -1;   // Порядковый индекс радиокомпонента, секция которого описывается характеристикой.
+    int group_index = -1;       // Индекс группы, с которой связана данная характеристика.
+    string section_name;        // Имя секции (обычно буква в диапазоне A-Z), с которой связана данная характеристика.
+    // Данные конкретного вывода.
+    string pin_name;            // Имя вывода.
+    string pin_al_number;       // Его "алфавитно-цифровой номер ножки", на который картируется вывод с именем pin_name данной секции.
+    int pin_index = -1;         // Порядковый индекс в базе.
+};
+
+class NetObjectDefTreeItemData : public wx
+{
+public:
+    int component_index = -1;
+    int group_index = -1;
+    string section_name;
+};
 
 DatabaseResBrowser::DatabaseResBrowser(wxWindow* parent, wxWindowID id)
 {
@@ -188,7 +241,7 @@ void DatabaseResBrowser::BuildContent(wxWindow* parent, wxWindowID id)
     ComponentCommonPropertiesSizer->Add(ComponentTyIDText, 1, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     ComponentPropertiesSizer->Add(ComponentCommonPropertiesSizer, 0, wxBOTTOM|wxEXPAND, 5);
     ComponentOrgPropertiesSizer = new wxBoxSizer(wxHORIZONTAL);
-    ComponentOrgCoordsTitle = new wxStaticText(ComponentPropertiesSizer->GetStaticBox(), wxID_ANY, _("Координаты"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
+    ComponentOrgCoordsTitle = new wxStaticText(ComponentPropertiesSizer->GetStaticBox(), wxID_ANY, _("Координаты привязки"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
     ComponentOrgPropertiesSizer->Add(ComponentOrgCoordsTitle, 0, wxLEFT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     ComponentOrgCoordsText = new wxTextCtrl(ComponentPropertiesSizer->GetStaticBox(), ID_TEXT_COMPONENT_ORG_COORDS, _("Нет"), wxDefaultPosition, wxDefaultSize, wxTE_READONLY, wxDefaultValidator, _T("ID_TEXT_COMPONENT_ORG_COORDS"));
     ComponentOrgPropertiesSizer->Add(ComponentOrgCoordsText, 1, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
@@ -508,6 +561,18 @@ DatabaseResBrowser::~DatabaseResBrowser()
     //*)
 }
 
+wxString DatabaseResBrowser::ConvertToUnicode(const std::string& narrow_string) const
+{
+    static wchar_t output_buffer[CONVERT_UNICODE_BUFFER_LEN];
+    // narrow_string полагается однобайтовой строкой, имеющей кодировку, на которую настроен вход перекодировщика pdif_encoding_conv_.
+    // Целевая кодировка перекодировщика всегда wxFONTENCODING_UNICODE (Юникод).
+    if (narrow_string.size() <= (CONVERT_UNICODE_BUFFER_LEN / 4))
+        pdif_encoding_conv_.Convert(narrow_string.c_str(), output_buffer);
+    else
+        pdif_encoding_conv_.Convert(narrow_string.substr(0, CONVERT_UNICODE_BUFFER_LEN / 4).c_str(), output_buffer);
+    return wxString(output_buffer);
+}
+
 // Получение текстового описания для ошибки с кодом code.
 wxString DatabaseResBrowser::DatabaseErrorToString(DatabaseErrorCode code)
 {
@@ -519,6 +584,33 @@ wxString DatabaseResBrowser::DatabaseErrorToString(DatabaseErrorCode code)
         return _("Другая ошибка");
     }
     return {};
+}
+
+// Функция-член
+void DatabaseResBrowser::LoadNewNetDescription(int net_index, int net_part_index)
+{
+    bool old_block_signals = block_signals_;
+    block_signals_ = true;
+
+    decltype(view_pcad_database_->nets_begin()) use_net_it;
+    bool in_clear_mode = !view_pcad_database_ || net_index < 0 || net_index >= static_cast<int>(view_pcad_database_->nets_size());
+    if (!in_clear_mode)
+    {
+        use_net_it = view_pcad_database_->nets_begin() + static_cast<size_t>(net_index);
+        if (net_part_index < 0 || net_part_index >= static_cast<size_t>(use_net_it->size()))
+            in_clear_mode = true;
+    }
+    if (in_clear_mode)
+    {
+        NetObjectDescriptionText->Clear();
+    }
+    else
+    {
+        const GraphObj* net_part_graph = *(use_net_it->begin() + net_part_index);
+        NetObjectDescriptionText->SetValue(ConvertToUnicode(net_part_graph->GetObjectLongText()));
+    }
+
+    block_signals_ = old_block_signals;
 }
 
 void DatabaseResBrowser::LoadNewNet(int net_index)
@@ -533,18 +625,34 @@ void DatabaseResBrowser::LoadNewNet(int net_index)
         // ----------
         NetObjectsInfoSizer->GetStaticBox()->SetLabel(wxTR(FRAGMENTS_TEXT) + ZERO_VALUE_STR);
         NetObjectsListChoice->Clear();
-        NetObjectDescriptionText->Clear();
+        LoadNewNetDescription(int net_index, -1);
         // ----------
         block_signals_ = old_block_signals;
         return;
     }
 
     auto use_net_it = view_pcad_database_->nets_begin() + static_cast<size_t>(net_index);
-    NetNameText->SetValue(use_net_it->GetName());
-    IsNetUserNameCheck->SetValue(false);
+    // Разыменовывание итератор use_net_it даёт переменную типа NetDefDesc.
+    NetNameText->SetValue(ConvertToUnicode(use_net_it->GetName()));
+    IsNetUserNameCheck->SetValue(use_net_it->IsUsetNetName());
     // ----------
-    NetObjectsInfoSizer->GetStaticBox()->SetLabel(wxTR(FRAGMENTS_TEXT) + ZERO_VALUE_STR);
+    NetObjectsInfoSizer->GetStaticBox()->SetLabel(wxTR(FRAGMENTS_TEXT) + wxFI(use_net_it->size()));
     NetObjectsListChoice->Clear();
+    for (auto net_part_it = use_net_it->begin(); net_part_it != use_net_it->end(); ++net_part_it)
+    { // Разыменование итератора net_part_it ведёт к указателю типа GraphObj*.
+        GraphObj* net_graph_obj = *net_part_it;
+        NetObjectsListChoice->Append(ConvertToUnicode(net_graph_obj->GetObjectShortText()));
+    }
+    if (NetObjectsListChoice->GetCount())
+    { // Список фрагментов цепи не пуст.
+        NetObjectsListChoice->SetSelection(0);
+        LoadNewNetDescription(int net_index, 0);
+    }
+    else
+    { // Токопроводящая цепь не содержит никаких фрагментов.
+        NetObjectsListChoice->SetSelection(wxNOT_FOUND);
+        LoadNewNetDescription(int net_index, -1);
+    }
 
     block_signals_ = old_block_signals;
 }
@@ -569,8 +677,347 @@ void DatabaseResBrowser::LoadNewNet(const string& net_name)
         LoadNewNet(-1);
 }
 
+void DatabaseResBrowser::SetPinTypeToText(const PinType& pin_type, wxTextCtrl* pin_type_text_field)
+{
+    if (std::holds_alternative<int>(pin_type))
+        pin_type_text_field->SetValue(wxFI(std::get<int>(pin_type)));
+    else if (std::holds_alternative<std::string>(pin_type))
+        pin_type_text_field->SetValue(ConvertToUnicode(std::get<std::string>(pin_type)));
+    else
+        pin_type_text_field->Clear();
+}
+
+// Метод загрузки в виджеты формы диалога информации об определённом выводе библиотечного радиокомпонента.
+void DatabaseResBrowser::LoadCompPinDescription(int component_index, int pin_index)
+{
+    bool old_block_signals = block_signals_;
+    block_signals_ = true;
+
+    decltype(view_pcad_database_->radio_components_begin()) use_component_it;
+    const RadioComponentDesc* component_desc = nullptr;
+    decltype(use_component_it->pins_begin()) use_pin_it;
+    const ComponentPinDef* pin_def = nullptr;
+
+    bool in_clear_mode = !view_pcad_database_ || component_index < 0 ||
+        component_index >= static_cast<int>(view_pcad_database_->radio_components_size());
+    if (!in_clear_mode)
+    {
+        use_component_it = view_pcad_database_->radio_components_begin() + static_cast<size_t>(component_index);
+        component_desc = &(*use_component_it);
+        if (pin_index < 0 || pin_index >= static_cast<int>(use_component_it->pins_size()))
+        {
+            in_clear_mode = true;
+        }
+        else
+        {
+            use_pin_it = use_component_it->pins_begin() + static_cast<size_t>(pin_index);
+            pin_def = &(*use_pin_it);
+        }
+    }
+
+    if (in_clear_mode)
+    { // Режим очистки виджетов с информацией
+        ComponentPinAlNumText->Clear();
+        ComponentPinNameText->Clear();
+        // ----------
+        ComponentPinLayerText->Clear();
+        ComponentPinCoordsText->Clear();
+        ComponentPinTypeText->Clear();
+        ComponentPinEquivText->Clear();
+        // ----------
+        ComponentPinLabelCoordsText->Clear();
+        ComponentPinLabelLayerText->Clear();
+        ComponentPinLabelHeightText->SetValue(ZERO_VALUE_STR);
+        //
+        ComponentPinLabelAlignChoice->Clear();
+        ComponentPinLabelAlignChoice->SetSelection(wxNOT_FOUND);
+        ComponentPinLabelOrientChoice->Clear();
+        ComponentPinLabelOrientChoice->SetSelection(wxNOT_FOUND);
+
+        block_signals_ = old_block_signals;
+        return;
+    }
+    // Мз базы данных документа выделены корректные указатели на описатель вывода (ножки) с порядковым индексом pin_index
+    // библиотечного элемента component_index.
+    ComponentPinAlNumText->SetValue(ConvertToUnicode(pin_def->pin_al_number));
+    ComponentPinNameText->SetValue(ConvertToUnicode(pin_def->pin_name));
+    // ----------
+    ComponentPinLayerText->SetValue(ConvertToUnicode(view_pcad_database_->GetLayerDesc(pin_def->layer_number).layer_name));
+    ComponentPinCoordsText->SetValue(ConvertPointToString(pin_def->pin_coords, view_draw_context_));
+    SetPinTypeToText(pin_def->pin_type, ComponentPinTypeText);
+    ComponentPinEquivText->SetValue(wxFI(pin_def->equive_code));
+    // ----------
+    ComponentPinLabelCoordsText->SetValue(ConvertPointToString(pin_def->pin_label.pin_name_coords, view_draw_context_));
+    ComponentPinLabelLayerText->SetValue(ConvertToUnicode(view_pcad_database_->GetLayerDesc(pin_def->pin_label.layer_number).layer_name));
+    ComponentPinLabelHeightText->SetValue(wxFI(pin_def->pin_label.text_height));
+    ComponentPinLabelAlignChoice->SetSelection(static_cast<int>(pin_def->pin_label.text_align));
+    ComponentPinLabelOrientChoice->SetSelection(static_cast<int>(pin_def->pin_label.text_orient));
+
+    block_signals_ = old_block_signals;
+}
+
+// Метод загрузки в виджеты формы диалога информации об определённом выводе вставленной копии радиокомпонента.
+// insertion_index - порядковый индекс вставки в базе документа, insert_pin_index - .
+// pin_label - указатель на этикету, connected_pin_info - сведения о соединении вывода с токопроводящими цепями.
+void DatabaseResBrowser::LoadInsertPinDescription(int insertion_index, int insert_pin_index)
+{
+    bool old_block_signals = block_signals_;
+    block_signals_ = true;
+    // Указатели на объект обрабатываемой вставки.
+    decltype(view_pcad_database_->radio_comp_inserts_begin()) use_component_insert_it;
+    const RadioComponentInsertion* component_insert = nullptr;
+    // Указатели на библиотечный объект вставляемого радиокомпонента (то есть того из них, копия которого вставляется).
+    decltype(view_pcad_database_->radio_components_begin()) use_component_it;
+    const RadioComponentDesc* component_desc = nullptr;
+    // Указатели на информацию о выводе (ножке) вставляемого экземпляра с индексом insert_pin_index.
+    decltype(component_insert->connect_info_begin()) use_connected_pin_info_it;
+    const RadioComponentInsertion::PinNetConnectInfo* connected_pin_info = nullptr;
+    // Указатели на вывод (ножку) библиотечного компонента, соответствующего выводу (ножке) вставляемого экземпляра с индексом insert_pin_index.
+    decltype(use_component_it->pins_begin()) use_component_pin_it;
+    const ComponentPinDef* component_pin_def = nullptr;
+
+    auto do_clear_op = [this, &old_block_signals](bool is_clear_all) -> void
+        {
+            if (is_clear_all)
+            {
+                InsertPinNameText->Clear();
+                InsertPinNetNameConnectText->Clear();
+            }
+            InsertPinAlNumText->Clear();
+            InsertPinTypeText->Clear();
+            // ----------
+            LoadTextParams(text_groups_map_.at(TextParamGroup::TEXT_GROUP_INSERT_PIN_LABEL), CLEAR_TEXT_PARAMS_);
+            // ----------
+            block_signals_ = old_block_signals;
+        };
+
+    if (view_pcad_database_ && insertion_index >= 0 && insertion_index < static_cast<int>(view_pcad_database_->radio_comp_inserts_size()))
+    {
+        use_component_insert_it = view_pcad_database_->radio_comp_inserts_begin() + static_cast<size_t>(insertion_index);
+        component_insert = &(*use_component_insert_it);
+        // component_index - порядковый индекс компонента внутри их библиотеки, входящей в состав текущего документа.
+        int component_index = component_insert->GetComponentNumber();
+        if (component_index >= 0 && component_index < static_cast<int>(view_pcad_database_->radio_components_size()))
+        {
+            use_component_it = view_pcad_database_->radio_components_begin() + static_cast<size_t>(component_index);
+            component_desc = &(*use_component_it);
+        }
+        else
+        {
+            do_clear_op(true);
+            return;
+        }
+    }
+    else
+    {
+        do_clear_op(true);
+        return;
+    }
+
+    if (insert_pin_index >= 0 && insert_pin_index <= static_cast<int>(component_insert->connect_info_size()))
+    {
+        use_connected_pin_info_it = component_insert->connect_info_begin() + insert_pin_index;
+        connected_pin_info = &(*use_connected_pin_info_it);
+        InsertPinNameText->SetValue(ConvertToUnicode(connected_pin_info.pin_name));
+        InsertPinNetNameConnectText->SetValue(ConvertToUnicode(connected_pin_info.net_name));
+    }
+    else
+    {
+        do_clear_op(true);
+        return;
+    }
+
+    if (connected_pin_info->pin_index >= 0 && connected_pin_info->pin_index < static_cast<int>(component_desc->pins_size()))
+    { // Подсоединённый вывод insert_pin_index имеет соответствие среди выводов компонента component_desc.
+        use_component_pin_it = component_desc->pins_begin() + static_cast<size_t>(connected_pin_info.pin_index);
+        component_pin_def = &(*use_component_pin_it);
+    }
+    else
+    {
+        do_clear_op(false);
+        return;
+    }
+
+    // Удалось успешно получить весь комплекс необходимых данных о выводе (ножке).
+    InsertPinAlNumText->SetValue(ConvertToUnicode(component_pin_def->pin_al_number));
+    SetPinTypeToText(component_pin_def->pin_type, InsertPinTypeText);
+    // ----------
+    LoadTextParams(text_groups_map_.at(TextParamGroup::TEXT_GROUP_INSERT_PIN_LABEL),
+                   dynamic_cast<const ObjText*>(component_insert->GetRefDes()));
+
+    block_signals_ = old_block_signals;
+}
+
+// Функция-член загрузки в ветвь информационного дерева ComponentSectInfoTree с основанием root_section_item данных об упаковке
+// единичной секции с именем sect_name и распределением выводов one_sect_pack_info. Секция принадлежит компоненту component_index
+// и группе секций group_index.
+void DatabaseResBrowser::LoadSectPackInfoToTree
+    (int component_index, int group_index, const string& sect_name, const PinNameToALNumber& one_sect_pack_info, wxTreeItemId& root_section_item)
+{
+    int sect_pin_index = 0;
+    for (const auto& pin_info_pair : one_sect_pack_info)
+    { // Загрузка информации об "алфавитно-цифровой ножке" конструктива, соответствующей очередному выводу УГО.
+        const string& pin_name = pin_info_pair.first;
+        const string& pin_al_number = pin_info_pair.second;
+        // Создаем конечный узел дерева с информацией о парном отображении вывода pin_name на вывод pin_al_number.
+        // Опять сконструируем структуру сопровождающих данных.
+        SectDefTreeItemData* sect_tree_def = new SectDefTreeItemData;
+        sect_tree_def->component_index = component_index;
+        sect_tree_def->group_index = group_index;
+        sect_tree_def->section_name = sect_name;
+        sect_tree_def->pin_index = -1;
+        // Данные конкретного вывода.
+        sect_tree_def->pin_name;
+        sect_tree_def->pin_al_number;
+        sect_tree_def->pin_index = sect_pin_index;
+        //
+        wxTreeItemId pin_reflex_item = ComponentSectInfoTree->AppendItem
+            (root_section_group, ConvertToUnicode(pin_name) + " <-> " + ConvertToUnicode(pin_al_number), -1, -1, root_section_item);
+        ++sect_pin_index;
+    }
+}
+
+// Функция-член загрузки в ветвь информационного дерева ComponentSectInfoTree с основанием root_section_group данных о группе
+// секций sect_group_pack_info.
+void DatabaseResBrowser::LoadSectGroupPackInfoToTree
+    (int component_index, int group_index, const SectNameToPackInfo& sect_group_pack_info, wxTreeItemId& root_section_group)
+{
+    for (const auto& section_info_pair : sect_group_pack_info)
+    {
+        const string& section_name = section_info_pair.first;
+        const PinNameToALNumber& section_pack_info = section_info_pair.second;
+        // Создаём подкорень (основание новой ветви) для очередной секции - потомка корня общей секции root_section_group.
+        // Создаём сопровождающий объект дополнительной информации для этого подкорня.
+        SectDefTreeItemData* sect_tree_def = new SectDefTreeItemData;
+        sect_tree_def->component_index = component_index;
+        sect_tree_def->group_index = group_index;
+        sect_tree_def->section_name = section_name;
+        sect_tree_def->pin_index = -1;
+
+        wxTreeItemId root_section_item = ComponentSectInfoTree->AppendItem
+            (root_section_group, _("Секция ") + ConvertToUnicode(section_name), -1, -1, sect_tree_def);
+        // Загружаем всю компоновочную информацию о секции в ветвь с основанием root_section_item.
+        LoadSectPackInfoToTree(component_index, group_index, section_name, section_pack_info, root_section_item);
+    }
+}
+
+void DatabaseResBrowser::LoadPKGData(int component_index)
+{
+    bool old_block_signals = block_signals_;
+    block_signals_ = true;
+
+    ComponentSectInfoTree->DeleteAllItems();
+    if (component_index < 0 || component_index >= view_pcad_database_->radio_components_size())
+    { // Режим очистки упаковочной информации.
+        block_signals_ = old_block_signals;
+        return;
+    }
+
+    auto use_component_it = view_pcad_database_->radio_components_begin();
+    const RadioComponentDesc& component_desc = *use_component_it;
+    const ComponentPKGSectDef& pkg_sect_def = component_desc.GetSectionsDefData().GetPKGSectDef();
+
+    // Группа секций для УГО всегда одна, поэтому создаём для неё единственный условный корень.
+    // Создаём сопровождающий объект дополнительной информации.
+    SectDefTreeItemData* sect_tree_def = new SectDefTreeItemData;
+    sect_tree_def->component_index = component_index;
+    sect_tree_def->group_index = 0;
+    sect_tree_def->pin_index = -1;
+    wxTreeItemId root_section_group = ComponentSectInfoTree->AddRoot(_("УГО"), -1, -1, sect_tree_def);
+    // Загружаем в информационное дерево информацию об этой единственной группе секций, делая её потомком корня root_section_group.
+    LoadSectGroupPackInfoToTree(component_index, 0, pkg_sect_def.pin_pkg_data, root_section_group);
+
+    block_signals_ = old_block_signals;
+}
+
+void DatabaseResBrowser::LoadSPKGData(int component_index, const ComponentSPKGSectDef& spkg_sect_def)
+{
+    bool old_block_signals = block_signals_;
+    block_signals_ = true;
+
+    ComponentSectInfoTree->DeleteAllItems();
+    if (component_index < 0 || component_index >= view_pcad_database_->radio_components_size())
+    { // Режим очистки упаковочной информации.
+        block_signals_ = old_block_signals;
+        return;
+    }
+
+    auto use_component_it = view_pcad_database_->radio_components_begin();
+    const RadioComponentDesc& component_desc = *use_component_it;
+    const ComponentSPKGSectDef& spkg_sect_def = component_desc.GetSectionsDefData().GetSPKGSectDef();
+
+    // Для конструктива радиокомпонента групп секций может быть несколько. Каждую из них делаем отдельным корнем дерева.
+    int root_group_index = 0;
+    for (const SectNameToPackInfo& sect_pack_info : spkg_sect_def.sect_spkg_data)
+    {
+        // Создаём сопровождающий объект дополнительной информации.
+        SectDefTreeItemData* sect_tree_def = new SectDefTreeItemData;
+        sect_tree_def->component_index = component_index;
+        sect_tree_def->group_index = root_group_index;
+        sect_tree_def->pin_index = -1;
+        // Создаём ещё один корень "леса" групп секций для группы sect_pack_info.
+        wxTreeItemId current_sect_root =
+            ComponentSectInfoTree->AddRoot(_("Секция ") + wxFI(root_group_index), -1, -1, sect_tree_def);
+        // Загружаем в информационное дерево информацию о текущей группе секций, делая её потомком созданного
+        // для неё корня current_sect_root.
+        LoadSectGroupPackInfoToTree(component_index, root_group_index, sect_pack_info, current_sect_root);
+        ++root_group_index;
+    }
+
+    block_signals_ = old_block_signals;
+}
+
+// Перегруженные функции-члены загрузки в группу виджетов параметров некоторой текстовой надписи.
+void DatabaseResBrowser::LoadTextParams(const TextParamWidgets& param_widgets, const ObjText* text_object)
+{
+    if (text_object)
+    {
+        TextParamValues param_values
+        {
+            .pos = text_object->GetTextPoint(),
+            .layer_number = text_object->GetLayerNumber(),
+            .text_height = text_object->GetTextHeight(),
+            .text_align = text_object->GetTextAlign(),
+            .text_orient = text_object->GetTextOrientation()
+        };
+        LoadTextParams(param_widgets, param_values);
+    }
+    else
+    {
+        LoadTextParams(param_widgets, CLEAR_TEXT_PARAMS_);
+    }
+}
+
+void DatabaseResBrowser::LoadTextParams(const TextParamWidgets& param_widgets, const TextParamValues& param_values)
+{
+    bool old_block_signals = block_signals_;
+    block_signals_ = true;
+
+    if (param_values.text_height == INT_MIN)
+    { // Режим очистки группы виджетов с параметрами текста.
+        param_widgets.CoordsText->Clear();
+        param_widgets.LayerText->Clear();
+        param_widgets.HeightText->Clear();
+        param_widgets.AlignChoice->SetSelection(wxNOT_FOUND);
+        param_widgets.OrientChoice->SetSelection(wxNOT_FOUND);
+    }
+    else
+    { // Установка нового содержимого для виджетов, содержащих параметры текста.
+        param_widgets.CoordsText->SetValue(ConvertPointToString(param_values.pos, view_draw_context_));
+        param_widgets.LayerText->SetValue(ConvertToUnicode(view_pcad_database_->GetLayerDesc(param_values.layer_number).layer_name));
+        param_widgets.HeightText->SetValue(wxFI(param_values.text_height));
+        param_widgets.AlignChoice->SetSelection(static_cast<int>(param_values.text_align));
+        param_widgets.OrientChoice->SetSelection(static_cast<int>(param_values.text_orient));
+    }
+
+    block_signals_ = old_block_signals;
+}
+
 void DatabaseResBrowser::LoadNewComponent(int component_index)
 {
+    bool old_block_signals = block_signals_;
+    block_signals_ = true;
+
     if (!view_pcad_database_ || component_index < 0 || component_index >= static_cast<int>(view_pcad_database_->radio_components_size()))
     { // Индекс component_index не соответствует какому-либо существующему радиокомпоненту - выполняем очистку этой
       // группы информационных виджетов.
@@ -606,10 +1053,61 @@ void DatabaseResBrowser::LoadNewComponent(int component_index)
         ComponentPinLabelHeightText->SetValue(ZERO_VALUE_STR);
         ComponentPinLabelAlignChoice->SetSelection(0);
         ComponentPinLabelOrientChoice->SetSelection(0);
+        block_signals_ = old_block_signals;
         return;
     }
 
+    auto load_component_it = view_pcad_database_->radio_components_begin() + component_index;
+    const RadioComponentDesc& loaded_component = *load_component_it;
+    // ----------
+    ComponentNameText->SetValue(ConvertToUnicode(loaded_component.GetName()));
+    ComponentPackageIDText->SetValue(ConvertToUnicode(loaded_component.GetPackageID()));
+    ComponentTyIDText->SetValue(wxFI(loaded_component.GetTyID()));
+    ComponentOrgCoordsText->SetValue(ConvertPointToString(loaded_component.GetOrgPos(), view_draw_context_));
+    IsComponentJumper->SetValue(loaded_component.IsJumper());
+    IsComponentPlanar->SetValue(loaded_component.IsSMD());
+    // ----- Загружаем описание секций радиокомпонента в поле ComponentSectInfoTree в древовидной форме. -----
+    const ComponentSectDef& sects_data = loaded_component.GetSectionsDefData();
+    ComponentSectionsInfoSizer->GetStaticBox()->SetLabel(wxTR(SECTIONS_TEXT) + wxFI(sects_data.GetCount()));
+    if (sects_data.IsValid())
+    {
+        if (sects_data.IsSPKG())
+            LoadSPKGData(component_index, sects_data.GetSPKGSectDef());
+        else
+            LoadPKGData(component_index, sects_data.GetPKGSectDef());
+    }
+    else
+    {
+        LoadPKGData(-1, PCADFile::COMPONENT_PKG_INVALID);
+    }
+    // ---- Производим загрузку предварительной информации о параметрах конструкторского (позиционного) обозначения компонента.
+    const RefDesDef& component_ref_des = loaded_component.GetRefDes();
+    TextParamValues component_text_params
+    {
+        .pos = component_ref_des.pos,
+        .layer_number = component_ref_des.layer_number,
+        .text_height = component_ref_des.text_height,
+        .text_align = component_ref_des.text_align,
+        .text_orient = component_ref_des.text_orient
+    };
+    LoadTextParams(text_groups_map_.at(TextParamGroup::TEXT_GROUP_COMPONENT_REFDES), component_text_params);
+    // Загрузка информации об имеющихся выводах компонента.
+    ComponentPinsInfoSizer->GetStaticBox()->SetLabel(wxTR(PINS_TEXT) + wxFI(loaded_component.pins_size()));
+    ComponentPinsListChoice->Clear();
+    for (auto current_pin_it = loaded_component.pins_begin(); current_pin_it = loaded_component.pins_end(); ++current_pin_it)
+        ComponentPinsListChoice->Append(ConvertToUnicode(current_pin_it->pin_name));
+    if (loaded_component.pins_size())
+    {
+        ComponentPinsListChoice->SetSelection(0);
+        LoadCompPinDescription(component_index, 0, *loaded_component.pins_begin());
+    }
+    else
+    {
+        ComponentPinsListChoice->SetSelection(wxNOT_FOUND);
+        LoadCompPinDescription(component_index, -1, PCADFile::COMPONENT_PIN_INVALID);
+    }
 
+    block_signals_ = old_block_signals;
 }
 
 void DatabaseResBrowser::LoadNewComponent(const string& component_name)
@@ -697,9 +1195,15 @@ std::vector<DatabaseResBrowser::LoadDatabaseError> DatabaseResBrowser::LoadPCADF
     if (!view_pcad_database_)
         return {};
 
+    PCADViewerApp* this_app = static_cast<PCADViewerApp*>(wxTheApp);
+    // Настроим "псевдоконтекст рисования", который потребуется нам для некоторых операций над коодинатами.
+    view_draw_context_.pcad_doc_ptr = const_cast<PCADFile*>(view_pcad_database_);
+    view_draw_context_.measure_unit_type = this_app->options_data.measure_unit_type;
+    view_draw_context_.text_export_style = TextExportStyleType::TEXT_EXPORT_PRECISION_STYLE;
+
     block_signals_ = true;
     // Настраиваем перекодировщик в соответствии с кодировкой просматриваемого документа.
-    pdif_encoding_conv.Init(pcad_database->GetFileDefValues().pdif_encoding, wxFONTENCODING_UNICODE, wxCONVERT_SUBSTITUTE);
+    pdif_encoding_conv_.Init(pcad_database->GetFileDefValues().pdif_encoding, wxFONTENCODING_UNICODE, wxCONVERT_SUBSTITUTE);
 
     // Составляем и загружаем в виджет выбора список доступных библиотечных радиокомпонентов документа.
     ComponentSectionsInfoSizer->GetStaticBox()->SetLabel(wxTR(SECTIONS_TEXT) + wxFI(view_pcad_database_->radio_components_size()));
@@ -716,6 +1220,9 @@ std::vector<DatabaseResBrowser::LoadDatabaseError> DatabaseResBrowser::LoadPCADF
     for (auto radio_comp_inserts_it = view_pcad_database_->radio_comp_inserts_begin();
          radio_comp_inserts_it != view_pcad_database_->radio_comp_inserts_end(); ++radio_comp_inserts_it)
         InsertionsListChoice->Append(radio_comp_inserts_it->GetName());
+    // Если список компонент не пуст, выбираем первый из них в качестве активного.
+    if (ComponentsListChoice->GetCount() != 0)
+        LoadNewComponent(0);
 
     block_signals_ = false;
     return {};
