@@ -2708,7 +2708,7 @@
 	<filesystem>
 	<unordered_map>
 
-1787745286c:\users\fedotov\source\repos\picadoglance\include\pcadviewdraw.h
+1788898405c:\users\fedotov\source\repos\picadoglance\include\pcadviewdraw.h
 	<string>
 	<vector>
 	<variant>
@@ -3127,7 +3127,7 @@
 	"wx/filesys.h"
 	"wx/hashmap.h"
 
-1787743739c:\users\fedotov\source\repos\picadoglance\include\pcadfile.h
+1788868993c:\users\fedotov\source\repos\picadoglance\include\pcadfile.h
 	<iostream>
 	<string>
 	<vector>
@@ -3415,7 +3415,7 @@
 	<wx/intl.h>
 	"redefine_.h"
 
-1787301165c:\users\fedotov\source\repos\picadoglance\include\optionsdialog.h
+1788847602c:\users\fedotov\source\repos\picadoglance\include\optionsdialog.h
 	"macroses.h"
 	"ApertureProvider.h"
 	<wx/button.h>
@@ -3429,6 +3429,7 @@
 	<wx/statbox.h>
 	<wx/stattext.h>
 	<wx/textctrl.h>
+	<wx/spinctrl.h>
 
 1787215430source:c:\users\fedotov\source\repos\picadoglance\src\pcadtextexport.cpp
 	<iostream>
@@ -3740,7 +3741,7 @@
 	"PCADViewDraw.h"
 	"ApertureFile.h"
 
-1787748453c:\users\fedotov\source\repos\picadoglance\include\databaseresbrowser.h
+1789542607c:\users\fedotov\source\repos\picadoglance\include\databaseresbrowser.h
 	<wx/button.h>
 	<wx/checkbox.h>
 	<wx/choice.h>

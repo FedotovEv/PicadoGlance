@@ -563,10 +563,24 @@
 							<label>Вставок - 0</label>
 							<orient>wxVERTICAL</orient>
 							<object class="sizeritem">
-								<object class="wxChoice" name="ID_CHOICE_INSERTIONS_LIST" variable="InsertionsListChoice" member="yes">
-									<handler function="OnInsertionsListChoiceSelect" entry="EVT_CHOICE" />
+								<object class="wxBoxSizer" variable="InsertionsListSizer" member="no">
+									<object class="sizeritem">
+										<object class="wxChoice" name="ID_CHOICE_INSERTIONS_LIST" variable="InsertionsListChoice" member="yes">
+											<handler function="OnInsertionsListChoiceSelect" entry="EVT_CHOICE" />
+										</object>
+										<flag>wxEXPAND</flag>
+										<border>5</border>
+										<option>1</option>
+									</object>
+									<object class="sizeritem">
+										<object class="wxCheckBox" name="ID_CHECK_INSERT_IS_SELECT_COMPONENT_ONLY" variable="InsertIsSelectedComponentOnly" member="yes">
+											<label>Только выбранный компонент</label>
+										</object>
+										<flag>wxLEFT|wxRIGHT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+										<border>5</border>
+									</object>
 								</object>
-								<flag>wxBOTTOM|wxEXPAND</flag>
+								<flag>wxEXPAND</flag>
 								<border>5</border>
 							</object>
 							<object class="sizeritem">
@@ -851,10 +865,24 @@
 									<label>Выводов - 0</label>
 									<orient>wxVERTICAL</orient>
 									<object class="sizeritem">
-										<object class="wxChoice" name="ID_CHOICE_INSERT_PIN_NAMES_LIST" variable="InsertPinNamesListChoice" member="yes">
-											<handler function="OnInsertPinNamesListChoiceSelect" entry="EVT_CHOICE" />
+										<object class="wxBoxSizer" variable="InsertPinsChoiceSizer" member="no">
+											<object class="sizeritem">
+												<object class="wxChoice" name="ID_CHOICE_INSERT_PIN_NAMES_LIST" variable="InsertPinNamesListChoice" member="yes">
+													<handler function="OnInsertPinNamesListChoiceSelect" entry="EVT_CHOICE" />
+												</object>
+												<flag>wxEXPAND</flag>
+												<border>5</border>
+												<option>1</option>
+											</object>
+											<object class="sizeritem">
+												<object class="wxCheckBox" name="ID_CHECK_INSERT_IS_SELECT_NET_ONLY" variable="InsertIsSelectedNetOnly" member="yes">
+													<label>Только выбранная цепь</label>
+												</object>
+												<flag>wxLEFT|wxRIGHT|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+											</object>
 										</object>
-										<flag>wxBOTTOM|wxEXPAND</flag>
+										<flag>wxEXPAND</flag>
 										<border>5</border>
 									</object>
 									<object class="sizeritem">

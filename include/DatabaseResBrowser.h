@@ -49,6 +49,8 @@ class DatabaseResBrowser: public wxDialog
         wxButton* ExitDialogButton;
         wxButton* ExportAsTextButton;
         wxButton* ExportAsXMLButton;
+        wxCheckBox* InsertIsSelectedComponentOnly;
+        wxCheckBox* InsertIsSelectedNetOnly;
         wxCheckBox* IsComponentJumper;
         wxCheckBox* IsComponentPlanar;
         wxCheckBox* IsInsertMirroring;
@@ -167,6 +169,7 @@ class DatabaseResBrowser: public wxDialog
         static const wxWindowID ID_CHOICE_NET_OBJECTS_LIST;
         static const wxWindowID ID_TEXT_NET_OBJECT_DESCRIPTION;
         static const wxWindowID ID_CHOICE_INSERTIONS_LIST;
+        static const wxWindowID ID_CHECK_INSERT_IS_SELECT_COMPONENT_ONLY;
         static const wxWindowID ID_TEXT_INSERT_NAME;
         static const wxWindowID ID_TEXT_INSERT_NAME_COORDS;
         static const wxWindowID ID_CHECK_IS_INSERT_USER_NAME;
@@ -184,6 +187,7 @@ class DatabaseResBrowser: public wxDialog
         static const wxWindowID ID_CHOICE_INSERT_REFDES_ORIENT;
         static const wxWindowID ID_CHOICE_INSERT_REFDES_ALIGN;
         static const wxWindowID ID_CHOICE_INSERT_PIN_NAMES_LIST;
+        static const wxWindowID ID_CHECK_INSERT_IS_SELECT_NET_ONLY;
         static const wxWindowID ID_TEXT_INSERT_PIN_ALNUM;
         static const wxWindowID ID_TEXT_INSERT_PIN_NAME;
         static const wxWindowID ID_STATICTEXT9;
@@ -238,8 +242,8 @@ class DatabaseResBrowser: public wxDialog
             wxPoint pos;
             int layer_number = -1;
             int text_height = 1;
-            text_align = TextAlign::TEXT_CENTER_DOWN;
-            text_orient = TextOrientation::TEXT_LEFT_RIGHT;
+            TextAlign text_align = TextAlign::TEXT_CENTER_DOWN;
+            TextOrientation text_orient = TextOrientation::TEXT_LEFT_RIGHT;
         };
 
         static const std::unordered_map<TextParamGroup, TextParamWidgets> text_groups_map_;
@@ -265,21 +269,41 @@ class DatabaseResBrowser: public wxDialog
         void LoadNewNet(const std::string& net_name);
         void LoadNewComponent(int component_index);
         void LoadNewComponent(const std::string& component_name);
+        // ------ Работа с данными описания вставленной копии радиокомпонента. ------
+        // Функции-члены преобазования "логического" индекса вставки в абсолютный её индекс и обратно.
+        int LogInsertionIndexToAbs(int log_insertion_index);
+        int AbsInsertionIndexToLog(int abs_insertion_index);
+        // Заполнение списка доступных вставок в соответствии с выбранным пользователем режимом - всех имеющихся или только отдельного компонента.
+        void FillInsertionsList();
+        void LoadNewInsertion(int abs_insertion_index);
+        void LoadNewInsertion(const std::string& insertion_name);
+        // ------
         // --- Загрузка информационных подгрупп (подблоков).
         // Перегрузки функций-членов загрузки в группу виджетов параметров некоторой текстовой надписи.
         void LoadTextParams(const TextParamWidgets& param_widgets, const ObjText* text_object);
         void LoadTextParams(const TextParamWidgets& param_widgets, const TextParamValues& param_values);
-        //
-        void LoadPKGData(int component_index, const ComponentPKGSectDef& pkg_sect_def);
-        //
-        void LoadSPKGData(int component_index, const ComponentSPKGSectDef& spkg_sect_def);
-        //
+        // Заполнение дерева ComponentSectInfoTree секционных данных радиокомпонента component_index, если он содержит
+        // информацию о секционировании в формате PKG (секционное деление УГО).
+        void LoadPKGData(int component_index);
+        // Заполнение дерева ComponentSectInfoTree секционных данных радиокомпонента component_index, если он содержит
+        // информацию о секционировании в формате SPKG (секционирование конструктива).
+        void LoadSPKGData(int component_index);
+        // Загрузка данных в группу виджетов (ComponentPinAlNumText, и.т.д.) информации о некотором выводе (ножке) pin_index
+        // библиотечного радиокомпонента component_index.
         void LoadCompPinDescription(int component_index, int pin_index);
-        //
-        void LoadInsertPinDescription(int component_index, GraphObj* pin_label, const PinNetConnectInfo& connected_pin_info);
+        // ------ Работа с данными описания вывода (ножки) вставленной копии радиокомпонента. ------
+        int LogInsertPinIndexToAbs(int log_insert_pin_index);
+        int AbsInsertPinIndexToLog(int abs_insert_pin_index);
+        // Заполнение списка выводов текущей вставки в соответствии с выбранным пользователем режимом - всех имеющихся или только
+        // присоединённых к выбранной цепи.
+        void FillInsertPinsList(int abs_insertion_index);
+        // Загрузка данных в группу виджетов (InsertPinAlNumText, и.т.д.) информации о некотором выводе (ножке) insert_pin_index
+        // вставленной копии некоторого радиокомпонента, описанной во вставке с порядковым индексом insertion_index.
+        void LoadInsertPinDescription(int abs_insertion_index, int abs_insert_pin_index);
+        // ------
         // Функция-член загрузки в указанную ветвь информационного дерева данных об упаковке единичной секции УГО.
         void LoadSectPackInfoToTree
-            (int component_index, int group_index, const string& sect_name, const PinNameToALNumber& one_sect_pack_info,
+            (int component_index, int group_index, const std::string& sect_name, const PinNameToALNumber& one_sect_pack_info,
              wxTreeItemId& root_section_item);
         // Функция-член загрузки в назначенную ветвь информационного дерева данных о некоторой группе секций.
         void LoadSectGroupPackInfoToTree

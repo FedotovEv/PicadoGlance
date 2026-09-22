@@ -286,13 +286,13 @@ public:
     // Постобработка компонента после полного формирования первоначального всего документа, в состав которого компонент входит.
     void ComponentPostProcess(const PCADFile* pcad_document);
 
-    const std::string GetName() const   // Извлечение имени радиокомпонента.
+    const std::string& GetName() const   // Извлечение имени радиокомпонента.
     {
         return comp_name_;
     }
 
     // Получение имени файла, содержащего конструктив радиокомпонента для данного УГО (хранящегося в этом PCAD-документе).
-    const std::string GetPackageID() const
+    const std::string& GetPackageID() const
     {
         return package_id_;
     }

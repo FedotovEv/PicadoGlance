@@ -221,7 +221,65 @@ void RadioComponentInsertion::Clear() noexcept
 void RadioComponentInsertion::InsertPostProcess(const PCADFile* pcad_document)
 {
     pcad_document_ = pcad_document;
+    const RadioComponentDesc* lib_radio_component = nullptr;
+    // Отыщем в библиотеке компонент с именем comp_name_ (определим его порядковый библиотечный индекс).
+    auto scan_component_it = pcad_document_->radio_components_begin();
+    for (; scan_component_it != pcad_document_->radio_components_end(); ++scan_component_it)
+    {
+        if (comp_name_ == scan_component_it->GetName())
+            break;
+    }
+    if (scan_component_it != pcad_document_->radio_components_end())
+    {
+        comp_number_ = static_cast<int>(scan_component_it - pcad_document_->radio_components_begin());
+        lib_radio_component = &(*scan_component_it);
+    }
 
+    // Далее мы установим порядковые номера подсоединённых выводов (ножек) и соответствующих им токопроводящих цепей схемы.
+    for (auto scan_connect_it = connect_info_begin(); scan_connect_it != connect_info_end(); ++scan_connect_it)
+    {
+        const PinNetConnectInfo& pin_net_connection = (*scan_connect_it);
+        // Ищем токоведущую цепь с именем pin_net_connection.net_name.
+        auto scan_net_it = pcad_document_->nets_begin();
+        for (; scan_net_it != pcad_document_->nets_end(); ++scan_net_it)
+        {
+            if (pin_net_connection.net_name == scan_net_it->GetName())
+                break;
+        }
+        if (scan_net_it != pcad_document_->nets_end())
+        {
+            const_cast<PinNetConnectInfo&>(pin_net_connection).net_index =
+                static_cast<int>(scan_net_it - pcad_document_->nets_begin());
+        }
+
+        // Далее выполняем аналогичный поиск, но уже для выяснения порядкового индекса для вывода (ножки) с
+        // именем pin_net_connection.pin_name среди всех выводов библиотечного радиокомпонента lib_radio_component.
+        if (lib_radio_component)
+        {
+            auto scan_pin_it = lib_radio_component->pins_begin();
+            for (; scan_pin_it != lib_radio_component->pins_end(); ++scan_pin_it)
+            {
+                if (pin_net_connection.pin_name == scan_net_it->pin_name)
+                    break;
+            }
+            if (scan_pin_it != lib_radio_component->pins_end())
+            {
+                const_cast<PinNetConnectInfo&>(pin_net_connection).pin_index =
+                    static_cast<int>(scan_pin_it - lib_radio_component->pins_begin());
+            }
+        }
+    }
+
+    // А теперь нужно выработать графическое (видимое) представление данной вставленной копии радиокомпонента. Оно
+    // будет состоять из дубликатов набора графических примитивов, определённых и находящихся в составе библиотечного
+    // экземпляра данного радиоэлемента.
+    if (lib_radio_component)
+    {
+        for (const GraphObj* lib_graph_object : *lib_radio_component)
+        {
+
+        }
+    }
 }
 
 RadioComponentInsertion::RadioComponentInsertion(SourceData&& component_insert_data) :
